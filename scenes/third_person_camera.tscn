@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://5xlxwshtmxrs"]
+
+[ext_resource type="Script" path="res://scripts/ThirdPersonCamera.gd" id="1_8c7r1"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xggla"]
+
+[sub_resource type="Sky" id="Sky_a6j5n"]
+sky_material = SubResource("ProceduralSkyMaterial_xggla")
+
+[sub_resource type="Environment" id="Environment_q0kat"]
+background_mode = 2
+sky = SubResource("Sky_a6j5n")
+ambient_light_color = Color(0.942512, 1, 0.579284, 1)
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_enfn5"]
+
+[node name="ThirdPersonCamera" type="Node3D"]
+script = ExtResource("1_8c7r1")
+pivot = NodePath("Pivot")
+camera = NodePath("Pivot/Camera")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="Pivot"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -10)
+environment = SubResource("Environment_q0kat")
+attributes = SubResource("CameraAttributesPractical_enfn5")
+doppler_tracking = 2
+fov = 37.8493
+
+[node name="VoxelViewer" type="VoxelViewer" parent="Pivot/Camera"]
+requires_data_block_notifications = true
+enabled_in_editor = true

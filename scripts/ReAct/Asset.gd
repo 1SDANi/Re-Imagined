@@ -1,0 +1,2 @@
+class_name Asset
+extends PhysicsBody3D

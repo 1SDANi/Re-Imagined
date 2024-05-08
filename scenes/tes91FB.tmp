@@ -1,0 +1,88 @@
+[gd_scene load_steps=22 format=3 uid="uid://j28scctrhxas"]
+
+[ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="1_cuswy"]
+[ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="2_odv6i"]
+[ext_resource type="Texture2D" uid="uid://cuodfvyndyrmj" path="res://textures/Atlas.png" id="3_61c8w"]
+[ext_resource type="Script" path="res://scenes/InputTest.gd" id="4_uia1j"]
+
+[sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
+directory = "res://regions"
+
+[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_h48if"]
+channel = 0
+height = 1.0
+
+[sub_resource type="VoxelBlockyModelEmpty" id="VoxelBlockyModelEmpty_beyt7"]
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_ngj7d"]
+atlas_size_in_tiles = Vector2i(3, 3)
+tile_left = Vector2i(1, 1)
+tile_right = Vector2i(1, 1)
+tile_bottom = Vector2i(1, 1)
+tile_top = Vector2i(1, 1)
+tile_back = Vector2i(1, 1)
+tile_front = Vector2i(1, 1)
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uyh1n"]
+collision_enabled_0 = true
+mesh = ExtResource("1_cuswy")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b1npu"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_n7jru"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 16
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uq045"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 10
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b06tv"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 22
+
+[sub_resource type="VoxelBlockyLibrary" id="VoxelBlockyLibrary_m7hsr"]
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_beyt7"), SubResource("VoxelBlockyModelCube_ngj7d"), SubResource("VoxelBlockyModelMesh_uyh1n"), SubResource("VoxelBlockyModelMesh_b1npu"), SubResource("VoxelBlockyModelMesh_n7jru"), SubResource("VoxelBlockyModelMesh_uq045"), SubResource("VoxelBlockyModelMesh_b06tv")])
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_bds88"]
+library = SubResource("VoxelBlockyLibrary_m7hsr")
+
+[sub_resource type="Gradient" id="Gradient_ffi8r"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_aop2b"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uqutl"]
+width = 32
+height = 32
+invert = true
+color_ramp = SubResource("Gradient_ffi8r")
+noise = SubResource("FastNoiseLite_aop2b")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4rofn"]
+albedo_texture = ExtResource("3_61c8w")
+detail_mask = SubResource("NoiseTexture2D_uqutl")
+texture_filter = 0
+
+[sub_resource type="Gradient" id="Gradient_cuw1h"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_1d7oq"]
+gradient = SubResource("Gradient_cuw1h")
+
+[node name="SlopeMesh" type="VoxelTerrain"]
+stream = SubResource("VoxelStreamRegionFiles_tpghp")
+generator = SubResource("VoxelGeneratorFlat_h48if")
+mesher = SubResource("VoxelMesherBlocky_bds88")
+material_override = SubResource("StandardMaterial3D_4rofn")
+mesh_block_size = 32
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Camera2D"]
+position = Vector2(283, 150)
+texture = SubResource("GradientTexture2D_1d7oq")
+script = ExtResource("4_uia1j")

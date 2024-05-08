@@ -1,0 +1,345 @@
+[gd_scene load_steps=36 format=3 uid="uid://j28scctrhxas"]
+
+[ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="1_cuswy"]
+[ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="2_odv6i"]
+[ext_resource type="Texture2D" uid="uid://cuodfvyndyrmj" path="res://textures/Atlas.png" id="3_61c8w"]
+[ext_resource type="PackedScene" uid="uid://cyyggsxwufenm" path="res://scenes/third_person_actor.tscn" id="4_jwsea"]
+[ext_resource type="Script" path="res://scripts/ReControl/ThirdPersonPlayerController.gd" id="5_yrw4v"]
+[ext_resource type="Script" path="res://scripts/UIController.gd" id="6_k8042"]
+[ext_resource type="Script" path="res://scripts/FloatOptionBar.gd" id="7_5sxmf"]
+[ext_resource type="Script" path="res://addons/Overmind/nodes/camera_brain_3d.gd" id="7_yeacn"]
+[ext_resource type="Script" path="res://addons/Overmind/nodes/virtual_camera_3d.gd" id="8_q8p8a"]
+[ext_resource type="Script" path="res://addons/Overmind/resources/damped_value.gd" id="9_xb5mi"]
+[ext_resource type="Script" path="res://addons/Overmind/resources/orbiting_3d.gd" id="10_ifuqq"]
+
+[sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
+directory = "res://regions"
+
+[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_h48if"]
+channel = 0
+height = 1.0
+
+[sub_resource type="VoxelBlockyModelEmpty" id="VoxelBlockyModelEmpty_beyt7"]
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_ngj7d"]
+atlas_size_in_tiles = Vector2i(3, 3)
+tile_left = Vector2i(1, 1)
+tile_right = Vector2i(1, 1)
+tile_bottom = Vector2i(1, 1)
+tile_top = Vector2i(1, 1)
+tile_back = Vector2i(1, 1)
+tile_front = Vector2i(1, 1)
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uyh1n"]
+collision_enabled_0 = true
+mesh = ExtResource("1_cuswy")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b1npu"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_n7jru"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 16
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uq045"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 10
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b06tv"]
+collision_enabled_0 = true
+mesh = ExtResource("2_odv6i")
+mesh_ortho_rotation_index = 22
+
+[sub_resource type="VoxelBlockyLibrary" id="VoxelBlockyLibrary_m7hsr"]
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_beyt7"), SubResource("VoxelBlockyModelCube_ngj7d"), SubResource("VoxelBlockyModelMesh_uyh1n"), SubResource("VoxelBlockyModelMesh_b1npu"), SubResource("VoxelBlockyModelMesh_n7jru"), SubResource("VoxelBlockyModelMesh_uq045"), SubResource("VoxelBlockyModelMesh_b06tv")])
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_bds88"]
+library = SubResource("VoxelBlockyLibrary_m7hsr")
+
+[sub_resource type="Gradient" id="Gradient_ffi8r"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_aop2b"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uqutl"]
+width = 32
+height = 32
+invert = true
+color_ramp = SubResource("Gradient_ffi8r")
+noise = SubResource("FastNoiseLite_aop2b")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4rofn"]
+albedo_texture = ExtResource("3_61c8w")
+detail_mask = SubResource("NoiseTexture2D_uqutl")
+texture_filter = 0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dsxwu"]
+
+[sub_resource type="Sky" id="Sky_w41c8"]
+sky_material = SubResource("ProceduralSkyMaterial_dsxwu")
+
+[sub_resource type="Environment" id="Environment_5x367"]
+background_mode = 2
+sky = SubResource("Sky_w41c8")
+
+[sub_resource type="Resource" id="Resource_c21pw"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 3.0
+z = 1.0
+r = 0.5
+
+[sub_resource type="Resource" id="Resource_ctg5n"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 1.0
+z = 1.0
+r = 0.0
+
+[sub_resource type="Resource" id="Resource_di1kf"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 1.0
+z = 1.0
+r = 0.0
+
+[sub_resource type="Resource" id="Resource_hihxq"]
+script = ExtResource("10_ifuqq")
+dolly = 3.0
+tilt = 1.0
+pan = 0.0
+track = 0.0
+pedestal = 1.0
+yaw = 0.0
+pitch = 0.3
+roll = 0.0
+
+[sub_resource type="Resource" id="Resource_uo2h6"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = false
+f = 1.0
+z = 1.0
+r = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_tifdy"]
+
+[node name="World3D" type="Node3D"]
+
+[node name="SlopeMesh" type="VoxelTerrain" parent="."]
+stream = SubResource("VoxelStreamRegionFiles_tpghp")
+generator = SubResource("VoxelGeneratorFlat_h48if")
+mesher = SubResource("VoxelMesherBlocky_bds88")
+material_override = SubResource("StandardMaterial3D_4rofn")
+mesh_block_size = 32
+
+[node name="ThirdPersonActor" parent="." instance=ExtResource("4_jwsea")]
+transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 2, 0)
+walk_turn_force = 90.0
+run_turn_force = 60.0
+walk_turn_speed = 180.0
+run_turn_speed = 90.0
+walk_turn_deadzone = 2.0
+run_turn_deadzone = 2.0
+walk_turn_friction = 720.0
+run_turn_friction = 360.0
+walk_turn_static_friction = 90.0
+run_turn_static_friction = 45.0
+walk_force = 30.0
+run_force = 50.0
+walk_speed = 5.0
+run_speed = 10.0
+walk_friction = 20.0
+run_friction = 30.0
+walk_static_friction = 2.5
+run_static_friction = 5.0
+
+[node name="Node3D" type="Node3D" parent="ThirdPersonActor"]
+script = ExtResource("5_yrw4v")
+cam_speed_x = 1.0
+cam_speed_y = 1.0
+cam = NodePath("../../CameraBrain/VirtualCamera")
+
+[node name="VoxelViewer" type="VoxelViewer" parent="ThirdPersonActor"]
+enabled_in_editor = true
+
+[node name="CameraBrain" type="Camera3D" parent="."]
+process_priority = 999
+transform = Transform3D(1, -5.16704e-08, 1.67036e-07, 0, 0.955336, 0.29552, -1.74846e-07, -0.29552, 0.955336, 5.01109e-07, 3.8867, 2.86601)
+environment = SubResource("Environment_5x367")
+script = ExtResource("7_yeacn")
+
+[node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
+process_priority = 998
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.00014, 0)
+script = ExtResource("8_q8p8a")
+collides = true
+follow_node = NodePath("../../ThirdPersonActor")
+horizontal_damper = SubResource("Resource_c21pw")
+vertical_damper = SubResource("Resource_ctg5n")
+rotation_damper = SubResource("Resource_di1kf")
+orbiting = SubResource("Resource_hihxq")
+target_damper = SubResource("Resource_uo2h6")
+
+[node name="UIController" type="Node3D" parent="."]
+script = ExtResource("6_k8042")
+PauseUI = NodePath("../PauseUI")
+GameUI = NodePath("../GameUI")
+
+[node name="PauseUI" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="XSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedRow" type="HBoxContainer" parent="PauseUI/XSpeedRowMargin"]
+layout_mode = 2
+
+[node name="XSpeedNameMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedName" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedNameMargin"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Camera Speed X"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XSpeedBarMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedBar" type="HScrollBar" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedBarMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+step = 0.1
+script = ExtResource("7_5sxmf")
+Value = NodePath("../../XSpeedValueMargin2/XSpeedValue")
+target = "/root/game"
+subtarget = "inputHandler"
+setter = "set_cam_speed_x"
+getter = "get_cam_speed_x"
+
+[node name="XSpeedValueMargin2" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedValue" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedValueMargin2"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedRow" type="HBoxContainer" parent="PauseUI/YSpeedRowMargin"]
+layout_mode = 2
+
+[node name="YSpeedNameMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedName" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedNameMargin"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Camera Speed Y"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YSpeedBarMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedBar" type="HScrollBar" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedBarMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+step = 0.1
+script = ExtResource("7_5sxmf")
+Value = NodePath("../../YSpeedValueMargin2/YSpeedValue")
+target = "/root/game"
+subtarget = "inputHandler"
+setter = "set_cam_speed_y"
+getter = "get_cam_speed_y"
+
+[node name="YSpeedValueMargin2" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedValue" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedValueMargin2"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameUI" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.27064, 3.55866)
+mesh = SubResource("BoxMesh_tifdy")
+skeleton = NodePath("../SlopeMesh")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)

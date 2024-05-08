@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c4cy5m2cvr36p"
+path="res://.godot/imported/voxelvariants.obj-3f2d6ef885922e82ac729adf396a89be.mesh"
+
+[deps]
+
+files=["res://.godot/imported/voxelvariants.obj-3f2d6ef885922e82ac729adf396a89be.mesh"]
+
+source_file="res://models/voxelvariants.obj"
+dest_files=["res://.godot/imported/voxelvariants.obj-3f2d6ef885922e82ac729adf396a89be.mesh", "res://.godot/imported/voxelvariants.obj-3f2d6ef885922e82ac729adf396a89be.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
