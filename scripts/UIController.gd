@@ -11,7 +11,7 @@ func _ready() -> void:
 	_game_ui = get_node(GameUI)
 
 func _process(_delta: float) -> void:
-	if game.inputHandler.is_mouse_free():
+	if game.input.is_mouse_free():
 		_pause_ui.set_process_mode(PROCESS_MODE_INHERIT)
 		_pause_ui.set_visible(true)
 		_game_ui.set_process_mode(PROCESS_MODE_DISABLED)

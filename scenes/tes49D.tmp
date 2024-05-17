@@ -3,7 +3,6 @@
 [ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="1_cuswy"]
 [ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="2_odv6i"]
 [ext_resource type="Texture2D" uid="uid://cuodfvyndyrmj" path="res://textures/Atlas.png" id="3_61c8w"]
-[ext_resource type="Script" path="res://scripts/ReMesh/SlopeMesh.gd" id="4_epbx7"]
 [ext_resource type="PackedScene" uid="uid://cyyggsxwufenm" path="res://scenes/third_person_actor.tscn" id="4_jwsea"]
 [ext_resource type="Script" path="res://scripts/ReControl/ThirdPersonPlayerController.gd" id="5_yrw4v"]
 [ext_resource type="Script" path="res://scripts/UIController.gd" id="6_k8042"]
@@ -12,8 +11,6 @@
 [ext_resource type="Script" path="res://addons/Overmind/nodes/virtual_camera_3d.gd" id="8_q8p8a"]
 [ext_resource type="Script" path="res://addons/Overmind/resources/damped_value.gd" id="9_xb5mi"]
 [ext_resource type="Script" path="res://addons/Overmind/resources/orbiting_3d.gd" id="10_ifuqq"]
-[ext_resource type="PackedScene" uid="uid://1hvq61epxnpn" path="res://scenes/Highlight.tscn" id="13_tmnho"]
-[ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
 
 [sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
 directory = "res://regions"
@@ -78,6 +75,15 @@ albedo_texture = ExtResource("3_61c8w")
 detail_mask = SubResource("NoiseTexture2D_uqutl")
 texture_filter = 0
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dsxwu"]
+
+[sub_resource type="Sky" id="Sky_w41c8"]
+sky_material = SubResource("ProceduralSkyMaterial_dsxwu")
+
+[sub_resource type="Environment" id="Environment_5x367"]
+background_mode = 2
+sky = SubResource("Sky_w41c8")
+
 [sub_resource type="Resource" id="Resource_c21pw"]
 script = ExtResource("9_xb5mi")
 enabled = true
@@ -131,21 +137,20 @@ generator = SubResource("VoxelGeneratorFlat_h48if")
 mesher = SubResource("VoxelMesherBlocky_bds88")
 material_override = SubResource("StandardMaterial3D_4rofn")
 mesh_block_size = 32
-script = ExtResource("4_epbx7")
 
 [node name="ThirdPersonActor" parent="." instance=ExtResource("4_jwsea")]
 transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 1.5, 0)
 collision_layer = 2
 collision_mask = 2
-walk_turn_force = 90.0
+walk_turn_force = 180.0
 run_turn_force = 90.0
-walk_turn_speed = 360.0
+walk_turn_speed = 270.0
 run_turn_speed = 180.0
-walk_turn_deadzone = 5.0
-run_turn_deadzone = 5.0
+walk_turn_deadzone = 2.0
+run_turn_deadzone = 2.0
 walk_turn_friction = 720.0
 run_turn_friction = 360.0
-walk_turn_static_friction = 75.0
+walk_turn_static_friction = 90.0
 run_turn_static_friction = 45.0
 walk_force = 30.0
 run_force = 50.0
@@ -155,15 +160,12 @@ walk_friction = 20.0
 run_friction = 30.0
 walk_static_friction = 2.5
 run_static_friction = 5.0
-reach = 1.5
 
-[node name="ThirdPersonPlayerController" type="Node3D" parent="ThirdPersonActor"]
+[node name="Node3D" type="Node3D" parent="ThirdPersonActor"]
 script = ExtResource("5_yrw4v")
 cam_speed_x = 1.0
 cam_speed_y = 1.0
 cam = NodePath("../../CameraBrain/VirtualCamera")
-highlight = NodePath("../../Highlight")
-debug_highlight = NodePath("../../Debug_Highlight")
 
 [node name="VoxelViewer" type="VoxelViewer" parent="ThirdPersonActor"]
 enabled_in_editor = true
@@ -171,6 +173,7 @@ enabled_in_editor = true
 [node name="CameraBrain" type="Camera3D" parent="."]
 process_priority = 999
 transform = Transform3D(1, -5.16704e-08, 1.67036e-07, 0, 0.955336, 0.29552, -1.74846e-07, -0.29552, 0.955336, 5.01109e-07, 3.38656, 2.86601)
+environment = SubResource("Environment_5x367")
 script = ExtResource("7_yeacn")
 
 [node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
@@ -185,25 +188,10 @@ rotation_damper = SubResource("Resource_di1kf")
 orbiting = SubResource("Resource_hihxq")
 target_damper = SubResource("Resource_uo2h6")
 
-[node name="UIController" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="UIController" type="Node3D" parent="."]
 script = ExtResource("6_k8042")
 PauseUI = NodePath("../PauseUI")
 GameUI = NodePath("../GameUI")
-
-[node name="GameUI" type="VBoxContainer" parent="."]
-offset_top = -648.0
-offset_right = 40.0
-offset_bottom = -608.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="PauseUI" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -259,7 +247,7 @@ step = 0.1
 script = ExtResource("7_5sxmf")
 Value = NodePath("../../XSpeedValueMargin2/XSpeedValue")
 target = "/root/game"
-subtarget = "input"
+subtarget = "inputHandler"
 setter = "set_cam_speed_x"
 getter = "get_cam_speed_x"
 
@@ -325,7 +313,7 @@ step = 0.1
 script = ExtResource("7_5sxmf")
 Value = NodePath("../../YSpeedValueMargin2/YSpeedValue")
 target = "/root/game"
-subtarget = "input"
+subtarget = "inputHandler"
 setter = "set_cam_speed_y"
 getter = "get_cam_speed_y"
 
@@ -346,6 +334,10 @@ text = "0
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="GameUI" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.27064, 3.55866)
 mesh = SubResource("BoxMesh_tifdy")
@@ -353,8 +345,3 @@ skeleton = NodePath("../SlopeMesh")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
-
-[node name="Highlight" parent="." instance=ExtResource("13_tmnho")]
-
-[node name="Debug_Highlight" parent="." instance=ExtResource("14_00k5w")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)

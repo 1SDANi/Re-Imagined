@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://c3hck30uiqudy"]
+
+[sub_resource type="Gradient" id="Gradient_k4usd"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5y4ho"]
+gradient = SubResource("Gradient_k4usd")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hbaoy"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.501961)
+albedo_texture = SubResource("GradientTexture1D_5y4ho")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d3s6n"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.501961)
+albedo_texture = SubResource("GradientTexture1D_5y4ho")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t866g"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.501961)
+albedo_texture = SubResource("GradientTexture1D_5y4ho")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_euuyx"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.501961)
+albedo_texture = SubResource("GradientTexture1D_5y4ho")
+
+[node name="Highlight" type="CSGBox3D"]
+material = SubResource("StandardMaterial3D_hbaoy")
+
+[node name="Highlight Y" type="CSGBox3D" parent="."]
+operation = 2
+size = Vector3(0.9, 1, 0.9)
+material = SubResource("StandardMaterial3D_d3s6n")
+
+[node name="Highlight X" type="CSGBox3D" parent="."]
+operation = 2
+size = Vector3(1, 0.9, 0.9)
+material = SubResource("StandardMaterial3D_t866g")
+
+[node name="Highlight Z" type="CSGBox3D" parent="."]
+operation = 2
+size = Vector3(0.9, 0.9, 1)
+material = SubResource("StandardMaterial3D_euuyx")

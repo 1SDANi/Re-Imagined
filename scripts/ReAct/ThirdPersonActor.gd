@@ -80,12 +80,16 @@ func move(vector : Vector2):
 		var dot : float = (v.dot(basis.z) + 1) / 2
 		var diff : float = v.angle_to(Vector3(basis.z.x, 0, basis.z.z))
 
-		if diff > turn_deadzone:
+		if diff > turn_deadzone * 2:
 			turn_goal = vector
 			if cross.y > 0.0:
 				turn_right()
 			else:
 				turn_left()
+		else:
+			fix_angle(atan2(vector.x, vector.y))
 
 		if not is_zero_approx(dot):
 			locomote(-basis.z * dot)
+	else:
+		stop_turning()

@@ -11,6 +11,25 @@ axis_lock_angular_x = true
 axis_lock_angular_z = true
 gravity_scale = 0.0
 script = ExtResource("1_5kdu2")
+walk_turn_force = null
+run_turn_force = null
+walk_turn_speed = null
+run_turn_speed = null
+walk_turn_deadzone = null
+run_turn_deadzone = null
+walk_turn_friction = null
+run_turn_friction = null
+walk_turn_static_friction = null
+run_turn_static_friction = null
+walk_force = null
+run_force = null
+walk_speed = null
+run_speed = null
+walk_friction = null
+run_friction = null
+walk_static_friction = null
+run_static_friction = null
+reach = null
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_dxhhc")

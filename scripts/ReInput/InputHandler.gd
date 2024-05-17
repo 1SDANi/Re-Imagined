@@ -2,7 +2,8 @@ class_name InputHandler
 
 var gmp : Dictionary
 var kbm : Dictionary
-var mom : Dictionary
+var mod : Dictionary
+var mob : Dictionary
 var actions : Dictionary
 
 var default_deadzone: float
@@ -18,7 +19,7 @@ var default_buffer_length : int
 var cam_speed_x : float
 var cam_speed_y : float
 
-enum MOUSE_DIRECTION
+enum MOUSE_DIR
 {
 	UP,
 	DOWN,
@@ -59,7 +60,8 @@ func toggle_mouse_capture() -> void:
 func update_all(delta : float) -> void:
 	update_inputs(delta)
 	update_keys(delta)
-	update_mouse_movement(delta)
+	update_mouse_dir(delta)
+	update_mouse_buttons(delta)
 
 func update_inputs(delta : float) -> void:
 	for input in gmp:
@@ -69,16 +71,20 @@ func update_keys(delta : float) -> void:
 	for action in kbm:
 		actions[kbm[action]].update(Input.is_key_pressed(action), delta)
 
-func update_mouse_movement(delta : float) -> void:
+func update_mouse_buttons(delta : float) -> void:
+	for action in mob:
+		actions[mob[action]].update(Input.is_mouse_button_pressed(action), delta)
+
+func update_mouse_dir(delta : float) -> void:
 	var up : float = mouse_motion.y if mouse_motion.y > 0.0 else 0.0
 	var down : float = -mouse_motion.y if mouse_motion.y < 0.0 else 0.0
 	var right : float = mouse_motion.x if mouse_motion.x > 0.0 else 0.0
 	var left : float = -mouse_motion.x if mouse_motion.x < 0.0 else 0.0
 
-	actions[mom[MOUSE_DIRECTION.UP]].update(up, delta)
-	actions[mom[MOUSE_DIRECTION.DOWN]].update(down, delta)
-	actions[mom[MOUSE_DIRECTION.LEFT]].update(left, delta)
-	actions[mom[MOUSE_DIRECTION.RIGHT]].update(right, delta)
+	actions[mod[MOUSE_DIR.UP]].update(up, delta)
+	actions[mod[MOUSE_DIR.DOWN]].update(down, delta)
+	actions[mod[MOUSE_DIR.LEFT]].update(left, delta)
+	actions[mod[MOUSE_DIR.RIGHT]].update(right, delta)
 	mouse_motion = Vector2.ZERO
 
 func mouse_motion_event(event) -> void:
@@ -212,8 +218,11 @@ func has_input(input : String) -> bool:
 func has_key(key : Key) -> bool:
 	return kbm.has(key)
 
-func has_mouse_movement(direction : MOUSE_DIRECTION) -> bool:
-	return mom.has(direction)
+func has_mouse_dir(dir : MOUSE_DIR) -> bool:
+	return mod.has(dir)
+
+func has_mouse_button(mouse_button : MouseButton) -> bool:
+	return kbm.has(mouse_button)
 
 func has_action(action : String) -> bool:
 	return actions.has(action)
@@ -224,8 +233,11 @@ func is_input(input : String, action : String) -> bool:
 func is_key(key : Key, action : String) -> bool:
 	return has_key(key) and kbm.get(key) == action
 
-func is_mouse_movement(direction : MOUSE_DIRECTION, action : String) -> bool:
-	return has_mouse_movement(direction) and mom.get(direction) == action
+func is_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
+	return has_mouse_dir(dir) and mod.get(dir) == action
+
+func is_mouse_button(mouse_button : MouseButton, action : String) -> bool:
+	return has_mouse_button(mouse_button) and mob.get(mouse_button) == action
 
 func set_input(input : String, action : String) -> bool:
 	gmp[input] = action
@@ -235,8 +247,12 @@ func set_key(key : Key, action : String) -> bool:
 	kbm[key] = action
 	return true
 
-func set_mouse_movement(direction : MOUSE_DIRECTION, action : String) -> bool:
-	mom[direction] = action
+func set_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
+	mod[dir] = action
+	return true
+
+func set_mouse_button(mouse_button : MouseButton, action : String) -> bool:
+	mob[mouse_button] = action
 	return true
 
 func add_input(input : String, action : String) -> bool:
@@ -261,11 +277,22 @@ func add_key(key : Key, action : String) -> bool:
 
 	return true
 
-func add_mouse_movement(direction : MOUSE_DIRECTION, action : String) -> bool:
-	if has_mouse_movement(direction):
+func add_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
+	if has_mouse_dir(dir):
 		return false
 
-	set_mouse_movement(direction, action)
+	set_mouse_dir(dir, action)
+
+	if not has_action(action):
+		add_action(action)
+
+	return true
+
+func add_mouse_button(mouse_button : MouseButton, action : String) -> bool:
+	if has_mouse_button(mouse_button):
+		return false
+
+	set_mouse_button(mouse_button, action)
 
 	if not has_action(action):
 		add_action(action)
@@ -284,11 +311,17 @@ func ensure_key(key : Key, action : String) -> bool:
 
 	return set_key(key, action)
 
-func ensure_mouse_movement(direction : MOUSE_DIRECTION, action : String) -> bool:
-	if has_mouse_movement(direction):
-		return is_mouse_movement(direction, action)
+func ensure_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
+	if has_mouse_dir(dir):
+		return is_mouse_dir(dir, action)
 
-	return set_mouse_movement(direction, action)
+	return set_mouse_dir(dir, action)
+
+func ensure_mouse_button(mouse_button : MouseButton, action : String) -> bool:
+	if has_mouse_button(mouse_button):
+		return is_mouse_button(mouse_button, action)
+
+	return set_mouse_button(mouse_button, action)
 
 func change_input(input : String, action : String) -> bool:
 	return has_input(input) and set_input(input, action)
@@ -296,8 +329,11 @@ func change_input(input : String, action : String) -> bool:
 func change_key(key : Key, action : String) -> bool:
 	return has_key(key) and set_key(key, action)
 
-func change_mouse_movement(direction : MOUSE_DIRECTION, action : String) -> bool:
-	return has_mouse_movement(direction) and set_mouse_movement(direction, action)
+func change_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
+	return has_mouse_dir(dir) and set_mouse_dir(dir, action)
+
+func change_mouse_button(mouse_button : MouseButton, action : String) -> bool:
+	return has_mouse_button(mouse_button) and set_mouse_button(mouse_button, action)
 
 func add_action(action : String) -> bool:
 	if has_action(action):

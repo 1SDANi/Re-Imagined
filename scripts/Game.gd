@@ -1,20 +1,28 @@
 extends Node
 
-var inputHandler : InputHandler
+var slope_mesh : NodePath
+
+var input : InputHandler
 
 func _ready() -> void:
-	inputHandler =  InputHandler.new()
+	input =  InputHandler.new()
 
-	inputHandler.set_default_deadzone(0.25)
-	inputHandler.set_default_tap_threshold(0.125)
-	inputHandler.set_default_doubletap_threshold(0.25)
-	inputHandler.set_default_high_threshold(0.5)
-	inputHandler.set_default_hold_threshold(1.0)
-	inputHandler.set_default_buffer_length(5)
+	input.set_default_deadzone(0.25)
+	input.set_default_tap_threshold(0.125)
+	input.set_default_doubletap_threshold(0.25)
+	input.set_default_high_threshold(0.5)
+	input.set_default_hold_threshold(1.0)
+	input.set_default_buffer_length(5)
+
+func set_slope_mesh(path : NodePath) -> void:
+	slope_mesh = path
+
+func get_slope_mesh() -> SlopeMesh:
+	return get_node(slope_mesh)
 
 func _physics_process(delta: float) -> void:
-	inputHandler.update_all(delta)
+	input.update_all(delta)
 
 func _input(event):
 	if event is InputEventMouseMotion:
-		inputHandler.mouse_motion_event(event)
+		input.mouse_motion_event(event)
