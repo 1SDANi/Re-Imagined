@@ -5,29 +5,40 @@ var state : int
 var statenames : Array[String]
 var states : Array[MoveState]
 
+var acceleration : float
+var deceleration : float
+var max_speed : float
+
 @export var reach : float
 
-func locomote(vector : Vector3):
-	if pos_inertia.length() < states[state].speed:
-		var diff : float = states[state].speed - pos_inertia.length()
-		var rem : float = min(states[state].force, diff)
-		pos_inertia += vector.normalized() * rem
+func locomote(vector : Vector3, target : float, mod : float):
+	var difference : float = target * max_speed - pos_inertia.length()
+	var acc : float = min(difference, acceleration)
+	var dec : float = min(pos_inertia.length(), deceleration)
+	pos_inertia += vector.normalized() * acc * mod - pos_inertia.normalized() * dec
+	static_friction = false if acc > 0 else true
 
-func turn_right():
-	if rot_inertia.length() < states[state].turn_speed:
+func turn_right(mod : float):
+	if rot_inertia.y > -states[state].turn_speed:
 		if turn_snap == false: turn_snap = true
-		rot_inertia.y -= states[state].turn_force
+		rot_inertia.y -= states[state].turn_force * mod
+		if absf(rot_inertia.y) < states[state].turn_static_friction:
+			rot_inertia.y = -states[state].turn_static_friction
 
-func turn_left():
-	if rot_inertia.length() < states[state].turn_speed:
+func turn_left(mod : float):
+	if rot_inertia.y < states[state].turn_speed:
 		if turn_snap == false: turn_snap = true
-		rot_inertia.y += states[state].turn_force
+		rot_inertia.y += states[state].turn_force * mod
+		if absf(rot_inertia.y) < states[state].turn_static_friction:
+			rot_inertia.y = states[state].turn_static_friction
 
-func stop_turning():
-	if rot_inertia.y < -turn_deadzone:
-		turn_left()
-	if rot_inertia.y > turn_deadzone:
-		turn_right()
-	turn_snap = false
-	turn_goal = Vector2.ZERO
+func stop_turning(mod : float):
+	var friction : float = states[state].turn_friction
+	friction +=  + states[state].turn_static_friction
+	if rot_inertia.y < (-states[state].turn_force + friction) * mod:
+		turn_left(mod)
+	elif rot_inertia.y > (states[state].turn_force + friction) * mod:
+		turn_right(mod)
+	else:
+		fix_angle(rotation.y)
 

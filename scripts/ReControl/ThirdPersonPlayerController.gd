@@ -40,7 +40,7 @@ func _physics_process(delta : float) -> void:
 	if game.input.is_mouse_free(): return
 
 	handle_looking(delta)
-	handle_movement()
+	handle_movement(delta)
 	handle_placing()
 
 func handle_pausing() -> void:
@@ -64,7 +64,7 @@ func handle_looking(delta : float) -> void:
 		_cam.orbiting.pitch += look_y * game.input.get_cam_speed_y() * delta
 		_cam.orbiting.pitch = clamp(_cam.orbiting.pitch, -TAU/4 + 1.2, TAU/4 - 0.1)
 
-func handle_movement() -> void:
+func handle_movement(delta: float) -> void:
 	var move_y : float = game.input.get_axis_value_spacey("Move Front", "Move Back", true)
 	var move_x : float = game.input.get_axis_value_spacey("Move Left", "Move Right", true)
 
@@ -72,9 +72,9 @@ func handle_movement() -> void:
 
 	if not move.is_zero_approx():
 		var v : Vector3 = move.rotated(Vector3.UP, -_cam.orbiting.yaw)
-		get_parent().move(Vector2(v.x, v.z))
+		get_parent().move(Vector2(v.x, v.z), delta)
 	else:
-		get_parent().move(Vector2.ZERO)
+		get_parent().move(Vector2.ZERO, delta)
 
 func handle_placing() -> void:
 	var place : float = game.input.get_action_value("Place")
@@ -83,19 +83,20 @@ func handle_placing() -> void:
 	var pos : Vector3 = mesh.to_local(get_parent().position)
 	var forward : Vector3 = -get_parent().basis.z.normalized()
 	var reach : float = get_parent().reach
-	var target : Vector3i = pos + forward * reach
-	if target.x < 0: target.x -= 1.0
-	if target.y < 0: target.y -= 1.0
-	if target.z < 0: target.z -= 1.0
+	var target : Vector3 = pos + forward * reach
+	if target.x < 0.0: target.x -= 1.0
+	if target.y < 0.0: target.y -= 1.0
+	if target.z < 0.0: target.z -= 1.0
+	var targeti : Vector3i = target
 	var grid : Vector3 = Vector3.UP * 0.5 + Vector3.RIGHT * 0.5 + Vector3.BACK * 0.5
 
 	var raycast : VoxelRaycastResult = mesh.tool.raycast(pos, forward, reach)
 	if raycast:
-		target = raycast.position
+		targeti = raycast.position
 
 	if _debug_highlight != null:
 		_debug_highlight.position = pos + forward * reach
-	_highlight.position = Vector3(target) + grid
+	_highlight.position = Vector3(targeti) + grid
 
 
 	if _place_lock:

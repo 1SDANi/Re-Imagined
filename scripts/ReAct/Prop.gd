@@ -15,6 +15,7 @@ var mass : float
 var turn_deadzone : float
 var turn_goal : Vector2
 var turn_snap : bool = false
+var static_friction : bool = true
 
 func _physics_process(delta: float) -> void:
 	apply_inertia(delta)
@@ -40,19 +41,22 @@ func apply_rot_inertia(delta : float):
 		rotation += rot_inertia * delta
 
 func apply_pos_inertia(delta : float):
-	if pos_inertia.length() > pos_static_friction:
+	if pos_inertia.length() > pos_static_friction or not static_friction:
 		position += pos_inertia * delta
 
 func apply_friction(delta : float):
 	if rot_inertia.length() > rot_static_friction:
 		rot_inertia -= rot_inertia.normalized() * rot_friction * delta
 	else:
-		rot_inertia = Vector3.ZERO
+		fix_angle(rotation.y)
 
-	if pos_inertia.length() > pos_static_friction:
+	if pos_inertia.length() > pos_static_friction or not static_friction:
 		pos_inertia -= pos_inertia.normalized() * pos_friction * delta
 	else:
-		pos_inertia = Vector3.ZERO
+		stop()
+
+func stop():
+	pos_inertia = Vector3.ZERO
 
 func fix_angle(angle : float):
 	if turn_snap == true: turn_snap = false

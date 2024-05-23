@@ -1,0 +1,41 @@
+[gd_resource type="VoxelBlockyLibrary" load_steps=10 format=3 uid="uid://cru6jf72jiri0"]
+
+[ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="1_eqr46"]
+[ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="2_wxgkq"]
+
+[sub_resource type="VoxelBlockyModelEmpty" id="VoxelBlockyModelEmpty_beyt7"]
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_ngj7d"]
+atlas_size_in_tiles = Vector2i(3, 3)
+tile_left = Vector2i(1, 1)
+tile_right = Vector2i(1, 1)
+tile_bottom = Vector2i(1, 1)
+tile_top = Vector2i(1, 1)
+tile_back = Vector2i(1, 1)
+tile_front = Vector2i(1, 1)
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uyh1n"]
+collision_enabled_0 = true
+mesh = ExtResource("1_eqr46")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b1npu"]
+collision_enabled_0 = true
+mesh = ExtResource("2_wxgkq")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_n7jru"]
+collision_enabled_0 = true
+mesh = ExtResource("2_wxgkq")
+mesh_ortho_rotation_index = 16
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_uq045"]
+collision_enabled_0 = true
+mesh = ExtResource("2_wxgkq")
+mesh_ortho_rotation_index = 10
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_b06tv"]
+collision_enabled_0 = true
+mesh = ExtResource("2_wxgkq")
+mesh_ortho_rotation_index = 22
+
+[resource]
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_beyt7"), SubResource("VoxelBlockyModelCube_ngj7d"), SubResource("VoxelBlockyModelMesh_uyh1n"), SubResource("VoxelBlockyModelMesh_b1npu"), SubResource("VoxelBlockyModelMesh_n7jru"), SubResource("VoxelBlockyModelMesh_uq045"), SubResource("VoxelBlockyModelMesh_b06tv")])

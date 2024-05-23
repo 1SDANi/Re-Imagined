@@ -91,18 +91,16 @@ walk_turn_friction = 15.0
 run_turn_friction = 15.0
 walk_turn_static_friction = 30.0
 run_turn_static_friction = 30.0
-walk_max_speed = 5.0
-run_max_speed = 10.0
-walk_acceleration = 5.0
-run_acceleration = 5.0
-walk_deceleration = 1.0
-run_deceleration = 1.0
+walk_force = 15.0
+run_force = 15.0
+walk_speed = 30.0
+run_speed = 30.0
 walk_peak_time = 0.5
 run_peak_time = 0.5
-walk_friction = 1.0
-run_friction = 1.0
-walk_static_friction = 2.0
-run_static_friction = 2.0
+walk_friction = 5.0
+run_friction = 5.0
+walk_static_friction = 10.0
+run_static_friction = 10.0
 reach = 1.5
 
 [node name="ThirdPersonPlayerController" type="Node3D" parent="ThirdPersonActor"]
