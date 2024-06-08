@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://fuvbcm4axwp"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_oqedv"]
+[ext_resource type="ArrayMesh" uid="uid://dtf6dwgdxrjj5" path="res://models/B.obj" id="2_xu7ru"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_gny62"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_860qy"]
+material_override_0 = ExtResource("1_oqedv")
+collision_enabled_0 = true
+mesh = ExtResource("2_xu7ru")
+
+[resource]
+resource_name = "fishfork"
+unique_name = &"fishfork"
+base_model = SubResource("VoxelBlockyModelMesh_860qy")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_gny62")])

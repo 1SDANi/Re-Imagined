@@ -12,10 +12,10 @@ var max_speed : float
 @export var reach : float
 
 func locomote(vector : Vector3, target : float, mod : float):
-	var difference : float = target * max_speed - pos_inertia.length()
-	var acc : float = min(difference, acceleration)
 	var dec : float = min(pos_inertia.length(), deceleration)
-	pos_inertia += vector.normalized() * acc * mod - pos_inertia.normalized() * dec
+	var difference : float = target * max_speed - pos_inertia.length() + dec
+	var acc : float = max(0, min(difference, acceleration)) * mod
+	pos_inertia += vector.normalized() * acc - pos_inertia.normalized() * dec
 	static_friction = false if acc > 0 else true
 
 func turn_right(mod : float):

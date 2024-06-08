@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://c02wepvsnafhc"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_i85va"]
+[ext_resource type="ArrayMesh" uid="uid://kbpajv1d2vqg" path="res://models/D.obj" id="2_5urfu"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_lwtvm"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_fwyiq"]
+material_override_0 = ExtResource("1_i85va")
+collision_enabled_0 = true
+mesh = ExtResource("2_5urfu")
+
+[resource]
+resource_name = "bowfork"
+unique_name = &"bowfork"
+base_model = SubResource("VoxelBlockyModelMesh_fwyiq")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_lwtvm")])

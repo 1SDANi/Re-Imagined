@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://c6idvbx28mwkv"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_q1mft"]
+[ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="2_o02xw"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_lwtvm"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_fwyiq"]
+material_override_0 = ExtResource("1_q1mft")
+collision_enabled_0 = true
+mesh = ExtResource("2_o02xw")
+
+[resource]
+resource_name = "spire"
+unique_name = &"spire"
+base_model = SubResource("VoxelBlockyModelMesh_fwyiq")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_lwtvm")])

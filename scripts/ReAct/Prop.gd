@@ -17,9 +17,12 @@ var turn_goal : Vector2
 var turn_snap : bool = false
 var static_friction : bool = true
 
+func _ready() -> void:
+	motion_mode = CharacterBody3D.MOTION_MODE_GROUNDED
+
 func _physics_process(delta: float) -> void:
-	apply_inertia(delta)
 	apply_friction(delta)
+	apply_inertia(delta)
 
 func apply_pos_force(angle : Vector3, force : float):
 	pos_inertia += angle.normalized() * force
@@ -42,18 +45,26 @@ func apply_rot_inertia(delta : float):
 
 func apply_pos_inertia(delta : float):
 	if pos_inertia.length() > pos_static_friction or not static_friction:
-		position += pos_inertia * delta
+		velocity = pos_inertia * delta
+	else:
+		velocity = Vector3.ZERO
+	move_and_slide()
 
 func apply_friction(delta : float):
-	if rot_inertia.length() > rot_static_friction:
-		rot_inertia -= rot_inertia.normalized() * rot_friction * delta
-	else:
-		fix_angle(rotation.y)
+	#apply_pos_friction(delta)
+	apply_rot_friction(delta)
 
+func apply_pos_friction(delta : float):
 	if pos_inertia.length() > pos_static_friction or not static_friction:
 		pos_inertia -= pos_inertia.normalized() * pos_friction * delta
 	else:
 		stop()
+
+func apply_rot_friction(delta : float):
+	if rot_inertia.length() > rot_static_friction:
+		rot_inertia -= rot_inertia.normalized() * rot_friction * delta
+	else:
+		fix_angle(rotation.y)
 
 func stop():
 	pos_inertia = Vector3.ZERO

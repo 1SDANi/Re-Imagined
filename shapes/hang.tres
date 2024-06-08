@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://burgc8mde8k0n"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_o7jib"]
+[ext_resource type="ArrayMesh" uid="uid://b5t8bao0gy47t" path="res://models/E.obj" id="2_jc21u"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_vm5op"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_7jp8x"]
+material_override_0 = ExtResource("1_o7jib")
+collision_enabled_0 = true
+mesh = ExtResource("2_jc21u")
+
+[resource]
+resource_name = "hang"
+unique_name = &"hang"
+base_model = SubResource("VoxelBlockyModelMesh_7jp8x")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_vm5op")])

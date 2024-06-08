@@ -1,0 +1,85 @@
+[gd_resource type="VoxelBlockyTypeLibrary" load_steps=31 format=3 uid="uid://cjjw4bedmovap"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_6vx73"]
+[ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="2_35jlf"]
+[ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="3_57mmt"]
+[ext_resource type="VoxelBlockyType" uid="uid://u71ow1hjduoc" path="res://shapes/lfork.tres" id="4_7ca3e"]
+[ext_resource type="VoxelBlockyType" uid="uid://dsqjor8bckdvj" path="res://shapes/narrow.tres" id="5_c4o53"]
+[ext_resource type="VoxelBlockyType" uid="uid://blbuvyi2gaaqo" path="res://shapes/slope.tres" id="6_oqnpk"]
+[ext_resource type="VoxelBlockyType" uid="uid://cpe3cg4e36n0h" path="res://shapes/tfork.tres" id="7_30ylq"]
+[ext_resource type="ArrayMesh" uid="uid://cdvg63nwq0k6k" path="res://models/6.obj" id="8_84vk6"]
+[ext_resource type="ArrayMesh" uid="uid://ch77f8fj3kkmu" path="res://models/7.obj" id="9_55vjv"]
+[ext_resource type="VoxelBlockyType" uid="uid://1luqx5l0b6by" path="res://shapes/corner.tres" id="10_xelho"]
+[ext_resource type="VoxelBlockyType" uid="uid://egbmmv0id6y" path="res://shapes/xfork.tres" id="11_4l3f2"]
+[ext_resource type="VoxelBlockyType" uid="uid://c1aclbhitgcpl" path="res://shapes/macefork.tres" id="12_f48d2"]
+[ext_resource type="VoxelBlockyType" uid="uid://fuvbcm4axwp" path="res://shapes/fishfork.tres" id="13_s47ne"]
+[ext_resource type="VoxelBlockyType" uid="uid://cp6yiilvfhep1" path="res://shapes/heartfork.tres" id="14_58en1"]
+[ext_resource type="VoxelBlockyType" uid="uid://c02wepvsnafhc" path="res://shapes/bowfork.tres" id="15_qewke"]
+[ext_resource type="VoxelBlockyType" uid="uid://burgc8mde8k0n" path="res://shapes/hang.tres" id="16_8hki3"]
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_j60md"]
+material_override_0 = ExtResource("1_6vx73")
+atlas_size_in_tiles = Vector2i(1, 1)
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_l2o8e"]
+resource_name = "block"
+unique_name = &"block"
+base_model = SubResource("VoxelBlockyModelCube_j60md")
+
+[sub_resource type="VoxelBlockyAttributeDirection" id="VoxelBlockyAttributeDirection_psfum"]
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_pev1w"]
+material_override_0 = ExtResource("1_6vx73")
+collision_enabled_0 = true
+mesh = ExtResource("2_35jlf")
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_idyw6"]
+resource_name = "spire"
+unique_name = &"spire"
+base_model = SubResource("VoxelBlockyModelMesh_pev1w")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeDirection_psfum")])
+
+[sub_resource type="VoxelBlockyAttributeDirection" id="VoxelBlockyAttributeDirection_fkw7l"]
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_fejxw"]
+material_override_0 = ExtResource("1_6vx73")
+collision_enabled_0 = true
+mesh = ExtResource("3_57mmt")
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_3ckq6"]
+resource_name = "end"
+unique_name = &"end"
+base_model = SubResource("VoxelBlockyModelMesh_fejxw")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeDirection_fkw7l")])
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_x0me8"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_chqf5"]
+material_override_0 = ExtResource("1_6vx73")
+collision_enabled_0 = true
+mesh = ExtResource("8_84vk6")
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_qc34c"]
+resource_name = "qfork"
+unique_name = &"qfork"
+base_model = SubResource("VoxelBlockyModelMesh_chqf5")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_x0me8")])
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_b05hp"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_hq1n8"]
+material_override_0 = ExtResource("1_6vx73")
+collision_enabled_0 = true
+mesh = ExtResource("9_55vjv")
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_x14u8"]
+resource_name = "pfork"
+unique_name = &"pfork"
+base_model = SubResource("VoxelBlockyModelMesh_hq1n8")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_b05hp")])
+
+[resource]
+types = Array[VoxelBlockyType]([SubResource("VoxelBlockyType_l2o8e"), SubResource("VoxelBlockyType_idyw6"), SubResource("VoxelBlockyType_3ckq6"), ExtResource("4_7ca3e"), ExtResource("5_c4o53"), ExtResource("6_oqnpk"), ExtResource("7_30ylq"), SubResource("VoxelBlockyType_qc34c"), SubResource("VoxelBlockyType_x14u8"), ExtResource("10_xelho"), ExtResource("11_4l3f2"), ExtResource("12_f48d2"), ExtResource("13_s47ne"), ExtResource("14_58en1"), ExtResource("15_qewke"), ExtResource("16_8hki3")])
+_id_map_data = PackedStringArray("block", "spire[direction=0]", "spire[direction=1]", "spire[direction=2]", "spire[direction=3]", "spire[direction=4]", "spire[direction=5]", "end[direction=0]", "end[direction=1]", "end[direction=2]", "end[direction=3]", "end[direction=4]", "end[direction=5]", "lfork[direction=0]", "lfork[direction=1]", "lfork[direction=2]", "lfork[direction=3]", "lfork[direction=4]", "lfork[direction=5]", "narrow[direction=0]", "narrow[direction=1]", "narrow[direction=2]", "narrow[direction=3]", "narrow[direction=4]", "narrow[direction=5]", "slope[direction=0]", "slope[direction=1]", "slope[direction=2]", "slope[direction=3]", "slope[direction=4]", "slope[direction=5]", "tfork[direction=0]", "tfork[direction=1]", "tfork[direction=2]", "tfork[direction=3]", "tfork[direction=4]", "tfork[direction=5]", "qfork[direction=0]", "qfork[direction=1]", "qfork[direction=2]", "qfork[direction=3]", "qfork[direction=4]", "qfork[direction=5]", "pfork[direction=0]", "pfork[direction=1]", "pfork[direction=2]", "pfork[direction=3]", "pfork[direction=4]", "pfork[direction=5]", "corner[direction=0]", "corner[direction=1]", "corner[direction=2]", "corner[direction=3]", "corner[direction=4]", "corner[direction=5]", "xfork[direction=0]", "xfork[direction=1]", "xfork[direction=2]", "xfork[direction=3]", "xfork[direction=4]", "xfork[direction=5]", "macefork[direction=0]", "macefork[direction=1]", "macefork[direction=2]", "macefork[direction=3]", "macefork[direction=4]", "macefork[direction=5]", "fishfork[direction=0]", "fishfork[direction=1]", "fishfork[direction=2]", "fishfork[direction=3]", "fishfork[direction=4]", "fishfork[direction=5]", "heartfork[direction=0]", "heartfork[direction=1]", "heartfork[direction=2]", "heartfork[direction=3]", "heartfork[direction=4]", "heartfork[direction=5]", "hang[direction=0]", "hang[direction=1]", "hang[direction=2]", "hang[direction=3]", "hang[direction=4]", "hang[direction=5]", "lfork[rotation=0]", "lfork[rotation=1]", "lfork[rotation=2]", "lfork[rotation=3]", "lfork[rotation=4]", "lfork[rotation=5]", "lfork[rotation=6]", "lfork[rotation=7]", "lfork[rotation=8]", "lfork[rotation=9]", "lfork[rotation=10]", "lfork[rotation=11]", "lfork[rotation=12]", "lfork[rotation=13]", "lfork[rotation=14]", "lfork[rotation=15]", "lfork[rotation=16]", "lfork[rotation=17]", "lfork[rotation=18]", "lfork[rotation=19]", "lfork[rotation=20]", "lfork[rotation=21]", "lfork[rotation=22]", "lfork[rotation=23]", "narrow[rotation=0]", "narrow[rotation=1]", "narrow[rotation=2]", "narrow[rotation=3]", "narrow[rotation=4]", "narrow[rotation=5]", "narrow[rotation=6]", "narrow[rotation=7]", "narrow[rotation=8]", "narrow[rotation=9]", "narrow[rotation=10]", "narrow[rotation=11]", "narrow[rotation=12]", "narrow[rotation=13]", "narrow[rotation=14]", "narrow[rotation=15]", "narrow[rotation=16]", "narrow[rotation=17]", "narrow[rotation=18]", "narrow[rotation=19]", "narrow[rotation=20]", "narrow[rotation=21]", "narrow[rotation=22]", "narrow[rotation=23]", "slope[rotation=0]", "slope[rotation=1]", "slope[rotation=2]", "slope[rotation=3]", "slope[rotation=4]", "slope[rotation=5]", "slope[rotation=6]", "slope[rotation=7]", "slope[rotation=8]", "slope[rotation=9]", "slope[rotation=10]", "slope[rotation=11]", "slope[rotation=12]", "slope[rotation=13]", "slope[rotation=14]", "slope[rotation=15]", "slope[rotation=16]", "slope[rotation=17]", "slope[rotation=18]", "slope[rotation=19]", "slope[rotation=20]", "slope[rotation=21]", "slope[rotation=22]", "slope[rotation=23]", "tfork[rotation=0]", "tfork[rotation=1]", "tfork[rotation=2]", "tfork[rotation=3]", "tfork[rotation=4]", "tfork[rotation=5]", "tfork[rotation=6]", "tfork[rotation=7]", "tfork[rotation=8]", "tfork[rotation=9]", "tfork[rotation=10]", "tfork[rotation=11]", "tfork[rotation=12]", "tfork[rotation=13]", "tfork[rotation=14]", "tfork[rotation=15]", "tfork[rotation=16]", "tfork[rotation=17]", "tfork[rotation=18]", "tfork[rotation=19]", "tfork[rotation=20]", "tfork[rotation=21]", "tfork[rotation=22]", "tfork[rotation=23]", "spire[rotation=0]", "spire[rotation=1]", "spire[rotation=2]", "spire[rotation=3]", "spire[rotation=4]", "spire[rotation=5]", "spire[rotation=6]", "spire[rotation=7]", "spire[rotation=8]", "spire[rotation=9]", "spire[rotation=10]", "spire[rotation=11]", "spire[rotation=12]", "spire[rotation=13]", "spire[rotation=14]", "spire[rotation=15]", "spire[rotation=16]", "spire[rotation=17]", "spire[rotation=18]", "spire[rotation=19]", "spire[rotation=20]", "spire[rotation=21]", "spire[rotation=22]", "spire[rotation=23]", "qfork[rotation=0]", "qfork[rotation=1]", "qfork[rotation=2]", "qfork[rotation=3]", "qfork[rotation=4]", "qfork[rotation=5]", "qfork[rotation=6]", "qfork[rotation=7]", "qfork[rotation=8]", "qfork[rotation=9]", "qfork[rotation=10]", "qfork[rotation=11]", "qfork[rotation=12]", "qfork[rotation=13]", "qfork[rotation=14]", "qfork[rotation=15]", "qfork[rotation=16]", "qfork[rotation=17]", "qfork[rotation=18]", "qfork[rotation=19]", "qfork[rotation=20]", "qfork[rotation=21]", "qfork[rotation=22]", "qfork[rotation=23]", "pfork[rotation=0]", "pfork[rotation=1]", "pfork[rotation=2]", "pfork[rotation=3]", "pfork[rotation=4]", "pfork[rotation=5]", "pfork[rotation=6]", "pfork[rotation=7]", "pfork[rotation=8]", "pfork[rotation=9]", "pfork[rotation=10]", "pfork[rotation=11]", "pfork[rotation=12]", "pfork[rotation=13]", "pfork[rotation=14]", "pfork[rotation=15]", "pfork[rotation=16]", "pfork[rotation=17]", "pfork[rotation=18]", "pfork[rotation=19]", "pfork[rotation=20]", "pfork[rotation=21]", "pfork[rotation=22]", "pfork[rotation=23]", "corner[rotation=0]", "corner[rotation=1]", "corner[rotation=2]", "corner[rotation=3]", "corner[rotation=4]", "corner[rotation=5]", "corner[rotation=6]", "corner[rotation=7]", "corner[rotation=8]", "corner[rotation=9]", "corner[rotation=10]", "corner[rotation=11]", "corner[rotation=12]", "corner[rotation=13]", "corner[rotation=14]", "corner[rotation=15]", "corner[rotation=16]", "corner[rotation=17]", "corner[rotation=18]", "corner[rotation=19]", "corner[rotation=20]", "corner[rotation=21]", "corner[rotation=22]", "corner[rotation=23]", "xfork[rotation=0]", "xfork[rotation=1]", "xfork[rotation=2]", "xfork[rotation=3]", "xfork[rotation=4]", "xfork[rotation=5]", "xfork[rotation=6]", "xfork[rotation=7]", "xfork[rotation=8]", "xfork[rotation=9]", "xfork[rotation=10]", "xfork[rotation=11]", "xfork[rotation=12]", "xfork[rotation=13]", "xfork[rotation=14]", "xfork[rotation=15]", "xfork[rotation=16]", "xfork[rotation=17]", "xfork[rotation=18]", "xfork[rotation=19]", "xfork[rotation=20]", "xfork[rotation=21]", "xfork[rotation=22]", "xfork[rotation=23]", "macefork[rotation=0]", "macefork[rotation=1]", "macefork[rotation=2]", "macefork[rotation=3]", "macefork[rotation=4]", "macefork[rotation=5]", "macefork[rotation=6]", "macefork[rotation=7]", "macefork[rotation=8]", "macefork[rotation=9]", "macefork[rotation=10]", "macefork[rotation=11]", "macefork[rotation=12]", "macefork[rotation=13]", "macefork[rotation=14]", "macefork[rotation=15]", "macefork[rotation=16]", "macefork[rotation=17]", "macefork[rotation=18]", "macefork[rotation=19]", "macefork[rotation=20]", "macefork[rotation=21]", "macefork[rotation=22]", "macefork[rotation=23]", "fishfork[rotation=0]", "fishfork[rotation=1]", "fishfork[rotation=2]", "fishfork[rotation=3]", "fishfork[rotation=4]", "fishfork[rotation=5]", "fishfork[rotation=6]", "fishfork[rotation=7]", "fishfork[rotation=8]", "fishfork[rotation=9]", "fishfork[rotation=10]", "fishfork[rotation=11]", "fishfork[rotation=12]", "fishfork[rotation=13]", "fishfork[rotation=14]", "fishfork[rotation=15]", "fishfork[rotation=16]", "fishfork[rotation=17]", "fishfork[rotation=18]", "fishfork[rotation=19]", "fishfork[rotation=20]", "fishfork[rotation=21]", "fishfork[rotation=22]", "fishfork[rotation=23]", "heartfork[rotation=0]", "heartfork[rotation=1]", "heartfork[rotation=2]", "heartfork[rotation=3]", "heartfork[rotation=4]", "heartfork[rotation=5]", "heartfork[rotation=6]", "heartfork[rotation=7]", "heartfork[rotation=8]", "heartfork[rotation=9]", "heartfork[rotation=10]", "heartfork[rotation=11]", "heartfork[rotation=12]", "heartfork[rotation=13]", "heartfork[rotation=14]", "heartfork[rotation=15]", "heartfork[rotation=16]", "heartfork[rotation=17]", "heartfork[rotation=18]", "heartfork[rotation=19]", "heartfork[rotation=20]", "heartfork[rotation=21]", "heartfork[rotation=22]", "heartfork[rotation=23]", "bowfork[rotation=0]", "bowfork[rotation=1]", "bowfork[rotation=2]", "bowfork[rotation=3]", "bowfork[rotation=4]", "bowfork[rotation=5]", "bowfork[rotation=6]", "bowfork[rotation=7]", "bowfork[rotation=8]", "bowfork[rotation=9]", "bowfork[rotation=10]", "bowfork[rotation=11]", "bowfork[rotation=12]", "bowfork[rotation=13]", "bowfork[rotation=14]", "bowfork[rotation=15]", "bowfork[rotation=16]", "bowfork[rotation=17]", "bowfork[rotation=18]", "bowfork[rotation=19]", "bowfork[rotation=20]", "bowfork[rotation=21]", "bowfork[rotation=22]", "bowfork[rotation=23]", "hang[rotation=0]", "hang[rotation=1]", "hang[rotation=2]", "hang[rotation=3]", "hang[rotation=4]", "hang[rotation=5]", "hang[rotation=6]", "hang[rotation=7]", "hang[rotation=8]", "hang[rotation=9]", "hang[rotation=10]", "hang[rotation=11]", "hang[rotation=12]", "hang[rotation=13]", "hang[rotation=14]", "hang[rotation=15]", "hang[rotation=16]", "hang[rotation=17]", "hang[rotation=18]", "hang[rotation=19]", "hang[rotation=20]", "hang[rotation=21]", "hang[rotation=22]", "hang[rotation=23]")

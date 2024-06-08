@@ -1,0 +1,302 @@
+[gd_scene load_steps=21 format=3 uid="uid://j28scctrhxas"]
+
+[ext_resource type="VoxelBlockyLibrary" uid="uid://bpn0eqa1qmsfk" path="res://scenes/Library.tres" id="1_83x52"]
+[ext_resource type="Script" path="res://scripts/ReMesh/SlopeMesh.gd" id="4_epbx7"]
+[ext_resource type="PackedScene" uid="uid://cyyggsxwufenm" path="res://scenes/third_person_actor.tscn" id="4_jwsea"]
+[ext_resource type="Script" path="res://scripts/ReControl/ThirdPersonPlayerController.gd" id="5_yrw4v"]
+[ext_resource type="Script" path="res://scripts/UIController.gd" id="6_k8042"]
+[ext_resource type="Script" path="res://scripts/FloatOptionBar.gd" id="7_5sxmf"]
+[ext_resource type="Script" path="res://addons/Overmind/nodes/camera_brain_3d.gd" id="7_yeacn"]
+[ext_resource type="Script" path="res://addons/Overmind/nodes/virtual_camera_3d.gd" id="8_q8p8a"]
+[ext_resource type="Script" path="res://addons/Overmind/resources/damped_value.gd" id="9_xb5mi"]
+[ext_resource type="Script" path="res://addons/Overmind/resources/orbiting_3d.gd" id="10_ifuqq"]
+[ext_resource type="PackedScene" uid="uid://1hvq61epxnpn" path="res://scenes/Highlight.tscn" id="13_tmnho"]
+[ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
+
+[sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
+directory = "res://regions"
+
+[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_h48if"]
+channel = 0
+height = 1.0
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_bds88"]
+library = ExtResource("1_83x52")
+
+[sub_resource type="Resource" id="Resource_c21pw"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 3.0
+z = 1.0
+r = 0.5
+
+[sub_resource type="Resource" id="Resource_ctg5n"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 1.0
+z = 1.0
+r = 0.0
+
+[sub_resource type="Resource" id="Resource_di1kf"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = true
+f = 1.0
+z = 1.0
+r = 0.0
+
+[sub_resource type="Resource" id="Resource_xqqyp"]
+script = ExtResource("10_ifuqq")
+dolly = 3.0
+tilt = 1.0
+pan = 0.0
+track = 0.0
+pedestal = 1.0
+yaw = 0.0
+pitch = 0.3
+roll = 0.0
+
+[sub_resource type="Resource" id="Resource_uo2h6"]
+script = ExtResource("9_xb5mi")
+enabled = true
+started = false
+f = 1.0
+z = 1.0
+r = 0.0
+
+[node name="World3D" type="Node3D"]
+
+[node name="SlopeMesh" type="VoxelTerrain" parent="."]
+stream = SubResource("VoxelStreamRegionFiles_tpghp")
+generator = SubResource("VoxelGeneratorFlat_h48if")
+mesher = SubResource("VoxelMesherBlocky_bds88")
+collision_layer = 3
+mesh_block_size = 32
+script = ExtResource("4_epbx7")
+
+[node name="ThirdPersonActor" parent="." instance=ExtResource("4_jwsea")]
+transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 1, 0)
+collision_layer = 2
+collision_mask = 2
+walk_turn_force = 90.0
+run_turn_force = 90.0
+walk_turn_speed = 360.0
+run_turn_speed = 360.0
+walk_turn_peak_time = 0.25
+run_turn_peak_time = 0.25
+walk_turn_deadzone = 1.0
+run_turn_deadzone = 1.0
+walk_turn_friction = 15.0
+run_turn_friction = 15.0
+walk_turn_static_friction = 30.0
+run_turn_static_friction = 30.0
+walk_max_speed = 250.0
+run_max_speed = 250.0
+walk_acceleration = 50.0
+run_acceleration = 50.0
+walk_deceleration = 20.0
+run_deceleration = 20.0
+walk_friction = 25.0
+run_friction = 25.0
+walk_static_friction = 30.0
+run_static_friction = 30.0
+reach = 1.5
+
+[node name="ThirdPersonPlayerController" type="Node3D" parent="ThirdPersonActor"]
+script = ExtResource("5_yrw4v")
+cam_speed_x = 1.0
+cam_speed_y = 1.0
+cam = NodePath("../../CameraBrain/VirtualCamera")
+highlight = NodePath("../../Highlight")
+debug_highlight = NodePath("../../Debug_Highlight")
+
+[node name="VoxelViewer" type="VoxelViewer" parent="ThirdPersonActor"]
+enabled_in_editor = true
+
+[node name="CameraBrain" type="Camera3D" parent="."]
+process_priority = 999
+transform = Transform3D(0.999999, -5.16702e-08, 1.67035e-07, 0, 0.955332, 0.295518, -1.74845e-07, -0.295519, 0.955329, 5.01109e-07, 2.88656, 2.86601)
+script = ExtResource("7_yeacn")
+
+[node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
+process_priority = 998
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("8_q8p8a")
+collides = true
+follow_node = NodePath("../../ThirdPersonActor")
+horizontal_damper = SubResource("Resource_c21pw")
+vertical_damper = SubResource("Resource_ctg5n")
+rotation_damper = SubResource("Resource_di1kf")
+orbiting = SubResource("Resource_xqqyp")
+target_damper = SubResource("Resource_uo2h6")
+
+[node name="UIController" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("6_k8042")
+PauseUI = NodePath("../PauseUI")
+GameUI = NodePath("../GameUI")
+
+[node name="GameUI" type="VBoxContainer" parent="."]
+offset_top = -648.0
+offset_right = 40.0
+offset_bottom = -608.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PauseUI" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="XSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedRow" type="HBoxContainer" parent="PauseUI/XSpeedRowMargin"]
+layout_mode = 2
+
+[node name="XSpeedNameMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedName" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedNameMargin"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Camera Speed X"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XSpeedBarMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedBar" type="HScrollBar" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedBarMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+step = 0.1
+script = ExtResource("7_5sxmf")
+Value = NodePath("../../XSpeedValueMargin2/XSpeedValue")
+target = "/root/game"
+subtarget = "input"
+setter = "set_cam_speed_x"
+getter = "get_cam_speed_x"
+
+[node name="XSpeedValueMargin2" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedValue" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedValueMargin2"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedRow" type="HBoxContainer" parent="PauseUI/YSpeedRowMargin"]
+layout_mode = 2
+
+[node name="YSpeedNameMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedName" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedNameMargin"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Camera Speed Y"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YSpeedBarMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedBar" type="HScrollBar" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedBarMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+step = 0.1
+script = ExtResource("7_5sxmf")
+Value = NodePath("../../YSpeedValueMargin2/YSpeedValue")
+target = "/root/game"
+subtarget = "input"
+setter = "set_cam_speed_y"
+getter = "get_cam_speed_y"
+
+[node name="YSpeedValueMargin2" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YSpeedValue" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedValueMargin2"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
+
+[node name="Highlight" parent="." instance=ExtResource("13_tmnho")]
+
+[node name="Debug_Highlight" parent="." instance=ExtResource("14_00k5w")]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)

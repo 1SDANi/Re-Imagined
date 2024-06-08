@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://cp6yiilvfhep1"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_jho6g"]
+[ext_resource type="ArrayMesh" uid="uid://qek4sglqkmwy" path="res://models/C.obj" id="2_uyi4r"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_dlfb2"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_7sakm"]
+material_override_0 = ExtResource("1_jho6g")
+collision_enabled_0 = true
+mesh = ExtResource("2_uyi4r")
+
+[resource]
+resource_name = "heartfork"
+unique_name = &"heartfork"
+base_model = SubResource("VoxelBlockyModelMesh_7sakm")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_dlfb2")])

@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://bd2psjsjjc7ux"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_frpym"]
+[ext_resource type="ArrayMesh" uid="uid://ch77f8fj3kkmu" path="res://models/7.obj" id="2_0spw5"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_xe3hk"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_hq1n8"]
+material_override_0 = ExtResource("1_frpym")
+collision_enabled_0 = true
+mesh = ExtResource("2_0spw5")
+
+[resource]
+resource_name = "pfork"
+unique_name = &"pfork"
+base_model = SubResource("VoxelBlockyModelMesh_hq1n8")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_xe3hk")])

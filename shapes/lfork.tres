@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://u71ow1hjduoc"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_a62dk"]
+[ext_resource type="ArrayMesh" uid="uid://d0s1oolwcomj2" path="res://models/2.obj" id="2_13y6d"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_u2iq3"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_quf1p"]
+material_override_0 = ExtResource("1_a62dk")
+collision_enabled_0 = true
+mesh = ExtResource("2_13y6d")
+
+[resource]
+resource_name = "lfork"
+unique_name = &"lfork"
+base_model = SubResource("VoxelBlockyModelMesh_quf1p")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_u2iq3")])

@@ -105,19 +105,15 @@ func move(vector : Vector2, delta : float):
 			turn_goal = vector
 			turn_time += delta
 			if cross.y > 0.0:
-				turn_right(minf(turn_time / turn_peak_time, 1.0))
+				turn_right(1.0)
 			else:
-				turn_left(minf(turn_time / turn_peak_time, 1.0))
+				turn_left(1.0)
 		else:
 			turn_time = 0.0
 			fix_angle(atan2(vector.x, vector.y))
 
-		if not is_zero_approx(dot):
-			move_time += delta
-			locomote(-basis.z, vector.length(), minf(move_time / move_peak_time, dot))
-		else:
-			move_time = 0.0
-			locomote(-basis.z, vector.length(), 1.0)
+		move_time += delta
+		locomote(-basis.z, vector.length(), minf(move_time / move_peak_time, dot))
 	else:
 		turn_time = 0.0
 		move_time = 0.0

@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://blbuvyi2gaaqo"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_xmmp2"]
+[ext_resource type="ArrayMesh" uid="uid://bi615qu3urb3o" path="res://models/4.obj" id="2_upo6h"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_csoat"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_6jlur"]
+material_override_0 = ExtResource("1_xmmp2")
+collision_enabled_0 = true
+mesh = ExtResource("2_upo6h")
+
+[resource]
+resource_name = "slope"
+unique_name = &"slope"
+base_model = SubResource("VoxelBlockyModelMesh_6jlur")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_csoat")])

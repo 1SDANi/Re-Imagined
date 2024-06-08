@@ -31,19 +31,36 @@ const PPP : int = 1 << 26
 
 var tool : VoxelTool
 
+enum ROT
+{
+	UP_FRONT,
+	UP_BACK,
+	UP_LEFT,
+	UP_RIGHT,
+	DOWN_FRONT,
+	DOWN_BACK,
+	DOWN_LEFT,
+	DOWN_RIGHT,
+}
+
 func _ready() -> void:
 	game.set_slope_mesh(get_path())
 	tool = get_voxel_tool()
+
+func _get_shape(name : String, rot : ROT):
+	return mesher.library.get_model_index_single_attribute(name, rot)
 
 func place(pos : Vector3i) -> void:
 	tool.channel = VoxelBuffer.CHANNEL_TYPE
 	var voxel : int = tool.get_voxel(pos)
 
 	if voxel <= 0:
-		tool.set_voxel(pos, 1)
+		tool.set_voxel(pos, _get_shape("block", 0))
+		#tool.set_voxel(pos, 1)
 		shapes(pos)
 	else:
 		tool.set_voxel(pos, 0)
+		#tool.set_voxel(pos, 0)
 		shapes(pos)
 
 func shapes(pos : Vector3i) -> void:
@@ -70,42 +87,216 @@ func shape(pos : Vector3i) -> void:
 		var zzn : bool = mask & ZZN > 0
 		var nzz : bool = mask & NZZ > 0
 		var znz : bool = mask & ZNZ > 0
+		var zpz : bool = mask & ZPZ > 0
 		var pzp : bool = mask & PZP > 0
 		var pzn : bool = mask & PZN > 0
 		var nzp : bool = mask & NZP > 0
 		var nzn : bool = mask & NZN > 0
 
-		if zzp and pzz and zzn and nzz:
-			tool.set_voxel(pos, 1)
-		elif zzp and pzz and zzn:
-			tool.set_voxel(pos, 13)
-		elif zzp and pzz and nzz:
-			tool.set_voxel(pos, 16)
-		elif pzz and zzn and nzz:
-			tool.set_voxel(pos, 14)
-		elif zzp and zzn and nzz:
-			tool.set_voxel(pos, 15)
-		elif zzp and pzz:
-			tool.set_voxel(pos, 8)
-		elif zzp and nzz:
-			tool.set_voxel(pos, 7)
-		elif pzz and zzn:
-			tool.set_voxel(pos, 9)
-		elif zzn and nzz:
-			tool.set_voxel(pos, 10)
-		elif pzz and nzz:
-			tool.set_voxel(pos, 12)
-		elif zzp and zzn:
-			tool.set_voxel(pos, 11)
-		elif zzp:
-			tool.set_voxel(pos, 3)
-		elif pzz:
-			tool.set_voxel(pos, 4)
-		elif zzn:
-			tool.set_voxel(pos, 5)
-		elif nzz:
-			tool.set_voxel(pos, 6)
-		elif znz:
-			tool.set_voxel(pos, 2)
+		if zzp and zzn and pzz and nzz and pzp and pzn and nzp and nzn:
+			tool.set_voxel(pos, _get_shape("block", 0))
+		elif znz and not zpz:
+			top_shape(pos, mask)
+		elif not znz and zpz:
+			bottom_shape(pos, mask)
+		elif not (znz and zpz):
+			side_shape(pos, mask)
 		else:
-			tool.set_voxel(pos, 1)
+			tool.set_voxel(pos, _get_shape("block", 0))
+
+func side_shape(pos : Vector3i, mask : int):
+	var zzp : bool = mask & ZZP > 0
+	var pzz : bool = mask & PZZ > 0
+	var zzn : bool = mask & ZZN > 0
+	var nzz : bool = mask & NZZ > 0
+	var pzp : bool = mask & PZP > 0
+	var pzn : bool = mask & PZN > 0
+	var nzp : bool = mask & NZP > 0
+	var nzn : bool = mask & NZN > 0
+	var zpp : bool = mask & ZPP > 0
+	var ppz : bool = mask & PPZ > 0
+	var zpn : bool = mask & ZPN > 0
+	var npz : bool = mask & NPZ > 0
+	var ppp : bool = mask & PPP > 0
+	var ppn : bool = mask & PPN > 0
+	var npp : bool = mask & NPP > 0
+	var npn : bool = mask & NPN > 0
+	var znp : bool = mask & ZNP > 0
+	var pnz : bool = mask & PNZ > 0
+	var znn : bool = mask & ZNN > 0
+	var nnz : bool = mask & NNZ > 0
+	var pnp : bool = mask & PNP > 0
+	var pnn : bool = mask & PNN > 0
+	var nnp : bool = mask & NNP > 0
+	var nnn : bool = mask & NNN > 0
+
+	if zzn and zpn and znn:
+		tool.set_voxel(pos, _get_shape("spire", 1))
+	elif zzp and zpp and znp:
+		tool.set_voxel(pos, _get_shape("spire", 3))
+	elif pzz and ppz and pnz:
+		tool.set_voxel(pos, _get_shape("spire", 4))
+	elif nzz and npz and nnz:
+		tool.set_voxel(pos, _get_shape("spire", 6))
+	elif zzp and zpp:
+		tool.set_voxel(pos, _get_shape("hang", 2))
+	elif zzn and zpn:
+		tool.set_voxel(pos, _get_shape("hang", 8))
+	elif pzz and ppz:
+		tool.set_voxel(pos, _get_shape("hang", 18))
+	elif nzz and npz:
+		tool.set_voxel(pos, _get_shape("hang", 20))
+	elif zzn and znn:
+		tool.set_voxel(pos, _get_shape("hang", 0))
+	elif zzp and znp:
+		tool.set_voxel(pos, _get_shape("hang", 10))
+	elif nzz and nnz:
+		tool.set_voxel(pos, _get_shape("hang", 16))
+	elif pzz and pnz:
+		tool.set_voxel(pos, _get_shape("hang", 22))
+	else:
+		tool.set_voxel(pos, _get_shape("block", 0))
+
+func top_shape(pos : Vector3i, mask : int):
+	var zzp : bool = mask & ZZP > 0
+	var pzz : bool = mask & PZZ > 0
+	var zzn : bool = mask & ZZN > 0
+	var nzz : bool = mask & NZZ > 0
+	var pzp : bool = mask & PZP > 0
+	var pzn : bool = mask & PZN > 0
+	var nzp : bool = mask & NZP > 0
+	var nzn : bool = mask & NZN > 0
+
+	if zzp and pzz and zzn and nzz and nzp and nzn and pzn:
+		tool.set_voxel(pos, _get_shape("heartfork", 0))
+	elif zzp and pzz and zzn and nzz and pzn and pzp and nzp:
+		tool.set_voxel(pos, _get_shape("heartfork", 10))
+	elif zzp and pzz and zzn and nzz and pzp and nzp and nzn:
+		tool.set_voxel(pos, _get_shape("heartfork", 16))
+	elif zzp and pzz and zzn and nzz and nzn and pzn and pzp:
+		tool.set_voxel(pos, _get_shape("heartfork", 22))
+	elif zzp and pzz and zzn and nzz and pzn and pzp:
+		tool.set_voxel(pos, _get_shape("macefork", 0))
+	elif zzp and pzz and zzn and nzz and nzp and nzn:
+		tool.set_voxel(pos, _get_shape("macefork", 10))
+	elif zzp and pzz and zzn and nzz and nzn and pzn:
+		tool.set_voxel(pos, _get_shape("macefork", 16))
+	elif zzp and pzz and zzn and nzz and pzp and nzp:
+		tool.set_voxel(pos, _get_shape("macefork", 22))
+	elif zzp and pzz and zzn and nzz and pzn and nzp:
+		tool.set_voxel(pos, _get_shape("bowfork", 0))
+	elif zzp and pzz and zzn and nzz and nzn and pzp:
+		tool.set_voxel(pos, _get_shape("bowfork", 16))
+	elif zzp and pzz and zzn and nzz and pzn:
+		tool.set_voxel(pos, _get_shape("fishfork", 0))
+	elif zzp and pzz and zzn and nzz and nzp:
+		tool.set_voxel(pos, _get_shape("fishfork", 10))
+	elif zzp and pzz and zzn and nzz and nzn:
+		tool.set_voxel(pos, _get_shape("fishfork", 16))
+	elif zzp and pzz and zzn and nzz and pzp:
+		tool.set_voxel(pos, _get_shape("fishfork", 22))
+	elif zzp and pzz and zzn and nzz:
+		tool.set_voxel(pos, _get_shape("xfork", 0))
+	elif zzp and pzz and zzn and pzp and pzn:
+		tool.set_voxel(pos, _get_shape("slope", 0))
+	elif zzp and zzn and nzz and nzp and nzn:
+		tool.set_voxel(pos, _get_shape("slope", 10))
+	elif pzz and zzn and nzz and pzn and nzn:
+		tool.set_voxel(pos, _get_shape("slope", 16))
+	elif zzp and pzz and nzz and pzp and nzp:
+		tool.set_voxel(pos, _get_shape("slope", 22))
+	elif zzp and pzz and zzn and pzp:
+		tool.set_voxel(pos, _get_shape("pfork", 0))
+	elif zzp and zzn and nzz and nzn:
+		tool.set_voxel(pos, _get_shape("pfork", 10))
+	elif pzz and zzn and nzz and pzn:
+		tool.set_voxel(pos, _get_shape("pfork", 16))
+	elif zzp and pzz and nzz and nzp:
+		tool.set_voxel(pos, _get_shape("pfork", 22))
+	elif zzp and pzz and zzn and pzn:
+		tool.set_voxel(pos, _get_shape("qfork", 0))
+	elif zzp and zzn and nzz and nzp:
+		tool.set_voxel(pos, _get_shape("qfork", 10))
+	elif pzz and zzn and nzz and nzn:
+		tool.set_voxel(pos, _get_shape("qfork", 16))
+	elif zzp and pzz and nzz and pzp:
+		tool.set_voxel(pos, _get_shape("qfork", 22))
+	elif zzp and pzz and zzn:
+		tool.set_voxel(pos, _get_shape("tfork", 0))
+	elif zzp and zzn and nzz:
+		tool.set_voxel(pos, _get_shape("tfork", 10))
+	elif pzz and zzn and nzz:
+		tool.set_voxel(pos, _get_shape("tfork", 16))
+	elif zzp and pzz and nzz:
+		tool.set_voxel(pos, _get_shape("tfork", 22))
+	elif zzp and nzz and nzp:
+		tool.set_voxel(pos, _get_shape("corner", 0))
+	elif zzn and pzz and pzn:
+		tool.set_voxel(pos, _get_shape("corner", 10))
+	elif zzp and pzz and pzp:
+		tool.set_voxel(pos, _get_shape("corner", 16))
+	elif zzn and nzz and nzn:
+		tool.set_voxel(pos, _get_shape("corner", 22))
+	elif zzp and nzz:
+		tool.set_voxel(pos, _get_shape("lfork", 0))
+	elif pzz and zzn:
+		tool.set_voxel(pos, _get_shape("lfork", 10))
+	elif zzp and pzz:
+		tool.set_voxel(pos, _get_shape("lfork", 16))
+	elif zzn and nzz:
+		tool.set_voxel(pos, _get_shape("lfork", 22))
+	elif zzp and zzn:
+		tool.set_voxel(pos, _get_shape("narrow", 0))
+	elif pzz and nzz:
+		tool.set_voxel(pos, _get_shape("narrow", 16))
+	elif zzp:
+		tool.set_voxel(pos, _get_shape("end", 0))
+	elif zzn:
+		tool.set_voxel(pos, _get_shape("end", 10))
+	elif pzz:
+		tool.set_voxel(pos, _get_shape("end", 16))
+	elif nzz:
+		tool.set_voxel(pos, _get_shape("end", 22))
+	else:
+		tool.set_voxel(pos, _get_shape("spire", 0))
+
+func bottom_shape(pos : Vector3i, mask : int):
+	var zzp : bool = mask & ZZP > 0
+	var pzz : bool = mask & PZZ > 0
+	var zzn : bool = mask & ZZN > 0
+	var nzz : bool = mask & NZZ > 0
+	var pzp : bool = mask & PZP > 0
+	var pzn : bool = mask & PZN > 0
+	var nzp : bool = mask & NZP > 0
+	var nzn : bool = mask & NZN > 0
+
+	if zzn and nzz and nzn:
+		tool.set_voxel(pos, _get_shape("corner", 2))
+	elif zzp and pzz and pzp:
+		tool.set_voxel(pos, _get_shape("corner", 8))
+	elif zzp and nzz and nzp:
+		tool.set_voxel(pos, _get_shape("corner", 18))
+	elif zzn and pzz and pzn:
+		tool.set_voxel(pos, _get_shape("corner", 20))
+	elif zzp and nzz:
+		tool.set_voxel(pos, _get_shape("lfork", 2))
+	elif zzp and pzz:
+		tool.set_voxel(pos, _get_shape("lfork", 8))
+	elif zzn and nzz:
+		tool.set_voxel(pos, _get_shape("lfork", 18))
+	elif pzz and zzn:
+		tool.set_voxel(pos, _get_shape("lfork", 20))
+	elif zzp and zzn:
+		tool.set_voxel(pos, _get_shape("narrow", 2))
+	elif pzz and nzz:
+		tool.set_voxel(pos, _get_shape("narrow", 18))
+	elif zzn:
+		tool.set_voxel(pos, _get_shape("end", 2))
+	elif zzp:
+		tool.set_voxel(pos, _get_shape("end", 8))
+	elif nzz:
+		tool.set_voxel(pos, _get_shape("end", 18))
+	elif pzz:
+		tool.set_voxel(pos, _get_shape("end", 20))
+	else:
+		tool.set_voxel(pos, _get_shape("spire", 2))

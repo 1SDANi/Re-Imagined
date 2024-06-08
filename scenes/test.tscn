@@ -1,17 +1,32 @@
-[gd_scene load_steps=21 format=3 uid="uid://j28scctrhxas"]
+[gd_scene load_steps=39 format=3 uid="uid://j28scctrhxas"]
 
-[ext_resource type="VoxelBlockyLibrary" uid="uid://bpn0eqa1qmsfk" path="res://scenes/Library.tres" id="1_83x52"]
+[ext_resource type="VoxelBlockyType" uid="uid://dkru7m53gujo1" path="res://shapes/block.tres" id="1_xee6j"]
+[ext_resource type="VoxelBlockyType" uid="uid://34x6m77ge37x" path="res://shapes/end.tres" id="2_7h5fh"]
+[ext_resource type="VoxelBlockyType" uid="uid://u71ow1hjduoc" path="res://shapes/lfork.tres" id="3_kvb1v"]
 [ext_resource type="Script" path="res://scripts/ReMesh/SlopeMesh.gd" id="4_epbx7"]
 [ext_resource type="PackedScene" uid="uid://cyyggsxwufenm" path="res://scenes/third_person_actor.tscn" id="4_jwsea"]
+[ext_resource type="VoxelBlockyType" uid="uid://dsqjor8bckdvj" path="res://shapes/narrow.tres" id="4_xps6b"]
+[ext_resource type="VoxelBlockyType" uid="uid://c6idvbx28mwkv" path="res://shapes/spire.tres" id="5_gut5w"]
 [ext_resource type="Script" path="res://scripts/ReControl/ThirdPersonPlayerController.gd" id="5_yrw4v"]
 [ext_resource type="Script" path="res://scripts/UIController.gd" id="6_k8042"]
+[ext_resource type="VoxelBlockyType" uid="uid://blbuvyi2gaaqo" path="res://shapes/slope.tres" id="6_tfj65"]
 [ext_resource type="Script" path="res://scripts/FloatOptionBar.gd" id="7_5sxmf"]
+[ext_resource type="VoxelBlockyType" uid="uid://cpe3cg4e36n0h" path="res://shapes/tfork.tres" id="7_gbrlg"]
 [ext_resource type="Script" path="res://addons/Overmind/nodes/camera_brain_3d.gd" id="7_yeacn"]
+[ext_resource type="VoxelBlockyType" uid="uid://bd2psjsjjc7ux" path="res://shapes/pfork.tres" id="8_kcmpg"]
 [ext_resource type="Script" path="res://addons/Overmind/nodes/virtual_camera_3d.gd" id="8_q8p8a"]
+[ext_resource type="VoxelBlockyType" uid="uid://d0sr8ijnq44ce" path="res://shapes/qfork.tres" id="9_hc77s"]
 [ext_resource type="Script" path="res://addons/Overmind/resources/damped_value.gd" id="9_xb5mi"]
 [ext_resource type="Script" path="res://addons/Overmind/resources/orbiting_3d.gd" id="10_ifuqq"]
+[ext_resource type="VoxelBlockyType" uid="uid://1luqx5l0b6by" path="res://shapes/corner.tres" id="10_udrqf"]
+[ext_resource type="VoxelBlockyType" uid="uid://egbmmv0id6y" path="res://shapes/xfork.tres" id="11_pnxrd"]
+[ext_resource type="VoxelBlockyType" uid="uid://c1aclbhitgcpl" path="res://shapes/macefork.tres" id="12_kh5x2"]
+[ext_resource type="VoxelBlockyType" uid="uid://fuvbcm4axwp" path="res://shapes/fishfork.tres" id="13_op26c"]
 [ext_resource type="PackedScene" uid="uid://1hvq61epxnpn" path="res://scenes/Highlight.tscn" id="13_tmnho"]
 [ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
+[ext_resource type="VoxelBlockyType" uid="uid://cp6yiilvfhep1" path="res://shapes/heartfork.tres" id="14_22uid"]
+[ext_resource type="VoxelBlockyType" uid="uid://c02wepvsnafhc" path="res://shapes/bowfork.tres" id="15_ikxwg"]
+[ext_resource type="VoxelBlockyType" uid="uid://burgc8mde8k0n" path="res://shapes/hang.tres" id="16_uy0ui"]
 
 [sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
 directory = "res://regions"
@@ -20,8 +35,19 @@ directory = "res://regions"
 channel = 0
 height = 1.0
 
-[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_bds88"]
-library = ExtResource("1_83x52")
+[sub_resource type="VoxelBlockyModelEmpty" id="VoxelBlockyModelEmpty_eeuph"]
+
+[sub_resource type="VoxelBlockyType" id="VoxelBlockyType_qkyx5"]
+resource_name = "air"
+unique_name = &"air"
+base_model = SubResource("VoxelBlockyModelEmpty_eeuph")
+
+[sub_resource type="VoxelBlockyTypeLibrary" id="VoxelBlockyTypeLibrary_v3m0o"]
+types = Array[VoxelBlockyType]([SubResource("VoxelBlockyType_qkyx5"), ExtResource("1_xee6j"), ExtResource("2_7h5fh"), ExtResource("3_kvb1v"), ExtResource("4_xps6b"), ExtResource("5_gut5w"), ExtResource("6_tfj65"), ExtResource("7_gbrlg"), ExtResource("8_kcmpg"), ExtResource("9_hc77s"), ExtResource("10_udrqf"), ExtResource("11_pnxrd"), ExtResource("12_kh5x2"), ExtResource("13_op26c"), ExtResource("14_22uid"), ExtResource("15_ikxwg"), ExtResource("16_uy0ui")])
+_id_map_data = PackedStringArray("air", "block[rotation=0]", "block[rotation=1]", "block[rotation=2]", "block[rotation=3]", "block[rotation=4]", "block[rotation=5]", "block[rotation=6]", "block[rotation=7]", "block[rotation=8]", "block[rotation=9]", "block[rotation=10]", "block[rotation=11]", "block[rotation=12]", "block[rotation=13]", "block[rotation=14]", "block[rotation=15]", "block[rotation=16]", "block[rotation=17]", "block[rotation=18]", "block[rotation=19]", "block[rotation=20]", "block[rotation=21]", "block[rotation=22]", "block[rotation=23]", "end[rotation=0]", "end[rotation=1]", "end[rotation=2]", "end[rotation=3]", "end[rotation=4]", "end[rotation=5]", "end[rotation=6]", "end[rotation=7]", "end[rotation=8]", "end[rotation=9]", "end[rotation=10]", "end[rotation=11]", "end[rotation=12]", "end[rotation=13]", "end[rotation=14]", "end[rotation=15]", "end[rotation=16]", "end[rotation=17]", "end[rotation=18]", "end[rotation=19]", "end[rotation=20]", "end[rotation=21]", "end[rotation=22]", "end[rotation=23]", "lfork[rotation=0]", "lfork[rotation=1]", "lfork[rotation=2]", "lfork[rotation=3]", "lfork[rotation=4]", "lfork[rotation=5]", "lfork[rotation=6]", "lfork[rotation=7]", "lfork[rotation=8]", "lfork[rotation=9]", "lfork[rotation=10]", "lfork[rotation=11]", "lfork[rotation=12]", "lfork[rotation=13]", "lfork[rotation=14]", "lfork[rotation=15]", "lfork[rotation=16]", "lfork[rotation=17]", "lfork[rotation=18]", "lfork[rotation=19]", "lfork[rotation=20]", "lfork[rotation=21]", "lfork[rotation=22]", "lfork[rotation=23]", "narrow[rotation=0]", "narrow[rotation=1]", "narrow[rotation=2]", "narrow[rotation=3]", "narrow[rotation=4]", "narrow[rotation=5]", "narrow[rotation=6]", "narrow[rotation=7]", "narrow[rotation=8]", "narrow[rotation=9]", "narrow[rotation=10]", "narrow[rotation=11]", "narrow[rotation=12]", "narrow[rotation=13]", "narrow[rotation=14]", "narrow[rotation=15]", "narrow[rotation=16]", "narrow[rotation=17]", "narrow[rotation=18]", "narrow[rotation=19]", "narrow[rotation=20]", "narrow[rotation=21]", "narrow[rotation=22]", "narrow[rotation=23]", "spire[rotation=0]", "spire[rotation=1]", "spire[rotation=2]", "spire[rotation=3]", "spire[rotation=4]", "spire[rotation=5]", "spire[rotation=6]", "spire[rotation=7]", "spire[rotation=8]", "spire[rotation=9]", "spire[rotation=10]", "spire[rotation=11]", "spire[rotation=12]", "spire[rotation=13]", "spire[rotation=14]", "spire[rotation=15]", "spire[rotation=16]", "spire[rotation=17]", "spire[rotation=18]", "spire[rotation=19]", "spire[rotation=20]", "spire[rotation=21]", "spire[rotation=22]", "spire[rotation=23]", "slope[rotation=0]", "slope[rotation=1]", "slope[rotation=2]", "slope[rotation=3]", "slope[rotation=4]", "slope[rotation=5]", "slope[rotation=6]", "slope[rotation=7]", "slope[rotation=8]", "slope[rotation=9]", "slope[rotation=10]", "slope[rotation=11]", "slope[rotation=12]", "slope[rotation=13]", "slope[rotation=14]", "slope[rotation=15]", "slope[rotation=16]", "slope[rotation=17]", "slope[rotation=18]", "slope[rotation=19]", "slope[rotation=20]", "slope[rotation=21]", "slope[rotation=22]", "slope[rotation=23]", "tfork[rotation=0]", "tfork[rotation=1]", "tfork[rotation=2]", "tfork[rotation=3]", "tfork[rotation=4]", "tfork[rotation=5]", "tfork[rotation=6]", "tfork[rotation=7]", "tfork[rotation=8]", "tfork[rotation=9]", "tfork[rotation=10]", "tfork[rotation=11]", "tfork[rotation=12]", "tfork[rotation=13]", "tfork[rotation=14]", "tfork[rotation=15]", "tfork[rotation=16]", "tfork[rotation=17]", "tfork[rotation=18]", "tfork[rotation=19]", "tfork[rotation=20]", "tfork[rotation=21]", "tfork[rotation=22]", "tfork[rotation=23]", "pfork[rotation=0]", "pfork[rotation=1]", "pfork[rotation=2]", "pfork[rotation=3]", "pfork[rotation=4]", "pfork[rotation=5]", "pfork[rotation=6]", "pfork[rotation=7]", "pfork[rotation=8]", "pfork[rotation=9]", "pfork[rotation=10]", "pfork[rotation=11]", "pfork[rotation=12]", "pfork[rotation=13]", "pfork[rotation=14]", "pfork[rotation=15]", "pfork[rotation=16]", "pfork[rotation=17]", "pfork[rotation=18]", "pfork[rotation=19]", "pfork[rotation=20]", "pfork[rotation=21]", "pfork[rotation=22]", "pfork[rotation=23]", "qfork[rotation=0]", "qfork[rotation=1]", "qfork[rotation=2]", "qfork[rotation=3]", "qfork[rotation=4]", "qfork[rotation=5]", "qfork[rotation=6]", "qfork[rotation=7]", "qfork[rotation=8]", "qfork[rotation=9]", "qfork[rotation=10]", "qfork[rotation=11]", "qfork[rotation=12]", "qfork[rotation=13]", "qfork[rotation=14]", "qfork[rotation=15]", "qfork[rotation=16]", "qfork[rotation=17]", "qfork[rotation=18]", "qfork[rotation=19]", "qfork[rotation=20]", "qfork[rotation=21]", "qfork[rotation=22]", "qfork[rotation=23]", "corner[rotation=0]", "corner[rotation=1]", "corner[rotation=2]", "corner[rotation=3]", "corner[rotation=4]", "corner[rotation=5]", "corner[rotation=6]", "corner[rotation=7]", "corner[rotation=8]", "corner[rotation=9]", "corner[rotation=10]", "corner[rotation=11]", "corner[rotation=12]", "corner[rotation=13]", "corner[rotation=14]", "corner[rotation=15]", "corner[rotation=16]", "corner[rotation=17]", "corner[rotation=18]", "corner[rotation=19]", "corner[rotation=20]", "corner[rotation=21]", "corner[rotation=22]", "corner[rotation=23]", "xfork[rotation=0]", "xfork[rotation=1]", "xfork[rotation=2]", "xfork[rotation=3]", "xfork[rotation=4]", "xfork[rotation=5]", "xfork[rotation=6]", "xfork[rotation=7]", "xfork[rotation=8]", "xfork[rotation=9]", "xfork[rotation=10]", "xfork[rotation=11]", "xfork[rotation=12]", "xfork[rotation=13]", "xfork[rotation=14]", "xfork[rotation=15]", "xfork[rotation=16]", "xfork[rotation=17]", "xfork[rotation=18]", "xfork[rotation=19]", "xfork[rotation=20]", "xfork[rotation=21]", "xfork[rotation=22]", "xfork[rotation=23]", "macefork[rotation=0]", "macefork[rotation=1]", "macefork[rotation=2]", "macefork[rotation=3]", "macefork[rotation=4]", "macefork[rotation=5]", "macefork[rotation=6]", "macefork[rotation=7]", "macefork[rotation=8]", "macefork[rotation=9]", "macefork[rotation=10]", "macefork[rotation=11]", "macefork[rotation=12]", "macefork[rotation=13]", "macefork[rotation=14]", "macefork[rotation=15]", "macefork[rotation=16]", "macefork[rotation=17]", "macefork[rotation=18]", "macefork[rotation=19]", "macefork[rotation=20]", "macefork[rotation=21]", "macefork[rotation=22]", "macefork[rotation=23]", "fishfork[rotation=0]", "fishfork[rotation=1]", "fishfork[rotation=2]", "fishfork[rotation=3]", "fishfork[rotation=4]", "fishfork[rotation=5]", "fishfork[rotation=6]", "fishfork[rotation=7]", "fishfork[rotation=8]", "fishfork[rotation=9]", "fishfork[rotation=10]", "fishfork[rotation=11]", "fishfork[rotation=12]", "fishfork[rotation=13]", "fishfork[rotation=14]", "fishfork[rotation=15]", "fishfork[rotation=16]", "fishfork[rotation=17]", "fishfork[rotation=18]", "fishfork[rotation=19]", "fishfork[rotation=20]", "fishfork[rotation=21]", "fishfork[rotation=22]", "fishfork[rotation=23]", "heartfork[rotation=0]", "heartfork[rotation=1]", "heartfork[rotation=2]", "heartfork[rotation=3]", "heartfork[rotation=4]", "heartfork[rotation=5]", "heartfork[rotation=6]", "heartfork[rotation=7]", "heartfork[rotation=8]", "heartfork[rotation=9]", "heartfork[rotation=10]", "heartfork[rotation=11]", "heartfork[rotation=12]", "heartfork[rotation=13]", "heartfork[rotation=14]", "heartfork[rotation=15]", "heartfork[rotation=16]", "heartfork[rotation=17]", "heartfork[rotation=18]", "heartfork[rotation=19]", "heartfork[rotation=20]", "heartfork[rotation=21]", "heartfork[rotation=22]", "heartfork[rotation=23]", "bowfork[rotation=0]", "bowfork[rotation=1]", "bowfork[rotation=2]", "bowfork[rotation=3]", "bowfork[rotation=4]", "bowfork[rotation=5]", "bowfork[rotation=6]", "bowfork[rotation=7]", "bowfork[rotation=8]", "bowfork[rotation=9]", "bowfork[rotation=10]", "bowfork[rotation=11]", "bowfork[rotation=12]", "bowfork[rotation=13]", "bowfork[rotation=14]", "bowfork[rotation=15]", "bowfork[rotation=16]", "bowfork[rotation=17]", "bowfork[rotation=18]", "bowfork[rotation=19]", "bowfork[rotation=20]", "bowfork[rotation=21]", "bowfork[rotation=22]", "bowfork[rotation=23]", "hang[rotation=0]", "hang[rotation=1]", "hang[rotation=2]", "hang[rotation=3]", "hang[rotation=4]", "hang[rotation=5]", "hang[rotation=6]", "hang[rotation=7]", "hang[rotation=8]", "hang[rotation=9]", "hang[rotation=10]", "hang[rotation=11]", "hang[rotation=12]", "hang[rotation=13]", "hang[rotation=14]", "hang[rotation=15]", "hang[rotation=16]", "hang[rotation=17]", "hang[rotation=18]", "hang[rotation=19]", "hang[rotation=20]", "hang[rotation=21]", "hang[rotation=22]", "hang[rotation=23]")
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_3sby3"]
+library = SubResource("VoxelBlockyTypeLibrary_v3m0o")
 
 [sub_resource type="Resource" id="Resource_c21pw"]
 script = ExtResource("9_xb5mi")
@@ -47,7 +73,7 @@ f = 1.0
 z = 1.0
 r = 0.0
 
-[sub_resource type="Resource" id="Resource_hihxq"]
+[sub_resource type="Resource" id="Resource_xqqyp"]
 script = ExtResource("10_ifuqq")
 dolly = 3.0
 tilt = 1.0
@@ -71,12 +97,13 @@ r = 0.0
 [node name="SlopeMesh" type="VoxelTerrain" parent="."]
 stream = SubResource("VoxelStreamRegionFiles_tpghp")
 generator = SubResource("VoxelGeneratorFlat_h48if")
-mesher = SubResource("VoxelMesherBlocky_bds88")
+mesher = SubResource("VoxelMesherBlocky_3sby3")
+collision_layer = 3
 mesh_block_size = 32
 script = ExtResource("4_epbx7")
 
 [node name="ThirdPersonActor" parent="." instance=ExtResource("4_jwsea")]
-transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 2, 0)
 collision_layer = 2
 collision_mask = 2
 walk_turn_force = 90.0
@@ -85,24 +112,22 @@ walk_turn_speed = 360.0
 run_turn_speed = 360.0
 walk_turn_peak_time = 0.25
 run_turn_peak_time = 0.25
-walk_turn_deadzone = 5.0
-run_turn_deadzone = 5.0
+walk_turn_deadzone = 1.0
+run_turn_deadzone = 1.0
 walk_turn_friction = 15.0
 run_turn_friction = 15.0
 walk_turn_static_friction = 30.0
 run_turn_static_friction = 30.0
-walk_max_speed = 5.0
-run_max_speed = 10.0
-walk_acceleration = 5.0
-run_acceleration = 5.0
-walk_deceleration = 1.0
-run_deceleration = 1.0
-walk_peak_time = 0.5
-run_peak_time = 0.5
-walk_friction = 1.0
-run_friction = 1.0
-walk_static_friction = 2.0
-run_static_friction = 2.0
+walk_max_speed = 250.0
+run_max_speed = 250.0
+walk_acceleration = 50.0
+run_acceleration = 50.0
+walk_deceleration = 20.0
+run_deceleration = 20.0
+walk_friction = 25.0
+run_friction = 25.0
+walk_static_friction = 30.0
+run_static_friction = 30.0
 reach = 1.5
 
 [node name="ThirdPersonPlayerController" type="Node3D" parent="ThirdPersonActor"]
@@ -118,19 +143,19 @@ enabled_in_editor = true
 
 [node name="CameraBrain" type="Camera3D" parent="."]
 process_priority = 999
-transform = Transform3D(1, -5.16704e-08, 1.67036e-07, 0, 0.955336, 0.29552, -1.74846e-07, -0.29552, 0.955336, 5.01109e-07, 3.38656, 2.86601)
+transform = Transform3D(0.999999, -5.16702e-08, 1.67035e-07, 0, 0.955332, 0.295518, -1.74845e-07, -0.295519, 0.955329, 5.01109e-07, 3.88656, 2.86601)
 script = ExtResource("7_yeacn")
 
 [node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
 process_priority = 998
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 script = ExtResource("8_q8p8a")
 collides = true
 follow_node = NodePath("../../ThirdPersonActor")
 horizontal_damper = SubResource("Resource_c21pw")
 vertical_damper = SubResource("Resource_ctg5n")
 rotation_damper = SubResource("Resource_di1kf")
-orbiting = SubResource("Resource_hihxq")
+orbiting = SubResource("Resource_xqqyp")
 target_damper = SubResource("Resource_uo2h6")
 
 [node name="UIController" type="Control" parent="."]

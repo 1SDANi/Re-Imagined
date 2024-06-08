@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://dsqjor8bckdvj"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_1uaa1"]
+[ext_resource type="ArrayMesh" uid="uid://dibfnu5bowtbp" path="res://models/3.obj" id="2_a6mft"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_wkepi"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_ip4v2"]
+material_override_0 = ExtResource("1_1uaa1")
+collision_enabled_0 = true
+mesh = ExtResource("2_a6mft")
+
+[resource]
+resource_name = "narrow"
+unique_name = &"narrow"
+base_model = SubResource("VoxelBlockyModelMesh_ip4v2")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_wkepi")])

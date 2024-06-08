@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://c1aclbhitgcpl"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_f1u2l"]
+[ext_resource type="ArrayMesh" uid="uid://da23s1dv6e4o5" path="res://models/A.obj" id="2_maoxc"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_iit4n"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_qwni7"]
+material_override_0 = ExtResource("1_f1u2l")
+collision_enabled_0 = true
+mesh = ExtResource("2_maoxc")
+
+[resource]
+resource_name = "macefork"
+unique_name = &"macefork"
+base_model = SubResource("VoxelBlockyModelMesh_qwni7")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_iit4n")])

@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://cpe3cg4e36n0h"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_or0da"]
+[ext_resource type="ArrayMesh" uid="uid://dxthnn2ys0nk2" path="res://models/5.obj" id="2_uquos"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_3suwi"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_shhqd"]
+material_override_0 = ExtResource("1_or0da")
+collision_enabled_0 = true
+mesh = ExtResource("2_uquos")
+
+[resource]
+resource_name = "tfork"
+unique_name = &"tfork"
+base_model = SubResource("VoxelBlockyModelMesh_shhqd")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_3suwi")])
