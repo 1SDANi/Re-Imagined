@@ -1,3 +1,6 @@
-[gd_resource type="VoxelBlockyTypeLibrary" format=3 uid="uid://n8j6mky3k8t4"]
+[gd_resource type="VoxelMesherBlocky" load_steps=2 format=3 uid="uid://n8j6mky3k8t4"]
+
+[ext_resource type="VoxelBlockyTypeLibrary" uid="uid://cjjw4bedmovap" path="res://libraries/SmartLibrary.tres" id="1_p3umt"]
 
 [resource]
+library = ExtResource("1_p3umt")

@@ -1,6 +1,6 @@
 [gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://u71ow1hjduoc"]
 
-[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="1_a62dk"]
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://shaders/grasstileshader.tres" id="1_a62dk"]
 [ext_resource type="ArrayMesh" uid="uid://d0s1oolwcomj2" path="res://models/2.obj" id="2_13y6d"]
 
 [sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_u2iq3"]

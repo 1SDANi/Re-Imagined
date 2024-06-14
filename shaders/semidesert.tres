@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bxva6uxab0gsk"]
+
+[ext_resource type="Texture2D" uid="uid://cg5d1sdd125xx" path="res://textures/prariegrasstile.png" id="1_xtinx"]
+
+[resource]
+albedo_texture = ExtResource("1_xtinx")
+texture_filter = 0

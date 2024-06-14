@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://7gegmduo3itx"
+path="res://.godot/imported/terrace_q-fork.obj-08abc03c902bb63e9204202b4fafeb07.mesh"
+
+[deps]
+
+files=["res://.godot/imported/terrace_q-fork.obj-08abc03c902bb63e9204202b4fafeb07.mesh"]
+
+source_file="res://models/terrace_q-fork.obj"
+dest_files=["res://.godot/imported/terrace_q-fork.obj-08abc03c902bb63e9204202b4fafeb07.mesh", "res://.godot/imported/terrace_q-fork.obj-08abc03c902bb63e9204202b4fafeb07.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://1mtk8hdglxgq" path="res://textures/grasstile.png" id="1_tsxfq"]
 [ext_resource type="ArrayMesh" uid="uid://cdwb5qnm7xl76" path="res://models/0.obj" id="1_xqleh"]
 [ext_resource type="ArrayMesh" uid="uid://bs0srvx2xfewo" path="res://models/1.obj" id="2_8cu3h"]
-[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://scenes/grasstileshader.tres" id="5_hb5a6"]
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://shaders/grasstileshader.tres" id="5_hb5a6"]
 [ext_resource type="ArrayMesh" uid="uid://d0s1oolwcomj2" path="res://models/2.obj" id="6_d2klh"]
 [ext_resource type="ArrayMesh" uid="uid://dibfnu5bowtbp" path="res://models/3.obj" id="7_xahis"]
 [ext_resource type="ArrayMesh" uid="uid://bi615qu3urb3o" path="res://models/4.obj" id="8_eft2e"]

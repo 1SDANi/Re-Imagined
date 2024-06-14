@@ -31,37 +31,111 @@ const PPP : int = 1 << 26
 
 var tool : VoxelTool
 
-enum ROT
-{
-	UP_FRONT,
-	UP_BACK,
-	UP_LEFT,
-	UP_RIGHT,
-	DOWN_FRONT,
-	DOWN_BACK,
-	DOWN_LEFT,
-	DOWN_RIGHT,
-}
+@export var textures : Array[Image]
+@export var texture_names : Array[String]
+@export var res : int
+
+@export var models : Array[Mesh]
+@export var model_names : Array[String]
+
+var atlas : Image
+
+var meshes : Array[VoxelBlockyModelMesh]
+
+var library : VoxelBlockyLibrary
 
 func _ready() -> void:
 	game.set_slope_mesh(get_path())
 	tool = get_voxel_tool()
+	#_new_atlas()
+	#_new_meshes()
+	#_new_library()
+	#_set_albedo(ImageTexture.create_from_image(atlas))
+	#library.bake()
+	#ResourceSaver.save(library, "res://library.tres")
+	#ResourceSaver.save(ImageTexture.create_from_image(atlas), "res://atlas.tres")
 
-func _get_shape(name : String, rot : ROT):
-	return mesher.library.get_model_index_single_attribute(name, rot)
+func _set_albedo(t : Texture2D):
+	material_override.set_texture(BaseMaterial3D.TextureParam.TEXTURE_ALBEDO, t)
 
-func place(pos : Vector3i) -> void:
+func _new_atlas() -> void:
+	var size : Vector2i = Vector2i(textures.size(), 1) * res
+	atlas = Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+
+	var pos : int = 0
+	for tex in textures: pos = _add_tex(pos, tex)
+
+func _add_tex(pos : int, tex : Image) -> int:
+	var rect : Rect2i = Rect2i(0, 0, tex.get_width(), tex.get_height())
+	atlas.blit_rect(tex, rect, Vector2i(pos, 0))
+	return pos + res
+
+func _new_meshes() -> void:
+	meshes = []
+	var size : int = floori(float(atlas.get_width() / float(res)))
+	for pos in size: for model in models: _add_mesh(model, pos)
+
+func _add_mesh(model : Mesh, pos : int) -> void:
+	for i in range(4):
+		var mesh: VoxelBlockyModelMesh = VoxelBlockyModelMesh.new()
+		mesh.mesh = _uv_setup(model, Vector2i(pos, 0))
+		match (i):
+			0:
+				mesh.mesh_ortho_rotation_index = 0
+			1:
+				mesh.mesh_ortho_rotation_index = 16
+			2:
+				mesh.mesh_ortho_rotation_index = 10
+			3:
+				mesh.mesh_ortho_rotation_index = 22
+		meshes.append(mesh)
+
+func _uv_setup(model : Mesh, pos: Vector2) -> ArrayMesh:
+	var mesh = ArrayMesh.new()
+	var i : int = model.get_surface_count() - 1
+	while i > -1: _add_uvs(model.surface_get_arrays(i), pos, mesh); i -= 1
+	return mesh
+
+func _add_uvs(verts : Array, pos : Vector2, mesh : ArrayMesh):
+	var uvs = verts[Mesh.ARRAY_TEX_UV]
+	var pack = PackedVector2Array()
+	for uv in uvs: pack.append((uv + pos) / Vector2(atlas.get_size() / res))
+	verts[Mesh.ARRAY_TEX_UV] = pack
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, verts)
+
+func _new_library():
+	library = VoxelBlockyLibrary.new()
+	var air : VoxelBlockyModelEmpty = VoxelBlockyModelEmpty.new()
+	air.culls_neighbors = false
+	library.add_model(air)
+	for mesh in meshes: library.add_model(mesh)
+	mesher = VoxelMesherBlocky.new()
+	mesher.library = library
+
+func _get_model(model : String, r : int, terrain : String) -> int:
+	if model == "air": return 0
+	var m : int = model_names.find(model)
+	var t : int = texture_names.find(terrain)
+	return t * model_names.size() * 4 + m * 4 + r + 1
+
+func _change_model(p : Vector3i, m : String, r : int):
+	var i : float = float(tool.get_voxel(p))
+	if i > 65000: i = 0
+	var t : int = floori(i / float(model_names.size()) / 4.0)
+	tool.set_voxel(p, _get_model(m, r, texture_names[t]))
+
+func place(pos : Vector3i, terrain : String, solid : bool) -> void:
 	tool.channel = VoxelBuffer.CHANNEL_TYPE
 	var voxel : int = tool.get_voxel(pos)
 
 	if voxel <= 0:
-		tool.set_voxel(pos, _get_shape("block", 0))
-		#tool.set_voxel(pos, 1)
+		tool.set_voxel(pos, _get_model("solidblock" if solid else "hardblock", 0, terrain))
 		shapes(pos)
 	else:
-		tool.set_voxel(pos, 0)
-		#tool.set_voxel(pos, 0)
+		tool.set_voxel(pos, _get_model("air", 0, terrain))
 		shapes(pos)
+
+	save_modified_blocks()
 
 func shapes(pos : Vector3i) -> void:
 	for x in range(-1,2):
@@ -70,6 +144,7 @@ func shapes(pos : Vector3i) -> void:
 				shape(pos + Vector3i(x, y, z))
 
 func shape(pos : Vector3i) -> void:
+	if tool.get_voxel(pos) % (texture_names.size() * 4) == 0: return
 	tool.channel = VoxelBuffer.CHANNEL_TYPE
 	var voxel : int = tool.get_voxel(pos)
 	#var data : Variant = tool.get_voxel_metadata(pos)
@@ -94,68 +169,11 @@ func shape(pos : Vector3i) -> void:
 		var nzn : bool = mask & NZN > 0
 
 		if zzp and zzn and pzz and nzz and pzp and pzn and nzp and nzn:
-			tool.set_voxel(pos, _get_shape("block", 0))
+			_change_model(pos, "hardblock", 0)
 		elif znz and not zpz:
 			top_shape(pos, mask)
-		elif not znz and zpz:
-			bottom_shape(pos, mask)
-		elif not (znz and zpz):
-			side_shape(pos, mask)
 		else:
-			tool.set_voxel(pos, _get_shape("block", 0))
-
-func side_shape(pos : Vector3i, mask : int):
-	var zzp : bool = mask & ZZP > 0
-	var pzz : bool = mask & PZZ > 0
-	var zzn : bool = mask & ZZN > 0
-	var nzz : bool = mask & NZZ > 0
-	var pzp : bool = mask & PZP > 0
-	var pzn : bool = mask & PZN > 0
-	var nzp : bool = mask & NZP > 0
-	var nzn : bool = mask & NZN > 0
-	var zpp : bool = mask & ZPP > 0
-	var ppz : bool = mask & PPZ > 0
-	var zpn : bool = mask & ZPN > 0
-	var npz : bool = mask & NPZ > 0
-	var ppp : bool = mask & PPP > 0
-	var ppn : bool = mask & PPN > 0
-	var npp : bool = mask & NPP > 0
-	var npn : bool = mask & NPN > 0
-	var znp : bool = mask & ZNP > 0
-	var pnz : bool = mask & PNZ > 0
-	var znn : bool = mask & ZNN > 0
-	var nnz : bool = mask & NNZ > 0
-	var pnp : bool = mask & PNP > 0
-	var pnn : bool = mask & PNN > 0
-	var nnp : bool = mask & NNP > 0
-	var nnn : bool = mask & NNN > 0
-
-	if zzn and zpn and znn:
-		tool.set_voxel(pos, _get_shape("spire", 1))
-	elif zzp and zpp and znp:
-		tool.set_voxel(pos, _get_shape("spire", 3))
-	elif pzz and ppz and pnz:
-		tool.set_voxel(pos, _get_shape("spire", 4))
-	elif nzz and npz and nnz:
-		tool.set_voxel(pos, _get_shape("spire", 6))
-	elif zzp and zpp:
-		tool.set_voxel(pos, _get_shape("hang", 2))
-	elif zzn and zpn:
-		tool.set_voxel(pos, _get_shape("hang", 8))
-	elif pzz and ppz:
-		tool.set_voxel(pos, _get_shape("hang", 18))
-	elif nzz and npz:
-		tool.set_voxel(pos, _get_shape("hang", 20))
-	elif zzn and znn:
-		tool.set_voxel(pos, _get_shape("hang", 0))
-	elif zzp and znp:
-		tool.set_voxel(pos, _get_shape("hang", 10))
-	elif nzz and nnz:
-		tool.set_voxel(pos, _get_shape("hang", 16))
-	elif pzz and pnz:
-		tool.set_voxel(pos, _get_shape("hang", 22))
-	else:
-		tool.set_voxel(pos, _get_shape("block", 0))
+			_change_model(pos, "hardblock", 0)
 
 func top_shape(pos : Vector3i, mask : int):
 	var zzp : bool = mask & ZZP > 0
@@ -168,135 +186,94 @@ func top_shape(pos : Vector3i, mask : int):
 	var nzn : bool = mask & NZN > 0
 
 	if zzp and pzz and zzn and nzz and nzp and nzn and pzn:
-		tool.set_voxel(pos, _get_shape("heartfork", 0))
-	elif zzp and pzz and zzn and nzz and pzn and pzp and nzp:
-		tool.set_voxel(pos, _get_shape("heartfork", 10))
+		_change_model(pos, "hardheartfork", 0)
 	elif zzp and pzz and zzn and nzz and pzp and nzp and nzn:
-		tool.set_voxel(pos, _get_shape("heartfork", 16))
+		_change_model(pos, "hardheartfork", 1)
+	elif zzp and pzz and zzn and nzz and pzn and pzp and nzp:
+		_change_model(pos, "hardheartfork", 2)
 	elif zzp and pzz and zzn and nzz and nzn and pzn and pzp:
-		tool.set_voxel(pos, _get_shape("heartfork", 22))
+		_change_model(pos, "hardheartfork", 3)
 	elif zzp and pzz and zzn and nzz and pzn and pzp:
-		tool.set_voxel(pos, _get_shape("macefork", 0))
-	elif zzp and pzz and zzn and nzz and nzp and nzn:
-		tool.set_voxel(pos, _get_shape("macefork", 10))
+		_change_model(pos, "hardmacefork", 0)
 	elif zzp and pzz and zzn and nzz and nzn and pzn:
-		tool.set_voxel(pos, _get_shape("macefork", 16))
+		_change_model(pos, "hardmacefork", 1)
+	elif zzp and pzz and zzn and nzz and nzp and nzn:
+		_change_model(pos, "hardmacefork", 2)
 	elif zzp and pzz and zzn and nzz and pzp and nzp:
-		tool.set_voxel(pos, _get_shape("macefork", 22))
+		_change_model(pos, "hardmacefork", 3)
 	elif zzp and pzz and zzn and nzz and pzn and nzp:
-		tool.set_voxel(pos, _get_shape("bowfork", 0))
+		_change_model(pos, "hardbowfork", 0)
 	elif zzp and pzz and zzn and nzz and nzn and pzp:
-		tool.set_voxel(pos, _get_shape("bowfork", 16))
+		_change_model(pos, "hardbowfork", 1)
 	elif zzp and pzz and zzn and nzz and pzn:
-		tool.set_voxel(pos, _get_shape("fishfork", 0))
-	elif zzp and pzz and zzn and nzz and nzp:
-		tool.set_voxel(pos, _get_shape("fishfork", 10))
+		_change_model(pos, "hardfishfork", 0)
 	elif zzp and pzz and zzn and nzz and nzn:
-		tool.set_voxel(pos, _get_shape("fishfork", 16))
+		_change_model(pos, "hardfishfork", 1)
+	elif zzp and pzz and zzn and nzz and nzp:
+		_change_model(pos, "hardfishfork", 2)
 	elif zzp and pzz and zzn and nzz and pzp:
-		tool.set_voxel(pos, _get_shape("fishfork", 22))
+		_change_model(pos, "hardfishfork", 3)
 	elif zzp and pzz and zzn and nzz:
-		tool.set_voxel(pos, _get_shape("xfork", 0))
+		_change_model(pos, "hardxfork", 0)
 	elif zzp and pzz and zzn and pzp and pzn:
-		tool.set_voxel(pos, _get_shape("slope", 0))
-	elif zzp and zzn and nzz and nzp and nzn:
-		tool.set_voxel(pos, _get_shape("slope", 10))
+		_change_model(pos, "hardslope", 0)
 	elif pzz and zzn and nzz and pzn and nzn:
-		tool.set_voxel(pos, _get_shape("slope", 16))
+		_change_model(pos, "hardslope", 1)
+	elif zzp and zzn and nzz and nzp and nzn:
+		_change_model(pos, "hardslope", 2)
 	elif zzp and pzz and nzz and pzp and nzp:
-		tool.set_voxel(pos, _get_shape("slope", 22))
+		_change_model(pos, "hardslope", 3)
 	elif zzp and pzz and zzn and pzp:
-		tool.set_voxel(pos, _get_shape("pfork", 0))
-	elif zzp and zzn and nzz and nzn:
-		tool.set_voxel(pos, _get_shape("pfork", 10))
+		_change_model(pos, "hardpfork", 0)
 	elif pzz and zzn and nzz and pzn:
-		tool.set_voxel(pos, _get_shape("pfork", 16))
+		_change_model(pos, "hardpfork", 1)
+	elif zzp and zzn and nzz and nzn:
+		_change_model(pos, "hardpfork", 2)
 	elif zzp and pzz and nzz and nzp:
-		tool.set_voxel(pos, _get_shape("pfork", 22))
+		_change_model(pos, "hardpfork", 3)
 	elif zzp and pzz and zzn and pzn:
-		tool.set_voxel(pos, _get_shape("qfork", 0))
-	elif zzp and zzn and nzz and nzp:
-		tool.set_voxel(pos, _get_shape("qfork", 10))
+		_change_model(pos, "hardqfork", 0)
 	elif pzz and zzn and nzz and nzn:
-		tool.set_voxel(pos, _get_shape("qfork", 16))
+		_change_model(pos, "hardqfork", 1)
+	elif zzp and zzn and nzz and nzp:
+		_change_model(pos, "hardqfork", 2)
 	elif zzp and pzz and nzz and pzp:
-		tool.set_voxel(pos, _get_shape("qfork", 22))
+		_change_model(pos, "hardqfork", 3)
 	elif zzp and pzz and zzn:
-		tool.set_voxel(pos, _get_shape("tfork", 0))
-	elif zzp and zzn and nzz:
-		tool.set_voxel(pos, _get_shape("tfork", 10))
+		_change_model(pos, "hardtfork", 0)
 	elif pzz and zzn and nzz:
-		tool.set_voxel(pos, _get_shape("tfork", 16))
+		_change_model(pos, "hardtfork", 1)
+	elif zzp and zzn and nzz:
+		_change_model(pos, "hardtfork", 2)
 	elif zzp and pzz and nzz:
-		tool.set_voxel(pos, _get_shape("tfork", 22))
+		_change_model(pos, "hardtfork", 3)
 	elif zzp and nzz and nzp:
-		tool.set_voxel(pos, _get_shape("corner", 0))
-	elif zzn and pzz and pzn:
-		tool.set_voxel(pos, _get_shape("corner", 10))
+		_change_model(pos, "hardcorner", 0)
 	elif zzp and pzz and pzp:
-		tool.set_voxel(pos, _get_shape("corner", 16))
+		_change_model(pos, "hardcorner", 1)
+	elif zzn and pzz and pzn:
+		_change_model(pos, "hardcorner", 2)
 	elif zzn and nzz and nzn:
-		tool.set_voxel(pos, _get_shape("corner", 22))
+		_change_model(pos, "hardcorner", 3)
 	elif zzp and nzz:
-		tool.set_voxel(pos, _get_shape("lfork", 0))
-	elif pzz and zzn:
-		tool.set_voxel(pos, _get_shape("lfork", 10))
+		_change_model(pos, "hardlfork", 0)
 	elif zzp and pzz:
-		tool.set_voxel(pos, _get_shape("lfork", 16))
-	elif zzn and nzz:
-		tool.set_voxel(pos, _get_shape("lfork", 22))
-	elif zzp and zzn:
-		tool.set_voxel(pos, _get_shape("narrow", 0))
-	elif pzz and nzz:
-		tool.set_voxel(pos, _get_shape("narrow", 16))
-	elif zzp:
-		tool.set_voxel(pos, _get_shape("end", 0))
-	elif zzn:
-		tool.set_voxel(pos, _get_shape("end", 10))
-	elif pzz:
-		tool.set_voxel(pos, _get_shape("end", 16))
-	elif nzz:
-		tool.set_voxel(pos, _get_shape("end", 22))
-	else:
-		tool.set_voxel(pos, _get_shape("spire", 0))
-
-func bottom_shape(pos : Vector3i, mask : int):
-	var zzp : bool = mask & ZZP > 0
-	var pzz : bool = mask & PZZ > 0
-	var zzn : bool = mask & ZZN > 0
-	var nzz : bool = mask & NZZ > 0
-	var pzp : bool = mask & PZP > 0
-	var pzn : bool = mask & PZN > 0
-	var nzp : bool = mask & NZP > 0
-	var nzn : bool = mask & NZN > 0
-
-	if zzn and nzz and nzn:
-		tool.set_voxel(pos, _get_shape("corner", 2))
-	elif zzp and pzz and pzp:
-		tool.set_voxel(pos, _get_shape("corner", 8))
-	elif zzp and nzz and nzp:
-		tool.set_voxel(pos, _get_shape("corner", 18))
-	elif zzn and pzz and pzn:
-		tool.set_voxel(pos, _get_shape("corner", 20))
-	elif zzp and nzz:
-		tool.set_voxel(pos, _get_shape("lfork", 2))
-	elif zzp and pzz:
-		tool.set_voxel(pos, _get_shape("lfork", 8))
-	elif zzn and nzz:
-		tool.set_voxel(pos, _get_shape("lfork", 18))
+		_change_model(pos, "hardlfork", 1)
 	elif pzz and zzn:
-		tool.set_voxel(pos, _get_shape("lfork", 20))
+		_change_model(pos, "hardlfork", 2)
+	elif zzn and nzz:
+		_change_model(pos, "hardlfork", 3)
 	elif zzp and zzn:
-		tool.set_voxel(pos, _get_shape("narrow", 2))
+		_change_model(pos, "hardnarrow", 0)
 	elif pzz and nzz:
-		tool.set_voxel(pos, _get_shape("narrow", 18))
-	elif zzn:
-		tool.set_voxel(pos, _get_shape("end", 2))
+		_change_model(pos, "hardnarrow", 1)
 	elif zzp:
-		tool.set_voxel(pos, _get_shape("end", 8))
-	elif nzz:
-		tool.set_voxel(pos, _get_shape("end", 18))
+		_change_model(pos, "hardend", 0)
 	elif pzz:
-		tool.set_voxel(pos, _get_shape("end", 20))
+		_change_model(pos, "hardend", 1)
+	elif zzn:
+		_change_model(pos, "hardend", 2)
+	elif nzz:
+		_change_model(pos, "hardend", 3)
 	else:
-		tool.set_voxel(pos, _get_shape("spire", 2))
+		_change_model(pos, "hardspire", 0)

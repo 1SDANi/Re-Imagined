@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://gmxftykonh0a"
+path="res://.godot/imported/hard_end.obj-a18e1cfed8a279482b393812168cd074.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hard_end.obj-a18e1cfed8a279482b393812168cd074.mesh"]
+
+source_file="res://models/hard_end.obj"
+dest_files=["res://.godot/imported/hard_end.obj-a18e1cfed8a279482b393812168cd074.mesh", "res://.godot/imported/hard_end.obj-a18e1cfed8a279482b393812168cd074.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -8,6 +8,12 @@ extends Controller
 @export var highlight : NodePath
 @export var debug_highlight : NodePath
 
+@export var terrain_label : NodePath
+@export var solid_label : NodePath
+
+var _terrain_label : Label
+var _solid_label : Label
+
 var _cam : VirtualCamera3D
 var _highlight : Node3D
 var _debug_highlight : Node3D
@@ -15,6 +21,10 @@ var _debug_highlight : Node3D
 var _pause_lock : bool
 var _place_lock : bool
 var _ymove_lock : bool
+var _solid_lock : bool
+
+var terrain : String = "grassland"
+var solid : bool = true
 
 func _ready() -> void:
 	game.input.add_mouse_dir(InputHandler.MOUSE_DIR.UP, "Look Up")
@@ -27,6 +37,21 @@ func _ready() -> void:
 	game.input.add_input("RX+", "Look Right GMP")
 	game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_LEFT, "Place")
 	game.input.add_input("RR", "Place GMP")
+	game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_RIGHT, "Solid")
+	game.input.add_input("RU", "Solid GMP")
+	game.input.add_key(Key.KEY_1, "Arctic")
+	game.input.add_key(Key.KEY_2, "Tundra")
+	game.input.add_key(Key.KEY_3, "Steppe")
+	game.input.add_key(Key.KEY_4, "Prarie")
+	game.input.add_key(Key.KEY_5, "Grassland")
+	game.input.add_key(Key.KEY_6, "Semidesert")
+	game.input.add_key(Key.KEY_7, "Desert")
+	game.input.add_key(Key.KEY_8, "Badland")
+	game.input.add_input("LU", "Fertile GMP")
+	game.input.add_input("LL", "Rugged GMP")
+	game.input.add_input("LR", "Harsh GMP")
+	game.input.add_input("LD", "Deadly GMP")
+	game.input.add_input("LC", "Tropical GMP")
 	game.input.add_key(Key.KEY_W, "Move Front")
 	game.input.add_input("LY-", "Move Front GMP")
 	game.input.add_key(Key.KEY_S, "Move Back")
@@ -44,6 +69,8 @@ func _ready() -> void:
 	game.input.set_cam_speed_x(cam_speed_x)
 	game.input.set_cam_speed_y(cam_speed_y)
 	_cam = get_node(cam)
+	_terrain_label = get_node(terrain_label)
+	_solid_label = get_node(solid_label)
 	_highlight = get_node(highlight)
 	_debug_highlight = get_node(debug_highlight)
 	_pause_lock = false
@@ -133,6 +160,22 @@ func handle_movement(delta: float) -> void:
 func handle_placing() -> void:
 	var place : float = game.input.get_action_value("Place")
 	place = max(place, game.input.get_action_value("Place GMP"))
+	var solid_toggle : float = game.input.get_action_value("Solid")
+	solid_toggle = max(solid_toggle, game.input.get_action_value("Solid GMP"))
+	var arctic : float = game.input.get_action_value("Arctic")
+	var tundra : float = game.input.get_action_value("Tundra")
+	var steppe : float = game.input.get_action_value("Steppe")
+	var prarie : float = game.input.get_action_value("Prarie")
+	var grassland : float = game.input.get_action_value("Grassland")
+	var semidesert : float = game.input.get_action_value("Semidesert")
+	var desert : float = game.input.get_action_value("Desert")
+	var badland : float = game.input.get_action_value("Badland")
+	var fertile : float = game.input.get_action_value("Fertile GMP")
+	var rugged : float = game.input.get_action_value("Rugged GMP")
+	var harsh : float = game.input.get_action_value("Harsh GMP")
+	var deadly : float = game.input.get_action_value("Deadly GMP")
+	var tropical : float = game.input.get_action_value("Tropical GMP")
+
 
 	var mesh : SlopeMesh = game.get_slope_mesh()
 	var pos : Vector3 = mesh.to_local(get_parent().position) + Vector3.DOWN / 2
@@ -153,6 +196,33 @@ func handle_placing() -> void:
 		_debug_highlight.position = pos + forward * reach
 	_highlight.position = Vector3(targeti) + grid
 
+	if arctic: terrain = "arctic"
+	elif tundra: terrain = "tundra"
+	elif steppe: terrain = "steppe"
+	elif prarie: terrain = "prarie"
+	elif grassland: terrain = "grassland"
+	elif semidesert: terrain = "semidesert"
+	elif desert: terrain = "desert"
+	elif badland: terrain = "badland"
+	elif not tropical:
+		if deadly: terrain = "arctic"
+		elif harsh: terrain = "tundra"
+		elif rugged: terrain = "steppe"
+		elif fertile: terrain = "prarie"
+	else:
+		if fertile: terrain = "grassland"
+		elif harsh: terrain = "semidesert"
+		elif rugged: terrain = "desert"
+		elif deadly: terrain = "badland"
+	_terrain_label.set_text(terrain)
+
+	if _solid_lock:
+		if is_zero_approx(solid_toggle):
+			_solid_lock = false
+	elif not is_zero_approx(solid_toggle):
+		_solid_lock = true
+		solid = not solid
+		_solid_label.set_text("yes" if solid else "no")
 
 	if _place_lock:
 		if is_zero_approx(place):
@@ -160,5 +230,5 @@ func handle_placing() -> void:
 	elif not is_zero_approx(place):
 		_place_lock = true
 
-		mesh.place(target)
+		mesh.place(target, terrain, solid)
 

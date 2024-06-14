@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://mf5fcmyk36px"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://shaders/grasstileshader.tres" id="1_u8a2l"]
+[ext_resource type="ArrayMesh" uid="uid://qqra08qpjjyd" path="res://models/hang_corner_l.obj" id="2_pod40"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_rb6xx"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_asbat"]
+material_override_0 = ExtResource("1_u8a2l")
+collision_enabled_0 = true
+mesh = ExtResource("2_pod40")
+
+[resource]
+resource_name = "hangcornerl"
+unique_name = &"hangcornerl"
+base_model = SubResource("VoxelBlockyModelMesh_asbat")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_rb6xx")])

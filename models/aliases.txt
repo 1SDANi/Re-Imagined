@@ -1,0 +1,15 @@
+0: spire/SPIRE
+1: end/END
+2: l-fork/L-FORK
+3: narrow/NARROW
+4: slope/SLOPE
+5: t-fork/T-FORK
+6: q-fork/Q-FORK
+7: p-fork/P-FORK
+8: corner/CORNER
+9: x-fork/X-FORK
+A: mace-fork/MACE-FORK
+B: fish-fork/FISK-FORK
+C: heart-fork/HEART-FORK
+D: bow-fork/BOW-FORK
+E: hang/HANG

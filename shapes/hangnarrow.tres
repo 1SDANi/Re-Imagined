@@ -1,0 +1,18 @@
+[gd_resource type="VoxelBlockyType" load_steps=5 format=3 uid="uid://dsidr12gm1o3s"]
+
+[ext_resource type="Material" uid="uid://bwjlith8sq8fg" path="res://shaders/grasstileshader.tres" id="1_k4tfy"]
+[ext_resource type="ArrayMesh" uid="uid://xedw5iumdt54" path="res://models/hang_narrow.obj" id="2_0an6n"]
+
+[sub_resource type="VoxelBlockyAttributeRotation" id="VoxelBlockyAttributeRotation_t3b7m"]
+horizontal_only = true
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_c0ivi"]
+material_override_0 = ExtResource("1_k4tfy")
+collision_enabled_0 = true
+mesh = ExtResource("2_0an6n")
+
+[resource]
+resource_name = "hangnarrow"
+unique_name = &"hangnarrow"
+base_model = SubResource("VoxelBlockyModelMesh_c0ivi")
+attributes = Array[VoxelBlockyAttribute]([SubResource("VoxelBlockyAttributeRotation_t3b7m")])

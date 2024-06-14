@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b7ld8is5qbj5y"
+path="res://.godot/imported/hard_mace-fork.obj-90a57125d44a8414f33764f7e7fa9fef.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hard_mace-fork.obj-90a57125d44a8414f33764f7e7fa9fef.mesh"]
+
+source_file="res://models/hard_mace-fork.obj"
+dest_files=["res://.godot/imported/hard_mace-fork.obj-90a57125d44a8414f33764f7e7fa9fef.mesh", "res://.godot/imported/hard_mace-fork.obj-90a57125d44a8414f33764f7e7fa9fef.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
