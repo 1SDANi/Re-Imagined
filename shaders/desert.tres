@@ -1,7 +1,4 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c0cuv0ym3slwf"]
-
-[ext_resource type="Texture2D" uid="uid://dkudcybk6t346" path="res://textures/sandtile.png" id="1_ofvyq"]
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c0cuv0ym3slwf"]
 
 [resource]
-albedo_texture = ExtResource("1_ofvyq")
 texture_filter = 0

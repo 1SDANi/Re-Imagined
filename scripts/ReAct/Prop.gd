@@ -24,14 +24,14 @@ func _physics_process(delta: float) -> void:
 	apply_friction(delta)
 	apply_inertia(delta)
 
-func apply_pos_force(angle : Vector3, force : float):
+func apply_pos_force(angle : Vector3, force : float) -> void:
 	pos_inertia += angle.normalized() * force
 
-func apply_inertia(delta : float):
+func apply_inertia(delta : float) -> void:
 	apply_rot_inertia(delta)
 	apply_pos_inertia(delta)
 
-func apply_rot_inertia(delta : float):
+func apply_rot_inertia(delta : float) -> void:
 	if rot_inertia.length() > rot_static_friction:
 		if turn_snap:
 			var cur : Vector3 = Vector3(basis.z.x, 0, basis.z.z)
@@ -43,33 +43,35 @@ func apply_rot_inertia(delta : float):
 
 		rotation += rot_inertia * delta
 
-func apply_pos_inertia(delta : float):
+func apply_pos_inertia(delta : float) -> void:
 	if pos_inertia.length() > pos_static_friction or not static_friction:
 		velocity = pos_inertia * delta
 	else:
 		velocity = Vector3.ZERO
-	move_and_slide()
+	if move_and_slide():
+		#collision
+		pass
 
-func apply_friction(delta : float):
-	#apply_pos_friction(delta)
+func apply_friction(delta : float) -> void:
+	apply_pos_friction(delta)
 	apply_rot_friction(delta)
 
-func apply_pos_friction(delta : float):
+func apply_pos_friction(delta : float) -> void:
 	if pos_inertia.length() > pos_static_friction or not static_friction:
 		pos_inertia -= pos_inertia.normalized() * pos_friction * delta
 	else:
 		stop()
 
-func apply_rot_friction(delta : float):
+func apply_rot_friction(delta : float) -> void:
 	if rot_inertia.length() > rot_static_friction:
 		rot_inertia -= rot_inertia.normalized() * rot_friction * delta
 	else:
 		fix_angle(rotation.y)
 
-func stop():
+func stop() -> void:
 	pos_inertia = Vector3.ZERO
 
-func fix_angle(angle : float):
+func fix_angle(angle : float) -> void:
 	if turn_snap == true: turn_snap = false
 	rotation.y = angle
 	rot_inertia = Vector3.ZERO

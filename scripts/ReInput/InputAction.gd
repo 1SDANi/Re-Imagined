@@ -56,28 +56,28 @@ func is_held() -> bool:
 	return statehistory[0]["is_held"]
 
 func was_held() -> bool:
-	for state in statehistory:
+	for state : Dictionary in statehistory:
 		if state["is_held"] == true:
 			return true
 
 	return false
 
 func was_tapped() -> bool:
-	for state in statehistory:
+	for state : Dictionary in statehistory:
 		if state["is_tapped"] == true:
 			return true
 
 	return false
 
 func was_doubletapped() -> bool:
-	for state in statehistory:
+	for state : Dictionary in statehistory:
 		if state["is_doubletapped"] == true:
 			return true
 
 	return false
 
 func was_pressed() -> bool:
-	for state in statehistory:
+	for state : Dictionary in statehistory:
 		if not (state["is_zero"] and state["is_held"] and state["is_tapped"]):
 			return true
 
@@ -91,7 +91,8 @@ func undoubletap() -> void:
 
 func clear_history() -> void:
 	if statehistory.size() > 1:
-		statehistory.resize(1)
+		if statehistory.resize(1) != OK:
+			print("failed to clear history")
 
 func pushstate(_is_high : bool, _is_zero : bool) -> void:
 	statehistory.push_front({})

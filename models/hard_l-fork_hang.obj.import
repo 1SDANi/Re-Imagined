@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c1ln5uyho15bp"
+path="res://.godot/imported/hard_l-fork_hang.obj-0888ca0821d69c6fc77ed5146cd2426f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hard_l-fork_hang.obj-0888ca0821d69c6fc77ed5146cd2426f.mesh"]
+
+source_file="res://models/hard_l-fork_hang.obj"
+dest_files=["res://.godot/imported/hard_l-fork_hang.obj-0888ca0821d69c6fc77ed5146cd2426f.mesh", "res://.godot/imported/hard_l-fork_hang.obj-0888ca0821d69c6fc77ed5146cd2426f.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://mrt4xeqwrkev"
+path="res://.godot/imported/hard_t-fork_hang.obj-50bc88e1e3184d9c020f3f8d933c79dd.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hard_t-fork_hang.obj-50bc88e1e3184d9c020f3f8d933c79dd.mesh"]
+
+source_file="res://models/hard_t-fork_hang.obj"
+dest_files=["res://.godot/imported/hard_t-fork_hang.obj-50bc88e1e3184d9c020f3f8d933c79dd.mesh", "res://.godot/imported/hard_t-fork_hang.obj-50bc88e1e3184d9c020f3f8d933c79dd.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

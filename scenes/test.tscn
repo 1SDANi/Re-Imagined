@@ -1,7 +1,9 @@
-[gd_scene load_steps=59 format=3 uid="uid://j28scctrhxas"]
+[gd_scene load_steps=53 format=3 uid="uid://j28scctrhxas"]
 
-[ext_resource type="VoxelBlockyLibrary" uid="uid://xeiet4gsdmh8" path="res://library.tres" id="1_qqh4w"]
-[ext_resource type="Material" uid="uid://dveosxboeb4pe" path="res://shaders/atlas.tres" id="2_oketf"]
+[ext_resource type="Shader" path="res://addons/VoxelShader/smooth.gdshader" id="1_jrjy4"]
+[ext_resource type="Script" path="res://scripts/ReMap/InitMap.gd" id="1_ml853"]
+[ext_resource type="CompressedTexture2DArray" uid="uid://5mfo72ymhi4k" path="res://atlas.png" id="2_ggxig"]
+[ext_resource type="Shader" path="res://addons/VoxelShader/slope.gdshader" id="2_uc5lo"]
 [ext_resource type="Script" path="res://scripts/ReMesh/SlopeMesh.gd" id="4_epbx7"]
 [ext_resource type="PackedScene" uid="uid://cyyggsxwufenm" path="res://scenes/third_person_actor.tscn" id="4_jwsea"]
 [ext_resource type="Image" uid="uid://bc0lqfl71ktd3" path="res://textures/snowtile.png" id="4_psxsc"]
@@ -10,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/UIController.gd" id="6_k8042"]
 [ext_resource type="Image" uid="uid://dcdfk74ninddp" path="res://textures/strawtile.png" id="7_3eagx"]
 [ext_resource type="Script" path="res://scripts/FloatOptionBar.gd" id="7_5sxmf"]
+[ext_resource type="Image" uid="uid://b8gcfmu1ejojo" path="res://textures/heathtile.png" id="7_xn442"]
 [ext_resource type="Script" path="res://addons/Overmind/nodes/camera_brain_3d.gd" id="7_yeacn"]
 [ext_resource type="Image" uid="uid://1mtk8hdglxgq" path="res://textures/grasstile.png" id="8_ai7ek"]
 [ext_resource type="Script" path="res://addons/Overmind/nodes/virtual_camera_3d.gd" id="8_q8p8a"]
@@ -17,50 +20,65 @@
 [ext_resource type="Script" path="res://addons/Overmind/resources/damped_value.gd" id="9_xb5mi"]
 [ext_resource type="Image" uid="uid://dkudcybk6t346" path="res://textures/sandtile.png" id="10_b8t4p"]
 [ext_resource type="Script" path="res://addons/Overmind/resources/orbiting_3d.gd" id="10_ifuqq"]
+[ext_resource type="Image" uid="uid://byi37jv3ptcko" path="res://textures/savannatile.png" id="10_sq67x"]
 [ext_resource type="Image" uid="uid://c7exp5wux4p10" path="res://textures/stonetile.png" id="11_co6d5"]
-[ext_resource type="ArrayMesh" uid="uid://cmrcrf10711w3" path="res://models/hard_spire.obj" id="12_jfncj"]
-[ext_resource type="ArrayMesh" uid="uid://boljbhl56jg1r" path="res://models/block.obj" id="12_rjvra"]
-[ext_resource type="ArrayMesh" uid="uid://dbhyanr5cn3n2" path="res://models/hard_bow-fork.obj" id="13_dw651"]
+[ext_resource type="Image" uid="uid://i8v820ejvaeu" path="res://textures/watertile.png" id="12_rkng1"]
 [ext_resource type="PackedScene" uid="uid://1hvq61epxnpn" path="res://scenes/Highlight.tscn" id="13_tmnho"]
 [ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
-[ext_resource type="ArrayMesh" uid="uid://b62jo5y5gyoj6" path="res://models/hard_corner.obj" id="14_ln8x8"]
-[ext_resource type="ArrayMesh" uid="uid://gmxftykonh0a" path="res://models/hard_end.obj" id="15_paese"]
-[ext_resource type="ArrayMesh" uid="uid://0gqyrbgdjhju" path="res://models/hard_fish-fork.obj" id="16_b3ukm"]
-[ext_resource type="ArrayMesh" uid="uid://cqb73yypwbnw3" path="res://models/hard_heart-fork.obj" id="17_57uqr"]
-[ext_resource type="ArrayMesh" uid="uid://bsobdd0x2mlck" path="res://models/hard_l-fork.obj" id="18_366ch"]
-[ext_resource type="ArrayMesh" uid="uid://b7ld8is5qbj5y" path="res://models/hard_mace-fork.obj" id="19_v1nkp"]
-[ext_resource type="ArrayMesh" uid="uid://yeax234gjb8u" path="res://models/hard_narrow.obj" id="20_w55sq"]
-[ext_resource type="ArrayMesh" uid="uid://wdtirc7pukad" path="res://models/hard_p-fork.obj" id="21_xdn0j"]
-[ext_resource type="ArrayMesh" uid="uid://dyj4qxrtjsyxx" path="res://models/hard_q-fork.obj" id="22_fpus7"]
-[ext_resource type="ArrayMesh" uid="uid://bfyj5nuf50sm1" path="res://models/hard_slope.obj" id="23_0dyp3"]
-[ext_resource type="ArrayMesh" uid="uid://dfrw8ww0iy7fk" path="res://models/hard_t-fork.obj" id="24_iwbi4"]
-[ext_resource type="ArrayMesh" uid="uid://bo08uugn6a2ht" path="res://models/hard_x-fork.obj" id="25_a5pss"]
-[ext_resource type="ArrayMesh" uid="uid://k4an6c2bci8e" path="res://models/terrace_spire.obj" id="26_0ha7r"]
-[ext_resource type="ArrayMesh" uid="uid://dsleobsxoti1f" path="res://models/terrace_bow-fork.obj" id="27_kbioy"]
-[ext_resource type="ArrayMesh" uid="uid://dqeo8ffrmvpep" path="res://models/terrace_corner.obj" id="28_kkjox"]
-[ext_resource type="ArrayMesh" uid="uid://h126grqlgxld" path="res://models/terrace_end.obj" id="29_oibgb"]
-[ext_resource type="ArrayMesh" uid="uid://cju5ifc5tbwhj" path="res://models/terrace_fish-fork.obj" id="30_2pa12"]
-[ext_resource type="ArrayMesh" uid="uid://bydlpslm6jx0x" path="res://models/terrace_heart-fork.obj" id="31_xd6qw"]
-[ext_resource type="ArrayMesh" uid="uid://7umhu1e8lrll" path="res://models/terrace_l-fork.obj" id="32_td81s"]
-[ext_resource type="ArrayMesh" uid="uid://rl1qryrppdbd" path="res://models/terrace_mace-fork.obj" id="33_tfgsx"]
-[ext_resource type="ArrayMesh" uid="uid://nrahf6drnijk" path="res://models/terrace_narrow.obj" id="34_3aj67"]
-[ext_resource type="ArrayMesh" uid="uid://dysmqckfbe3bn" path="res://models/terrace_p-fork.obj" id="35_5dxii"]
-[ext_resource type="ArrayMesh" uid="uid://7gegmduo3itx" path="res://models/terrace_q-fork.obj" id="36_ssnjh"]
-[ext_resource type="ArrayMesh" uid="uid://d1bvui2oi6g1l" path="res://models/terrace_slope.obj" id="37_774sm"]
-[ext_resource type="ArrayMesh" uid="uid://gr4s1g26xu4m" path="res://models/terrace_t-fork.obj" id="38_rrhm0"]
-[ext_resource type="ArrayMesh" uid="uid://dbpq21n6r8eko" path="res://models/terrace_x-fork.obj" id="39_u47gb"]
+[ext_resource type="Script" path="res://scripts/ReMesh/SmoothMesh.gd" id="15_gv8xu"]
+[ext_resource type="Script" path="res://scripts/ReMesh/ModelMesh.gd" id="16_aoao2"]
+[ext_resource type="Texture2D" uid="uid://bt2g2qe134m7o" path="res://ModelAtlas.tres" id="17_mnh0u"]
+[ext_resource type="ArrayMesh" uid="uid://btpyl3cwmin5f" path="res://models/sign.obj" id="17_svc6r"]
+[ext_resource type="ArrayMesh" uid="uid://boljbhl56jg1r" path="res://models/block.obj" id="17_xxmat"]
+[ext_resource type="Material" uid="uid://cuoqo0xmpnukq" path="res://shaders/water.tres" id="28_taxcv"]
 [ext_resource type="Script" path="res://scripts/ReControl/EditorController.gd" id="42_8tggf"]
+[ext_resource type="Script" path="res://scripts/StringTextEdit.gd" id="50_rxynf"]
+[ext_resource type="Script" path="res://scripts/GameButton.gd" id="51_0lhmo"]
+[ext_resource type="Script" path="res://scripts/StringLabel.gd" id="51_wnygd"]
 
-[sub_resource type="VoxelStreamRegionFiles" id="VoxelStreamRegionFiles_tpghp"]
-directory = "res://regions"
-
-[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_h48if"]
+[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_2j6iu"]
 channel = 0
-height = 1.0
 voxel_type = 0
 
-[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_jeyak"]
-library = ExtResource("1_qqh4w")
+[sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_5u5q7"]
+texturing_mode = 1
+mesh_optimization_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vyb7e"]
+render_priority = 0
+shader = ExtResource("2_uc5lo")
+shader_parameter/u_texture_array = ExtResource("2_ggxig")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k7xf1"]
+render_priority = 0
+shader = ExtResource("1_jrjy4")
+shader_parameter/u_texture_array = ExtResource("2_ggxig")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_whtb2"]
+collision_enabled_0 = true
+mesh = ExtResource("17_xxmat")
+
+[sub_resource type="VoxelBlockyLibrary" id="VoxelBlockyLibrary_7saae"]
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelMesh_whtb2")])
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_hha54"]
+library = SubResource("VoxelBlockyLibrary_7saae")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xafub"]
+transparency = 1
+albedo_texture = ExtResource("17_mnh0u")
+texture_filter = 0
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_djh0v"]
+ground_color = Color(0.620735, 0.799609, 0.964844, 1)
+
+[sub_resource type="Sky" id="Sky_8stpe"]
+sky_material = SubResource("PhysicalSkyMaterial_djh0v")
+
+[sub_resource type="Environment" id="Environment_no8sf"]
+background_mode = 2
+sky = SubResource("Sky_8stpe")
+ambient_light_color = Color(0.379061, 0.68455, 0.746094, 1)
 
 [sub_resource type="Resource" id="Resource_c21pw"]
 script = ExtResource("9_xb5mi")
@@ -105,24 +123,59 @@ f = 1.0
 z = 1.0
 r = 0.0
 
+[sub_resource type="QuadMesh" id="QuadMesh_cd132"]
+size = Vector2(100, 100)
+
 [node name="World3D" type="Node3D"]
+script = ExtResource("1_ml853")
+primaries = Array[String](["Arctic", "Tundra", "Steppe", "Heath", "Prarie", "Grassland", "Savanna", "Semidesert", "Desert", "Badland"])
+secondaries = Array[String](["Mountain", "Plateau", "Hills", "Plains", "Lagoon", "Archipelago", "Cape", "Coast", "Ocean"])
+initial_primary = "Grassland"
+initial_secondary = "Plains"
 
 [node name="SlopeMesh" type="VoxelTerrain" parent="."]
-stream = SubResource("VoxelStreamRegionFiles_tpghp")
-generator = SubResource("VoxelGeneratorFlat_h48if")
-mesher = SubResource("VoxelMesherBlocky_jeyak")
+generator = SubResource("VoxelGeneratorFlat_2j6iu")
+mesher = SubResource("VoxelMesherTransvoxel_5u5q7")
+gi_mode = 1
 collision_layer = 3
-material_override = ExtResource("2_oketf")
+material_override = SubResource("ShaderMaterial_vyb7e")
 mesh_block_size = 32
 script = ExtResource("4_epbx7")
-textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5")])
-texture_names = Array[String](["arctic", "tundra", "steppe", "prarie", "grassland", "semidesert", "desert", "badland"])
+textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_xn442"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("10_sq67x"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5")])
+texture_names = Array[String](["arctic", "tundra", "steppe", "heath", "prarie", "grassland", "savanna", "semidesert", "desert", "badland"])
 res = 32
-models = Array[Mesh]([ExtResource("12_rjvra"), ExtResource("12_rjvra"), ExtResource("12_jfncj"), ExtResource("13_dw651"), ExtResource("14_ln8x8"), ExtResource("15_paese"), ExtResource("16_b3ukm"), ExtResource("17_57uqr"), ExtResource("18_366ch"), ExtResource("19_v1nkp"), ExtResource("20_w55sq"), ExtResource("21_xdn0j"), ExtResource("22_fpus7"), ExtResource("23_0dyp3"), ExtResource("24_iwbi4"), ExtResource("25_a5pss"), ExtResource("26_0ha7r"), ExtResource("27_kbioy"), ExtResource("28_kkjox"), ExtResource("29_oibgb"), ExtResource("30_2pa12"), ExtResource("31_xd6qw"), ExtResource("32_td81s"), ExtResource("33_tfgsx"), ExtResource("34_3aj67"), ExtResource("35_5dxii"), ExtResource("36_ssnjh"), ExtResource("37_774sm"), ExtResource("38_rrhm0"), ExtResource("39_u47gb")])
-model_names = Array[String](["solidblock", "hardblock", "hardspire", "hardbowfork", "hardcorner", "hardend", "hardfishfork", "hardheartfork", "hardlfork", "hardmacefork", "hardnarrow", "hardpfork", "hardqfork", "hardslope", "hardtfork", "hardxfork", "terracespire", "terracebowfork", "terracecorner", "terraceend", "terracefishfork", "terraceheartfork", "terracelfork", "terracemacefork", "terracenarrow", "terracepfork", "terraceqfork", "terraceslope", "terracetfork", "terracexfork"])
+generate_library = true
+
+[node name="SmoothMesh" type="VoxelTerrain" parent="."]
+generator = SubResource("VoxelGeneratorFlat_2j6iu")
+mesher = SubResource("VoxelMesherTransvoxel_5u5q7")
+gi_mode = 1
+collision_layer = 3
+material_override = SubResource("ShaderMaterial_k7xf1")
+mesh_block_size = 32
+script = ExtResource("15_gv8xu")
+textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_xn442"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("10_sq67x"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5")])
+texture_names = Array[String](["arctic", "tundra", "steppe", "heath", "prarie", "grassland", "savanna", "semidesert", "desert", "badland"])
+res = 32
+generate_library = true
+
+[node name="ModelMesh" type="VoxelTerrain" parent="."]
+generator = SubResource("VoxelGeneratorFlat_2j6iu")
+mesher = SubResource("VoxelMesherBlocky_hha54")
+gi_mode = 1
+collision_layer = 3
+material_override = SubResource("StandardMaterial3D_xafub")
+mesh_block_size = 32
+script = ExtResource("16_aoao2")
+models = Array[Mesh]([ExtResource("17_xxmat"), ExtResource("17_svc6r")])
+model_names = Array[String](["block", "sign"])
+textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_xn442"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("10_sq67x"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5"), ExtResource("12_rkng1")])
+texture_names = Array[String](["arctic", "tundra", "steppe", "heath", "prarie", "grassland", "savanna", "semidesert", "desert", "badland", "water"])
+res = 32
+generate_library = true
 
 [node name="ThirdPersonActor" parent="." instance=ExtResource("4_jwsea")]
-transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, 0, 3, 0)
 collision_layer = 2
 collision_mask = 2
 walk_turn_force = 90.0
@@ -153,23 +206,30 @@ reach = 1.5
 script = ExtResource("42_8tggf")
 cam_speed_x = 1.0
 cam_speed_y = 1.0
+tool_scale = 0.1
 cam = NodePath("../../CameraBrain/VirtualCamera")
-highlight = NodePath("../../Highlight")
+start_highlight = NodePath("../../StartHighlight")
+end_highlight = NodePath("../../EndHighlight")
 debug_highlight = NodePath("../../Debug_Highlight")
 terrain_label = NodePath("../../GameUI/MarginContainer/HBoxContainer/MarginContainer2/Terrain Label")
-solid_label = NodePath("../../GameUI/MarginContainer/HBoxContainer/MarginContainer4/Solid Label")
+mode_label = NodePath("../../GameUI/MarginContainer/HBoxContainer/MarginContainer4/Mode Label")
+tool_label = NodePath("../../GameUI/MarginContainer/HBoxContainer/MarginContainer10/Tool Label")
+initial_model = "block"
+initial_terrain = "grassland"
+initial_mode = 1
 
 [node name="VoxelViewer" type="VoxelViewer" parent="ThirdPersonActor"]
 enabled_in_editor = true
 
 [node name="CameraBrain" type="Camera3D" parent="."]
 process_priority = 999
-transform = Transform3D(0.999999, -5.16702e-08, 1.67035e-07, 0, 0.955332, 0.295518, -1.74845e-07, -0.295519, 0.955329, 5.01109e-07, 3.88656, 2.86601)
+transform = Transform3D(0.999999, -5.16699e-08, 1.67034e-07, 0, 0.955328, 0.295516, -1.74845e-07, -0.295518, 0.955323, 5.01109e-07, 4.88656, 2.86601)
+environment = SubResource("Environment_no8sf")
 script = ExtResource("7_yeacn")
 
 [node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
 process_priority = 998
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 script = ExtResource("8_q8p8a")
 collides = true
 follow_node = NodePath("../../ThirdPersonActor")
@@ -193,6 +253,7 @@ PauseUI = NodePath("../PauseUI")
 GameUI = NodePath("../GameUI")
 
 [node name="GameUI" type="VBoxContainer" parent="."]
+visible = false
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 63.0
@@ -246,7 +307,7 @@ theme_override_constants/margin_bottom = 10
 
 [node name="Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer3"]
 layout_mode = 2
-text = "Solid: "
+text = "Mode: "
 
 [node name="MarginContainer4" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -256,9 +317,250 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Solid Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer4"]
+[node name="Mode Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer4"]
 layout_mode = 2
-text = "yes"
+
+[node name="MarginContainer5" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer5"]
+layout_mode = 2
+text = "Primary:"
+
+[node name="MarginContainer9" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer9"]
+layout_mode = 2
+text = "Tool: "
+
+[node name="MarginContainer10" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Tool Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer10"]
+layout_mode = 2
+
+[node name="MarginContainer11" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer11"]
+layout_mode = 2
+text = "Primary:"
+
+[node name="MarginContainer6" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Terrain Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer6"]
+layout_mode = 2
+text = "Grassland"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+subtarget = "map"
+getter = "get_primary"
+
+[node name="MarginContainer7" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer7"]
+layout_mode = 2
+text = "Secondary:"
+
+[node name="MarginContainer8" type="MarginContainer" parent="GameUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Solid Label" type="Label" parent="GameUI/MarginContainer/HBoxContainer/MarginContainer8"]
+layout_mode = 2
+text = "Plains"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+subtarget = "map"
+getter = "get_secondary"
+
+[node name="TileRowMargin" type="MarginContainer" parent="GameUI"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileRow" type="HBoxContainer" parent="GameUI/TileRowMargin"]
+layout_mode = 2
+
+[node name="BlockLabelMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="BlockLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/BlockLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Block Pos:"
+
+[node name="BlockPosMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="BlockPos" type="Label" parent="GameUI/TileRowMargin/TileRow/BlockPosMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_target_pos"
+
+[node name="TileLabelMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TileLabelMargin"]
+layout_mode = 2
+text = "Tile Position:"
+
+[node name="TilePosMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TilePos" type="Label" parent="GameUI/TileRowMargin/TileRow/TilePosMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_tile_pos"
+
+[node name="GeoMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="GeoLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/GeoMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Geo
+"
+
+[node name="GeoMargin2" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="GeoLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/GeoMargin2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_target_geo"
+
+[node name="TerrainMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TerrainLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TerrainMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Terrain"
+
+[node name="TerrainMargin2" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TerrainLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TerrainMargin2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_target_terrain"
+
+[node name="TileMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TileMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tile:"
+
+[node name="TileMargin2" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TileMargin2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+subtarget = "map"
+getter = "get_tile"
 
 [node name="PauseUI" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -269,18 +571,28 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="XSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+[node name="CameraSpeedMargin" type="MarginContainer" parent="PauseUI"]
 layout_mode = 2
-size_flags_vertical = 3
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="XSpeedRow" type="HBoxContainer" parent="PauseUI/XSpeedRowMargin"]
+[node name="CameraSpeedRow" type="HBoxContainer" parent="PauseUI/CameraSpeedMargin"]
 layout_mode = 2
 
-[node name="XSpeedNameMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+[node name="XSpeedRowMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XSpeedRow" type="HBoxContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin"]
+layout_mode = 2
+
+[node name="XSpeedNameMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -290,14 +602,14 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="XSpeedName" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedNameMargin"]
+[node name="XSpeedName" type="Label" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow/XSpeedNameMargin"]
 layout_mode = 2
 size_flags_vertical = 1
 text = "Camera Speed X"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="XSpeedBarMargin" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+[node name="XSpeedBarMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -307,9 +619,10 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="XSpeedBar" type="HScrollBar" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedBarMargin"]
+[node name="XSpeedBar" type="HScrollBar" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow/XSpeedBarMargin"]
 layout_mode = 2
 size_flags_vertical = 3
+max_value = 10.0
 step = 0.1
 script = ExtResource("7_5sxmf")
 Value = NodePath("../../XSpeedValueMargin2/XSpeedValue")
@@ -318,7 +631,7 @@ subtarget = "input"
 setter = "set_cam_speed_x"
 getter = "get_cam_speed_x"
 
-[node name="XSpeedValueMargin2" type="MarginContainer" parent="PauseUI/XSpeedRowMargin/XSpeedRow"]
+[node name="XSpeedValueMargin2" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -327,7 +640,7 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="XSpeedValue" type="Label" parent="PauseUI/XSpeedRowMargin/XSpeedRow/XSpeedValueMargin2"]
+[node name="XSpeedValue" type="Label" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/XSpeedRowMargin/XSpeedRow/XSpeedValueMargin2"]
 layout_mode = 2
 size_flags_vertical = 1
 text = "0
@@ -335,18 +648,18 @@ text = "0
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="YSpeedRowMargin" type="MarginContainer" parent="PauseUI"]
+[node name="YSpeedRowMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="YSpeedRow" type="HBoxContainer" parent="PauseUI/YSpeedRowMargin"]
+[node name="YSpeedRow" type="HBoxContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin"]
 layout_mode = 2
 
-[node name="YSpeedNameMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+[node name="YSpeedNameMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -356,14 +669,14 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="YSpeedName" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedNameMargin"]
+[node name="YSpeedName" type="Label" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow/YSpeedNameMargin"]
 layout_mode = 2
 size_flags_vertical = 1
 text = "Camera Speed Y"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="YSpeedBarMargin" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+[node name="YSpeedBarMargin" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -373,9 +686,10 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="YSpeedBar" type="HScrollBar" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedBarMargin"]
+[node name="YSpeedBar" type="HScrollBar" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow/YSpeedBarMargin"]
 layout_mode = 2
 size_flags_vertical = 3
+max_value = 10.0
 step = 0.1
 script = ExtResource("7_5sxmf")
 Value = NodePath("../../YSpeedValueMargin2/YSpeedValue")
@@ -384,7 +698,7 @@ subtarget = "input"
 setter = "set_cam_speed_y"
 getter = "get_cam_speed_y"
 
-[node name="YSpeedValueMargin2" type="MarginContainer" parent="PauseUI/YSpeedRowMargin/YSpeedRow"]
+[node name="YSpeedValueMargin2" type="MarginContainer" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -393,7 +707,7 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="YSpeedValue" type="Label" parent="PauseUI/YSpeedRowMargin/YSpeedRow/YSpeedValueMargin2"]
+[node name="YSpeedValue" type="Label" parent="PauseUI/CameraSpeedMargin/CameraSpeedRow/YSpeedRowMargin/YSpeedRow/YSpeedValueMargin2"]
 layout_mode = 2
 size_flags_vertical = 1
 text = "0
@@ -401,12 +715,231 @@ text = "0
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="TileRowMargin" type="MarginContainer" parent="PauseUI"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileRow" type="HBoxContainer" parent="PauseUI/TileRowMargin"]
+layout_mode = 2
+
+[node name="TileLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/TileLabelMargin"]
+layout_mode = 2
+text = "Tile
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+subtarget = "map"
+getter = "get_tile"
+
+[node name="XLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/XLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "X"
+
+[node name="XPosLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="XPosLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/XPosLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_tile_x"
+
+[node name="YLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/YLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Y
+"
+
+[node name="YPosLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="YPosLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/YPosLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_tile_y"
+
+[node name="ZLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ZLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/ZLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Z
+"
+
+[node name="ZPosLabelMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ZPosLabel" type="Label" parent="PauseUI/TileRowMargin/TileRow/ZPosLabelMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0
+"
+script = ExtResource("51_wnygd")
+target = "/root/game"
+getter = "get_tile_z"
+
+[node name="ResetMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ResetButton" type="Button" parent="PauseUI/TileRowMargin/TileRow/ResetMargin"]
+layout_mode = 2
+text = "Reset Tile
+"
+script = ExtResource("51_0lhmo")
+target = "/root/game"
+subtarget = "map"
+caller = "reset_tile"
+
+[node name="ReloadMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Reload" type="Button" parent="PauseUI/TileRowMargin/TileRow/ReloadMargin"]
+layout_mode = 2
+text = "Reload Map"
+script = ExtResource("51_0lhmo")
+target = "/root/game"
+subtarget = "map"
+caller = "reload_map"
+
+[node name="Clear" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Clear" type="Button" parent="PauseUI/TileRowMargin/TileRow/Clear"]
+layout_mode = 2
+text = "Clear Map"
+script = ExtResource("51_0lhmo")
+target = "/root/game"
+subtarget = "map"
+caller = "clear_map"
+
+[node name="NameMargin" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="Name" type="TextEdit" parent="PauseUI/TileRowMargin/TileRow/NameMargin"]
+layout_mode = 2
+text = "map"
+script = ExtResource("50_rxynf")
+target = "/root/game"
+subtarget = "map"
+setter = "set_save_location"
+getter = "get_save_location"
+
+[node name="Save" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Save" type="Button" parent="PauseUI/TileRowMargin/TileRow/Save"]
+layout_mode = 2
+text = "Save Map"
+script = ExtResource("51_0lhmo")
+target = "/root/game"
+subtarget = "map"
+caller = "save_map"
+
+[node name="Load" type="MarginContainer" parent="PauseUI/TileRowMargin/TileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Load" type="Button" parent="PauseUI/TileRowMargin/TileRow/Load"]
+layout_mode = 2
+text = "Load Map"
+script = ExtResource("51_0lhmo")
+target = "/root/game"
+subtarget = "map"
+caller = "load_map"
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
 
-[node name="Highlight" parent="." instance=ExtResource("13_tmnho")]
+[node name="StartHighlight" parent="." instance=ExtResource("13_tmnho")]
+
+[node name="EndHighlight" parent="." instance=ExtResource("13_tmnho")]
 
 [node name="Debug_Highlight" parent="." instance=ExtResource("14_00k5w")]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 50, 5, 50)
+visible = false
+material_override = ExtResource("28_taxcv")
+transparency = 0.75
+mesh = SubResource("QuadMesh_cd132")

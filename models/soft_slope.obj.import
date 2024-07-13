@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bkdeol4ca6o6q"
+path="res://.godot/imported/soft_slope.obj-3f8e9ab2c56605b2dc515f44382c4253.mesh"
+
+[deps]
+
+files=["res://.godot/imported/soft_slope.obj-3f8e9ab2c56605b2dc515f44382c4253.mesh"]
+
+source_file="res://models/soft_slope.obj"
+dest_files=["res://.godot/imported/soft_slope.obj-3f8e9ab2c56605b2dc515f44382c4253.mesh", "res://.godot/imported/soft_slope.obj-3f8e9ab2c56605b2dc515f44382c4253.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

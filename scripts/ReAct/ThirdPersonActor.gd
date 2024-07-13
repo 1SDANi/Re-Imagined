@@ -76,11 +76,11 @@ func _ready() -> void:
 	statenames.append("Running")
 	set_state("Standing")
 
-func append_state(key : String, value : MoveState):
+func append_state(key : String, value : MoveState) -> void:
 	statenames.append(key)
 	states.append(value)
 
-func set_state(key : String):
+func set_state(key : String) -> void:
 	state = statenames.find(key)
 	max_speed = states[state].max_speed
 	acceleration = states[state].acceleration
@@ -93,7 +93,7 @@ func set_state(key : String):
 	turn_peak_time = states[state].turn_peak_time
 	move_peak_time = states[state].peak_time
 
-func move(vector : Vector2, delta : float):
+func move(vector : Vector2, delta : float) -> void:
 	var v : Vector3 = Vector3(vector.x, 0, vector.y)
 
 	if not is_zero_approx(v.length()):

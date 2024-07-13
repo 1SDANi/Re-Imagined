@@ -25,6 +25,8 @@ var _solid_lock : bool
 
 var terrain : String = "grassland"
 var solid : bool = true
+var start_pos : Vector3i
+var end_pos : Vector3i
 
 func _ready() -> void:
 	game.input.add_mouse_dir(InputHandler.MOUSE_DIR.UP, "Look Up")
@@ -37,8 +39,8 @@ func _ready() -> void:
 	game.input.add_input("RX+", "Look Right GMP")
 	game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_LEFT, "Place")
 	game.input.add_input("RR", "Place GMP")
-	game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_RIGHT, "Solid")
-	game.input.add_input("RU", "Solid GMP")
+	game.input.add_key(Key.KEY_Q, "Solid")
+	game.input.add_input("LB", "Solid GMP")
 	game.input.add_key(Key.KEY_1, "Arctic")
 	game.input.add_key(Key.KEY_2, "Tundra")
 	game.input.add_key(Key.KEY_3, "Steppe")
@@ -47,6 +49,9 @@ func _ready() -> void:
 	game.input.add_key(Key.KEY_6, "Semidesert")
 	game.input.add_key(Key.KEY_7, "Desert")
 	game.input.add_key(Key.KEY_8, "Badland")
+	game.input.add_key(Key.KEY_9, "Water")
+	game.input.add_key(Key.KEY_C, "Copy")
+	game.input.add_key(Key.KEY_V, "Paste")
 	game.input.add_input("LU", "Fertile GMP")
 	game.input.add_input("LL", "Rugged GMP")
 	game.input.add_input("LR", "Harsh GMP")
@@ -75,6 +80,8 @@ func _ready() -> void:
 	_debug_highlight = get_node(debug_highlight)
 	_pause_lock = false
 	_place_lock = false
+	start_pos = Vector3i.ZERO
+	end_pos = Vector3i.ZERO
 
 func _physics_process(delta : float) -> void:
 	handle_pausing()
@@ -170,6 +177,9 @@ func handle_placing() -> void:
 	var semidesert : float = game.input.get_action_value("Semidesert")
 	var desert : float = game.input.get_action_value("Desert")
 	var badland : float = game.input.get_action_value("Badland")
+	var water : float = game.input.get_action_value("Water")
+	var copy : float = game.input.get_action_value("Copy")
+	var paste : float = game.input.get_action_value("Paste")
 	var fertile : float = game.input.get_action_value("Fertile GMP")
 	var rugged : float = game.input.get_action_value("Rugged GMP")
 	var harsh : float = game.input.get_action_value("Harsh GMP")
@@ -196,24 +206,25 @@ func handle_placing() -> void:
 		_debug_highlight.position = pos + forward * reach
 	_highlight.position = Vector3(targeti) + grid
 
-	if arctic: terrain = "arctic"
-	elif tundra: terrain = "tundra"
-	elif steppe: terrain = "steppe"
-	elif prarie: terrain = "prarie"
-	elif grassland: terrain = "grassland"
-	elif semidesert: terrain = "semidesert"
-	elif desert: terrain = "desert"
-	elif badland: terrain = "badland"
+	if arctic: terrain = set_terrain("arctic")
+	elif tundra: terrain = set_terrain("tundra")
+	elif steppe: terrain = set_terrain("steppe")
+	elif prarie: terrain = set_terrain("prarie")
+	elif grassland: terrain = set_terrain("grassland")
+	elif semidesert: terrain = set_terrain("semidesert")
+	elif desert: terrain = set_terrain("desert")
+	elif badland: terrain = set_terrain("badland")
+	elif water: terrain = set_terrain("water")
 	elif not tropical:
-		if deadly: terrain = "arctic"
-		elif harsh: terrain = "tundra"
-		elif rugged: terrain = "steppe"
-		elif fertile: terrain = "prarie"
+		if deadly: terrain = set_terrain("arctic")
+		elif harsh: terrain = set_terrain("tundra")
+		elif rugged: terrain = set_terrain("steppe")
+		elif fertile: terrain = set_terrain("prarie")
 	else:
-		if fertile: terrain = "grassland"
-		elif harsh: terrain = "semidesert"
-		elif rugged: terrain = "desert"
-		elif deadly: terrain = "badland"
+		if fertile: terrain = set_terrain("grassland")
+		elif harsh: terrain = set_terrain("semidesert")
+		elif rugged: set_terrain("desert")
+		elif deadly: set_terrain("badland")
 	_terrain_label.set_text(terrain)
 
 	if _solid_lock:
@@ -225,10 +236,14 @@ func handle_placing() -> void:
 		_solid_label.set_text("yes" if solid else "no")
 
 	if _place_lock:
-		if is_zero_approx(place):
+		if is_zero_approx(place) and is_zero_approx(copy) and is_zero_approx(place):
 			_place_lock = false
+			if is_zero_approx(place):
+				end_pos = target
 	elif not is_zero_approx(place):
 		_place_lock = true
 
+		start_pos = target
 		mesh.place(target, terrain, solid)
 
+func set_terrain(t : String): terrain = ("air" if terrain == t else t)

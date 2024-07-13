@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://di3ievrtooad7"
+path="res://.godot/imported/soft_end.obj-10f29058fdf8713836d89812d9ef6d00.mesh"
+
+[deps]
+
+files=["res://.godot/imported/soft_end.obj-10f29058fdf8713836d89812d9ef6d00.mesh"]
+
+source_file="res://models/soft_end.obj"
+dest_files=["res://.godot/imported/soft_end.obj-10f29058fdf8713836d89812d9ef6d00.mesh", "res://.godot/imported/soft_end.obj-10f29058fdf8713836d89812d9ef6d00.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ws0rrd03n8nf"
+path="res://.godot/imported/hard_l-fork_cliff_l.obj-c343be44de92e35bcd495dea58da65fe.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hard_l-fork_cliff_l.obj-c343be44de92e35bcd495dea58da65fe.mesh"]
+
+source_file="res://models/hard_l-fork_cliff_l.obj"
+dest_files=["res://.godot/imported/hard_l-fork_cliff_l.obj-c343be44de92e35bcd495dea58da65fe.mesh", "res://.godot/imported/hard_l-fork_cliff_l.obj-c343be44de92e35bcd495dea58da65fe.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

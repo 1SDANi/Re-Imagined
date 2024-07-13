@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://b8gcfmu1ejojo"
+path="res://.godot/imported/heathtile.png-66e2bb8a6d6cb1b2bb90d3fb53dc1875.image"
+
+[deps]
+
+source_file="res://textures/heathtile.png"
+dest_files=["res://.godot/imported/heathtile.png-66e2bb8a6d6cb1b2bb90d3fb53dc1875.image"]
+
+[params]
+

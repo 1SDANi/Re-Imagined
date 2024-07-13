@@ -64,16 +64,21 @@ func update_all(delta : float) -> void:
 	update_mouse_buttons(delta)
 
 func update_inputs(delta : float) -> void:
-	for input in gmp:
-		actions[gmp[input]].update(Input.get_action_strength(input), delta)
+	for input : String in gmp:
+		var i : InputAction = actions[gmp[input]]
+		i.update(Input.get_action_strength(input), delta)
 
 func update_keys(delta : float) -> void:
-	for action in kbm:
-		actions[kbm[action]].update(Input.is_key_pressed(action), delta)
+	for action : Key in kbm:
+		var a : InputAction = actions[kbm[action]]
+		a.update(Input.is_key_pressed(action), delta)
 
 func update_mouse_buttons(delta : float) -> void:
-	for action in mob:
-		actions[mob[action]].update(Input.is_mouse_button_pressed(action), delta)
+	for action : MouseButton in mob:
+		if action == MouseButton.MOUSE_BUTTON_WHEEL_UP: continue
+		if action == MouseButton.MOUSE_BUTTON_WHEEL_DOWN: continue
+		var a : InputAction = actions[mob[action]]
+		a.update(Input.is_mouse_button_pressed(action), delta)
 
 func update_mouse_dir(delta : float) -> void:
 	var up : float = mouse_motion.y if mouse_motion.y > 0.0 else 0.0
@@ -81,91 +86,127 @@ func update_mouse_dir(delta : float) -> void:
 	var right : float = mouse_motion.x if mouse_motion.x > 0.0 else 0.0
 	var left : float = -mouse_motion.x if mouse_motion.x < 0.0 else 0.0
 
-	actions[mod[MOUSE_DIR.UP]].update(up, delta)
-	actions[mod[MOUSE_DIR.DOWN]].update(down, delta)
-	actions[mod[MOUSE_DIR.LEFT]].update(left, delta)
-	actions[mod[MOUSE_DIR.RIGHT]].update(right, delta)
+	var up_action : InputAction = actions[mod[MOUSE_DIR.UP]]
+	var down_action : InputAction = actions[mod[MOUSE_DIR.DOWN]]
+	var left_action : InputAction = actions[mod[MOUSE_DIR.LEFT]]
+	var right_action : InputAction = actions[mod[MOUSE_DIR.RIGHT]]
+
+	up_action.update(up, delta)
+	down_action.update(down, delta)
+	left_action.update(left, delta)
+	right_action.update(right, delta)
 	mouse_motion = Vector2.ZERO
 
-func mouse_motion_event(event) -> void:
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		if event.relative.x != 0:
-			mouse_motion.x = event.relative.x
-		if event.relative.y != 0:
-			mouse_motion.y = event.relative.y
+func mouse_wheel_event(event : InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var e : InputEventMouseButton = event
+		var action : InputAction = actions[mob[e.button_index]]
+		if e.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
+			action.update(1.0, 1.0)
+		elif e.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
+			action.update(1.0, 1.0)
+
+func mouse_motion_event(event : InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var e : InputEventMouseMotion = event
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			if e.relative.x != 0:
+				mouse_motion.x = e.relative.x
+			if e.relative.y != 0:
+				mouse_motion.y = e.relative.y
 
 func is_action_zero(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].is_zero()
+	var a : InputAction = actions[action]
+
+	return a.is_zero()
 
 func is_action_high(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].is_high()
+	var a : InputAction = actions[action]
+
+	return a.is_high()
 
 func is_action_held(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].is_held()
+	var a : InputAction = actions[action]
+
+	return a.is_held()
 
 func was_action_held(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].was_held()
+	var a : InputAction = actions[action]
+
+	return a.was_held()
 
 func was_action_tapped(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].was_tapped()
+	var a : InputAction = actions[action]
+
+	return a.was_tapped()
 
 func was_action_doubletapped(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].was_doubletapped()
+	var a : InputAction = actions[action]
+
+	return a.was_doubletapped()
 
 func was_action_pressed(action : String) -> bool:
 	if not has_action(action):
 		return false
 
-	return actions[action].was_pressed()
+	var a : InputAction = actions[action]
+
+	return a.was_pressed()
 
 func untap_action(action : String) -> void:
-	actions[action].untap()
+	var a : InputAction = actions[action]
+	a.untap()
 
 func undoubletap_action(action : String) -> void:
-	actions[action].untap()
+	var a : InputAction = actions[action]
+	a.untap()
 
 func get_action_value(action : String) -> float:
 	if not has_action(action) or is_action_zero(action):
 		return 0.0
 
-	return actions[action].value
+	var a : InputAction = actions[action]
+
+	return a.value
 
 func get_action_duration(action : String) -> float:
+	var a : InputAction = actions[action]
+
 	if not has_action(action) or is_action_zero(action) or \
-			not actions[action].statehistory.size() > 0:
+			not a.statehistory.size() > 0:
 		return 0.0
 
-	return actions[action].statehistory[0]["duration"]
+	return a.statehistory[0]["duration"]
 
 func get_axis_value_spacey(action_pos : String, action_neg : String, \
 		bias_pos : bool) -> float:
 	if not (has_action(action_pos) and has_action(action_neg)):
 		return 0.0
 
-	var pos_value = get_action_value(action_pos)
-	var pos_duration = get_action_duration(action_pos)
-	var pos_zero = is_action_zero(action_pos)
-	var neg_value = get_action_value(action_neg)
-	var neg_duration = get_action_duration(action_neg)
-	var neg_zero = is_action_zero(action_neg)
+	var pos_value : float = get_action_value(action_pos)
+	var pos_duration : float = get_action_duration(action_pos)
+	var pos_zero : float = is_action_zero(action_pos)
+	var neg_value : float = get_action_value(action_neg)
+	var neg_duration : float = get_action_duration(action_neg)
+	var neg_zero : float = is_action_zero(action_neg)
 
 	if not pos_zero and (pos_duration < neg_duration or neg_zero):
 		return pos_value
@@ -180,10 +221,10 @@ func get_axis_value_biased(action_pos : String, action_neg : String, \
 	if not (has_action(action_pos) and has_action(action_neg)):
 		return 0.0
 
-	var pos_value = get_action_value(action_pos)
-	var pos_zero = is_action_zero(action_pos)
-	var neg_value = get_action_value(action_neg)
-	var neg_zero = is_action_zero(action_neg)
+	var pos_value : float = get_action_value(action_pos)
+	var pos_zero : float = is_action_zero(action_pos)
+	var neg_value : float = get_action_value(action_neg)
+	var neg_zero : float = is_action_zero(action_neg)
 
 	if bias_pos:
 		if not pos_zero:
@@ -200,16 +241,17 @@ func get_axis_value_total(action_pos : String, action_neg : String, absolute : b
 	if not (has_action(action_pos) and has_action(action_neg)):
 		return 0.0
 
-	var pos_value = get_action_value(action_pos)
-	var neg_value = get_action_value(action_neg)
+	var pos_value : float = get_action_value(action_pos)
+	var neg_value : float = get_action_value(action_neg)
 
 	return pos_value - (neg_value * (1 if absolute else -1))
 
 func clear_action_history(action : String) -> void:
-	actions[action].clear_history()
+	var a : InputAction = actions[action]
+	a.clear_history()
 
 func clear_action_histories(_actions : Array[String]) -> void:
-	for action in _actions:
+	for action : String in _actions:
 		clear_action_history(action)
 
 func has_input(input : String) -> bool:
@@ -259,10 +301,14 @@ func add_input(input : String, action : String) -> bool:
 	if has_input(input):
 		return false
 
-	set_input(input, action)
+	if not set_input(input, action):
+		return false
 
-	if not has_action(action):
-		add_action(action)
+	if has_action(action):
+		return false
+
+	if not add_action(action):
+		return false
 
 	return true
 
@@ -270,10 +316,14 @@ func add_key(key : Key, action : String) -> bool:
 	if has_key(key):
 		return false
 
-	set_key(key, action)
+	if not set_key(key, action):
+		return false
 
-	if not has_action(action):
-		add_action(action)
+	if has_action(action):
+		return false
+
+	if not add_action(action):
+		return false
 
 	return true
 
@@ -281,10 +331,14 @@ func add_mouse_dir(dir : MOUSE_DIR, action : String) -> bool:
 	if has_mouse_dir(dir):
 		return false
 
-	set_mouse_dir(dir, action)
+	if not set_mouse_dir(dir, action):
+		return false
 
-	if not has_action(action):
-		add_action(action)
+	if has_action(action):
+		return false
+
+	if not add_action(action):
+		return false
 
 	return true
 
@@ -292,10 +346,14 @@ func add_mouse_button(mouse_button : MouseButton, action : String) -> bool:
 	if has_mouse_button(mouse_button):
 		return false
 
-	set_mouse_button(mouse_button, action)
+	if not set_mouse_button(mouse_button, action):
+		return false
 
-	if not has_action(action):
-		add_action(action)
+	if has_action(action):
+		return false
+
+	if not add_action(action):
+		return false
 
 	return true
 
@@ -340,12 +398,25 @@ func add_action(action : String) -> bool:
 		return false
 
 	actions[action] = InputAction.new()
-	set_deadzone(action, default_deadzone)
-	set_tap_threshold(action, default_tap_threshold)
-	set_doubletap_threshold(action, default_doubletap_threshold)
-	set_hold_threshold(action, default_hold_threshold)
-	set_high_threshold(action, default_high_threshold)
-	set_buffer_length(action, default_buffer_length)
+
+	if not set_deadzone(action, default_deadzone):
+		return false
+
+	if not set_tap_threshold(action, default_tap_threshold):
+		return false
+
+	if not set_doubletap_threshold(action, default_doubletap_threshold):
+		return false
+
+	if not set_hold_threshold(action, default_hold_threshold):
+		return false
+
+	if not set_high_threshold(action, default_high_threshold):
+		return false
+
+	if not set_buffer_length(action, default_buffer_length):
+		return false
+
 	return true
 
 func set_deadzone(action: String, deadzone : float) -> bool:

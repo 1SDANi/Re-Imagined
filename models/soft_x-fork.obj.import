@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cr4dil6uwkkpr"
+path="res://.godot/imported/soft_x-fork.obj-e8c4cdf60b2483a851827e8c74f1ff9d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/soft_x-fork.obj-e8c4cdf60b2483a851827e8c74f1ff9d.mesh"]
+
+source_file="res://models/soft_x-fork.obj"
+dest_files=["res://.godot/imported/soft_x-fork.obj-e8c4cdf60b2483a851827e8c74f1ff9d.mesh", "res://.godot/imported/soft_x-fork.obj-e8c4cdf60b2483a851827e8c74f1ff9d.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
