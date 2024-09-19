@@ -4,55 +4,48 @@ extends Controller
 @export var cam_speed_x : float
 @export var cam_speed_y : float
 
-@export var tool_scale : float
-
 @export var cam : NodePath
 @export var start_highlight : NodePath
 @export var end_highlight : NodePath
 @export var debug_highlight : NodePath
-
-@export var terrain_label : NodePath
-@export var mode_label : NodePath
-@export var tool_label : NodePath
+@export var grid_highlight : NodePath
 
 @export var initial_rot : int
 @export var initial_model : String
-@export var initial_terrain : String
-@export var initial_mode : MapHandler.MODE
-@export var initial_tool : MapHandler.TOOL
 
-var _terrain_label : Label
-var _mode_label : Label
-var _tool_label : Label
+@export var initial_texture_1 : String
+@export var initial_texture_2 : String
+@export var initial_texture_3 : String
+@export var initial_texture_4 : String
+
+@export var initial_weight_r : float
+@export var initial_weight_g : float
+@export var initial_weight_b : float
+@export var initial_weight_a : float
+
+@export var initial_smooth_value : float
+@export var initial_slope_value : float
+
+@export var initial_mode : MapHandler.MODE
 
 var _cam : VirtualCamera3D
 var _start_highlight : Node3D
 var _end_highlight : Node3D
 var _debug_highlight : Node3D
+var _grid_highlight : Node3D
 
 var _pause_lock : bool
 var _place_lock : bool
 var _ymove_lock : bool
-var _mode_lock : bool
-var _tool_lock : bool
-var _terrain_lock : bool
+var _command_lock : bool
 
-var model : String
-var rot : int
-var terrain : String
-var mode : MapHandler.MODE
-var tool : MapHandler.TOOL
-var start_pos : Vector3i
-var dragging : bool
+var start_pos : bool
+var end_pos : bool
+var commanding : bool
+var opening : bool
 
 func _ready() -> void:
 	var action : InputAction
-
-	rot = initial_rot
-	model = initial_model
-	terrain = initial_terrain
-	mode = initial_mode
-	tool = initial_tool
 
 	if not game.input.add_mouse_dir(InputHandler.MOUSE_DIR.UP, "Look Up"):
 		print("failed to add input")
@@ -70,9 +63,9 @@ func _ready() -> void:
 		print("failed to add input")
 	if not game.input.add_input("RX+", "Look Right GMP"):
 		print("failed to add input")
-	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_LEFT, "Place"):
+	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_LEFT, "Use Command"):
 		print("failed to add input")
-	if not game.input.add_input("RR", "Place GMP"):
+	if not game.input.add_input("RR", "Use Command GMP"):
 		print("failed to add input")
 	if not game.input.add_key(Key.KEY_TAB, "Mode"):
 		print("failed to add input")
@@ -82,21 +75,21 @@ func _ready() -> void:
 		print("failed to add input")
 	if not game.input.add_input("RU", "Tool GMP"):
 		print("failed to add input")
-	if not game.input.add_key(Key.KEY_Q, "Last Primary"):
+	if not game.input.add_key(Key.KEY_Q, "Close Menu"):
 		print("failed to add input")
-	if not game.input.add_key(Key.KEY_E, "Next Primary"):
+	if not game.input.add_key(Key.KEY_E, "Open Menu"):
 		print("failed to add input")
-	if not game.input.add_input("LL", "Last Primary GMP"):
+	if not game.input.add_input("LL", "Close Menu GMP"):
 		print("failed to add input")
-	if not game.input.add_input("LR", "Next Primary GMP"):
+	if not game.input.add_input("LR", "Open Right GMP"):
 		print("failed to add input")
-	if not game.input.add_key(Key.KEY_F, "Last Secondary"):
+	if not game.input.add_key(Key.KEY_F, "Command Down"):
 		print("failed to add input")
-	if not game.input.add_key(Key.KEY_R, "Next Secondary"):
+	if not game.input.add_key(Key.KEY_R, "Command Up"):
 		print("failed to add input")
-	if not game.input.add_input("LD", "Last Secondary GMP"):
+	if not game.input.add_input("LD", "Command Down GMP"):
 		print("failed to add input")
-	if not game.input.add_input("LU", "Next Secondary GMP"):
+	if not game.input.add_input("LU", "Command Up GMP"):
 		print("failed to add input")
 	if not game.input.add_key(Key.KEY_C, "Copy"):
 		print("failed to add input")
@@ -153,17 +146,21 @@ func _ready() -> void:
 	game.input.set_cam_speed_x(cam_speed_x)
 	game.input.set_cam_speed_y(cam_speed_y)
 	_cam = get_node(cam)
-	_terrain_label = get_node(terrain_label)
-	_mode_label = get_node(mode_label)
-	_tool_label = get_node(tool_label)
 	_start_highlight = get_node(start_highlight)
 	_end_highlight = get_node(end_highlight)
 	_debug_highlight = get_node(debug_highlight)
+	_grid_highlight = get_node(grid_highlight)
 	_pause_lock = false
 	_place_lock = false
-	dragging = false
-	_mode_label.set_text(MapHandler.MODE_NAMES[mode])
-	_tool_label.set_text(MapHandler.TOOL_NAMES[tool])
+
+	game.set_actor((get_parent() as Actor))
+	game.set_controller(self)
+
+	await owner.ready
+
+	var _wheel : EditorWheel = EditorWheel.new(get_parent() as Actor, self)
+
+	update_target()
 
 func _physics_process(delta : float) -> void:
 	handle_pausing()
@@ -259,17 +256,78 @@ func handle_placing(delta: float) -> void:
 	action.update(0.0, delta)
 	action = game.input.actions["Next Texture"]
 	action.update(0.0, delta)
-	var primary : float = 0.0
-	primary -= game.input.get_action_value("Last Primary")
-	primary += game.input.get_action_value("Next Primary")
-	primary -= game.input.get_action_value("Last Primary GMP")
-	primary += game.input.get_action_value("Next Primary GMP")
-	var secondary : float = 0.0
-	secondary -= game.input.get_action_value("Last Secondary")
-	secondary += game.input.get_action_value("Next Secondary")
-	secondary -= game.input.get_action_value("Last Secondary GMP")
-	secondary += game.input.get_action_value("Next Secondary GMP")
 
+	var command : float = 0.0
+	command += game.input.get_action_value("Command Down")
+	command -= game.input.get_action_value("Command Up")
+	command += game.input.get_action_value("Command Up GMP")
+	command -= game.input.get_action_value("Command Down GMP")
+	var menu : float = 0.0
+	menu += game.input.get_action_value("Open Menu")
+	menu -= game.input.get_action_value("Close Menu")
+	menu += game.input.get_action_value("Open Menu GMP")
+	menu -= game.input.get_action_value("Close Menu GMP")
+	var use : float = 0.0
+	menu += game.input.get_action_value("Use Command")
+	menu += game.input.get_action_value("Use Command GMP")
+	var use_held : int = 0
+	use_held += 1 if game.input.was_action_held("Use Command") else 0
+	use_held += 1 if game.input.was_action_held("Use Command GMP") else 0
+	if use_held > 0: print("opened")
+
+	var use_tapped : int = 0
+	use_tapped += 1 if game.input.was_action_tapped("Use Command") else 0
+	use_tapped += 1 if game.input.was_action_tapped("Use Command GMP") else 0
+
+	var open_held : int = 0
+	open_held += 1 if game.input.was_action_held("Open Menu") else 0
+	open_held += 1 if game.input.was_action_held("Open Menu GMP") else 0
+	if open_held > 0: print("opened")
+
+	var open_tapped : int = 0
+	open_tapped += 1 if game.input.was_action_tapped("Open Menu") else 0
+	open_tapped += 1 if game.input.was_action_tapped("Open Menu GMP") else 0
+
+	update_target()
+
+	if commanding:
+		if use_held > 0:
+			(get_parent() as Actor).command_use_release_hold()
+		elif use_tapped > 0:
+			(get_parent() as Actor).command_use_release_tap()
+			commanding = false
+
+	if opening:
+		if use_held > 0:
+			(get_parent() as Actor).command_open_release_hold()
+		elif use_tapped > 0:
+			(get_parent() as Actor).command_open_release_tap()
+			opening = false
+
+	if _command_lock:
+		if is_zero_approx(command) and is_zero_approx(menu):
+			_command_lock = false
+	elif not is_zero_approx(command) or not is_zero_approx(menu) or \
+		not is_zero_approx(use):
+		_command_lock = true
+		if command > 0:
+			(get_parent() as Actor).command_up()
+		elif command < 0:
+			(get_parent() as Actor).command_down()
+		if menu > 0:
+			(get_parent() as Actor).command_open()
+			opening = true
+		elif menu < 0:
+			(get_parent() as Actor).command_close()
+		if not is_zero_approx(use):
+			(get_parent() as Actor).command_use()
+			commanding = true
+
+	elif not is_zero_approx(place) or not is_zero_approx(copy) or \
+		not is_zero_approx(paste) or not is_zero_approx(reskin):
+		_place_lock = true
+
+func update_target() -> void:
 	var mesh : VoxelMesh = game.get_mode_mesh()
 	var parent_pos : Vector3 = (get_parent() as ThirdPersonActor).position
 	var pos : Vector3 = mesh.to_local(parent_pos) + Vector3.DOWN / 2
@@ -278,173 +336,20 @@ func handle_placing(delta: float) -> void:
 	if target.y < 0.0: target.y -= 1.0
 	if target.z < 0.0: target.z -= 1.0
 	game.targeti = target + Vector3.DOWN / 2
-	var grid : Vector3 = Vector3.UP * 0.5 + Vector3.RIGHT * 0.5 + Vector3.BACK * 0.5
 
 	if _debug_highlight != null:
 		_debug_highlight.position = pos
-	_start_highlight.position = Vector3(game.targeti) + grid
-	if not dragging:
-		_end_highlight.position = Vector3(game.targeti) + grid
+	if _grid_highlight != null:
+		_grid_highlight.position = Vector3(Vector3i(target + Vector3.DOWN / 2))
 
-	if _terrain_lock:
-		if is_zero_approx(next) and is_zero_approx(last) and \
-			is_zero_approx(primary) and is_zero_approx(secondary):
-			_terrain_lock = false
-		else:
-			next = 0
-			last = 0
-			primary = 0
-			secondary = 0
-	elif not is_zero_approx(next) or not is_zero_approx(last) or \
-		not is_zero_approx(primary) or not is_zero_approx(secondary):
-		_terrain_lock = true
+func select_start(pos : Vector3i) -> void:
+		if not _start_highlight.visible: _start_highlight.visible = true
+		_start_highlight.position = Vector3(pos)
 
-	var index : int
-	if primary > 0.0:
-		index = game.map.primaries.find(game.map.primary)
-		if index == game.map.primaries.size() - 1:
-			game.map.primary = game.map.primaries[0]
-		else:
-			game.map.primary = game.map.primaries[index + 1]
-		next = 0.0
-	elif primary < 0.0:
-		index = game.map.primaries.find(game.map.primary)
-		if index == 0:
-			game.map.primary = game.map.primaries[game.map.primaries.size() - 1]
-		else:
-			game.map.primary = game.map.primaries[index - 1]
-		next = 0.0
-	elif secondary > 0.0:
-		index = game.map.secondaries.find(game.map.secondary)
-		if index == game.map.secondaries.size() - 1:
-			game.map.secondary = game.map.secondaries[0]
-		else:
-			game.map.secondary = game.map.secondaries[index + 1]
-		next = 0.0
-	elif secondary < 0.0:
-		index = game.map.secondaries.find(game.map.secondary)
-		if index == 0:
-			game.map.secondary = game.map.secondaries[game.map.secondaries.size() - 1]
-		else:
-			game.map.secondary = game.map.secondaries[index - 1]
-		next = 0.0
+func select_end(pos : Vector3i) -> void:
+		if not _end_highlight.visible: _end_highlight.visible = true
+		_end_highlight.position = Vector3(pos)
 
-	var m : int = mesh.texture_names.find(terrain)
-	if next:
-		if m >= mesh.texture_names.size() - 1: terrain = mesh.texture_names[0]
-		else: terrain = mesh.texture_names[m + 1]
-	elif last:
-		if m <= 0: terrain = mesh.texture_names[mesh.texture_names.size() - 1]
-		else: terrain = mesh.texture_names[m - 1]
-	_terrain_label.set_text(terrain)
-
-	if _mode_lock:
-		if is_zero_approx(mode_toggle):
-			_mode_lock = false
-	elif not is_zero_approx(mode_toggle):
-		_mode_lock = true
-		match(mode):
-			MapHandler.MODE.MODEL:
-				mode = MapHandler.MODE.SLOPE
-				game.mode = MapHandler.MODE.SLOPE
-			MapHandler.MODE.SLOPE:
-				mode = MapHandler.MODE.SMOOTH
-				game.mode = MapHandler.MODE.SMOOTH
-			MapHandler.MODE.SMOOTH:
-				mode = MapHandler.MODE.MODEL
-				game.mode = MapHandler.MODE.MODEL
-
-		_mode_label.set_text(MapHandler.MODE_NAMES[mode])
-
-	if _tool_lock:
-		if is_zero_approx(tool_toggle):
-			_tool_lock = false
-	elif not is_zero_approx(tool_toggle):
-		_tool_lock = true
-		match(tool):
-			MapHandler.TOOL.PLACE:
-				tool = MapHandler.TOOL.MAX
-			MapHandler.TOOL.MAX:
-				tool = MapHandler.TOOL.REMOVE
-			MapHandler.TOOL.REMOVE:
-				tool = MapHandler.TOOL.GROW
-			MapHandler.TOOL.GROW:
-				tool = MapHandler.TOOL.SHRINK
-			MapHandler.TOOL.SHRINK:
-				tool = MapHandler.TOOL.PLACE
-
-		_tool_label.set_text(MapHandler.TOOL_NAMES[tool])
-
-	if _place_lock:
-		if is_zero_approx(place) and is_zero_approx(copy) and \
-			is_zero_approx(paste) and is_zero_approx(reskin):
-			_place_lock = false
-			if not dragging: return
-			var r : int = 1
-			var s : int = 1
-			var t : int = 1
-			var i : int = game.targeti.x - start_pos.x
-			var j : int = game.targeti.y - start_pos.y
-			var k : int = game.targeti.z - start_pos.z
-			if i < 0:
-				i = -i
-				r = -r
-			if j < 0:
-				j = -j
-				s = -s
-			if k < 0:
-				k = -k
-				t = -t
-			var a : int
-			var b : int
-			var c : int
-			for x : int in range(i + 1):
-				for y : int in range(j + 1):
-					for z : int in range(k + 1):
-						a = start_pos.x + x * r
-						b = start_pos.y + y * s
-						c = start_pos.z + z * t
-						var at : Vector3i = Vector3i(a, b, c)
-						if mode in MapHandler.SOFT_MODES:
-							(mesh as SoftMesh).set_blend(at, Color(1.0, 0.0, 0.0, 0.0))
-							(mesh as SoftMesh).set_tex(at, terrain)
-							match(tool):
-								MapHandler.TOOL.PLACE:
-									(mesh as SoftMesh).place_geo(at)
-								MapHandler.TOOL.MAX:
-									(mesh as SoftMesh).max_geo(at)
-								MapHandler.TOOL.REMOVE:
-									(mesh as SoftMesh).remove_geo(at)
-								MapHandler.TOOL.GROW:
-									(mesh as SoftMesh).change_geo(at, -tool_scale)
-								MapHandler.TOOL.SHRINK:
-									(mesh as SoftMesh).change_geo(at, tool_scale)
-						elif mode == MapHandler.MODE.MODEL:
-							var voxel : int = (mesh as ModelMesh).get_model(model, rot, terrain)
-							match(tool):
-								MapHandler.TOOL.PLACE:
-									(mesh as ModelMesh).place_voxel(at, voxel)
-								MapHandler.TOOL.MAX:
-									(mesh as ModelMesh).place_voxel(at, voxel)
-								MapHandler.TOOL.REMOVE:
-									(mesh as ModelMesh).remove_voxel(at)
-								MapHandler.TOOL.GROW:
-									(mesh as ModelMesh).place_voxel(at, voxel)
-								MapHandler.TOOL.SHRINK:
-									(mesh as ModelMesh).remove_voxel(at)
-			dragging = false
-	elif not is_zero_approx(place) or not is_zero_approx(copy) or \
-		not is_zero_approx(paste) or not is_zero_approx(reskin):
-		_place_lock = true
-
-		if not is_zero_approx(place):
-			start_pos = game.targeti
-			_end_highlight.position = Vector3(game.targeti) + grid
-			dragging = true
-		elif not is_zero_approx(copy):
-			game.map.save_tile()
-		elif not is_zero_approx(paste):
-			game.map.set_tile()
-		elif not is_zero_approx(reskin):
-			game.map.reskin(mode, game.targeti, terrain, )
-
+func deselect() -> void:
+		_end_highlight.visible = false
+		_start_highlight.visible = false

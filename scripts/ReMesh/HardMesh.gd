@@ -1,5 +1,8 @@
-extends VoxelMesh
 class_name HardMesh
+extends VoxelMesh
+
+func _ready() -> void:
+	super()
 
 func get_voxel(pos : Vector3i) -> int:
 	tool.channel = VoxelBuffer.CHANNEL_TYPE

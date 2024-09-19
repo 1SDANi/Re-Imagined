@@ -1,0 +1,1 @@
+from eclextic on https://forum.godotengine.org/t/is-there-auto-font-size-like-in-unity/41243/6

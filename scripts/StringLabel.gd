@@ -12,7 +12,5 @@ func _ready() -> void:
 	else:
 		_get = Callable(get_node(target) as Object, getter)
 
-	set_text(_get.call() as String)
-
 func _process(_delta : float) -> void:
 	set_text(_get.call() as String)

@@ -18,6 +18,7 @@ var turn_snap : bool = false
 var static_friction : bool = true
 
 func _ready() -> void:
+	super()
 	motion_mode = CharacterBody3D.MOTION_MODE_GROUNDED
 
 func _physics_process(delta: float) -> void:
