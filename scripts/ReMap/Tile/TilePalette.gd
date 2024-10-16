@@ -109,6 +109,8 @@ func _new_atlas(t : Array[Image], n : Array[String], r : int) -> void:
 		print("failed to create atlas array")
 	if not ResourceSaver.save(atlas_array, "res://atlas_array.tres") == OK:
 		print("failed to save atlas array")
+	else:
+		game.atlas_update()
 
 func _add_tex(pos : int, tex : Image) -> int:
 	var rect : Rect2i = Rect2i(0, 0, tex.get_width(), tex.get_height())

@@ -75,6 +75,7 @@ func _ready() -> void:
 	append_state("Running", running_state)
 	statenames.append("Running")
 	set_state("Standing")
+	super()
 
 func append_state(key : String, value : MoveState) -> void:
 	statenames.append(key)

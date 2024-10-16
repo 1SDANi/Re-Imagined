@@ -1,16 +1,17 @@
 class_name ToolCommand
 extends Command
 
-var last : ToolMenu
 var tool : MapHandler.TOOL
 
 func _init(_last : ToolMenu, _tool : MapHandler.TOOL) -> void:
-	last = _last
 	tool = _tool
-	super(MapHandler.TOOL_NAMES[_tool])
+	category = MapHandler.TOOL_NAMES[_tool]
+	super(MapHandler.TOOL_NAMES[_tool], _last)
 
 func copy(pos : Vector3i) -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh()
+	var editor : EditorMenu = last.last
+	var mode : MapHandler.MODE = editor.get_mode()
+	var mesh : VoxelMesh = game.get_mode_mesh(mode)
 	var ind : int
 	var indices : Vector4i
 	var texw : String
@@ -23,7 +24,7 @@ func copy(pos : Vector3i) -> void:
 	var y : int = start.y - pos.y
 	var z : int = start.z - pos.z
 	var cb : MapTile = (last.last as EditorMenu).clipboard
-	match(game.mode):
+	match(mode):
 		MapHandler.MODE.SLOPE:
 			mesh.tool.channel = VoxelBuffer.CHANNEL_SDF
 			cb.slope_geo.layers[x].rows[y].geo[z] = mesh.tool.get_voxel_f(pos)

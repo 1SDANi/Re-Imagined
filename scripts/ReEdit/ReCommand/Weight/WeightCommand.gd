@@ -1,42 +1,43 @@
 class_name WeightCommand
 extends Command
 
-enum OP
-{
-	ADD,
-	SUB,
-	INC,
-	DEC,
-	SET
-}
-
-var last : WeightMenu
-var op : OP
+var op : ValueMenu.OP
 var val : float
 
-func _init(_last : WeightMenu, _op : OP, _val : float) -> void:
-	last = _last
+func _init(_last : WeightMenu, _op : ValueMenu.OP, _val : float) -> void:
+	category = get_init_name(_last, _val)
 	op = _op
 	val = _val
-	super(get_name())
+	super(get_init_name(_last, _val), _last)
 
-func command_use(_user : Actor) -> void:
-	last.calc(op, val)
+func command_use(_user : Actor, _state : InputState) -> void:
+	(last as WeightMenu).calc(op, val)
+
+func command_select(_user : Actor, _state : InputState) -> void:
+	command_use(_user, _state)
 
 func update_commands() -> void:
 	rename(get_name())
 
+func rename(_name : String) -> void:
+	category = _name
+	super(_name)
+
 func get_name() -> String:
+	var _last : DetailMenu = (last as WeightMenu).last
+	return get_init_name(last as WeightMenu, val)
+
+func get_init_name(_last : WeightMenu, _val : float) -> String:
 	match(op):
-		OP.ADD:
-			return "Add " + str(last.val)
-		OP.SUB:
-			return "Subtract " + str(last.val)
-		OP.INC:
-			return "Increase " + str(last.val) + " by " + str(val)
-		OP.DEC:
-			return "Decrease " + str(last.val) + " by " + str(val)
-		OP.SET:
-			return "Set " + str(last.val) + " to " + str(val)
+		ValueMenu.OP.ADD:
+			return "Add " + str(_last.minor) + " to " + str(_last.main)
+		ValueMenu.OP.SUB:
+			return "Subtract " + str(_last.minor) + " from " + str(_last.main)
+		ValueMenu.OP.INC:
+			return "Increase " + str(_last.minor) + " by " + str(_val)
+		ValueMenu.OP.DEC:
+			return "Decrease " + str(_last.minor) + " by " + str(_val)
+		ValueMenu.OP.SET:
+			return "Set " + str(_last.minor) + " to " + str(_val)
 		_:
 			return "ERROR"

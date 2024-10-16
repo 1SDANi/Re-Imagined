@@ -77,7 +77,7 @@ void fragment() {
         col3 * weights.a;
 
     ALBEDO = col;
-	NORMAL = normalize(cross(dFdy(VERTEX), dFdx(VERTEX)));
+    NORMAL = normalize(cross(dFdy(VERTEX), dFdx(VERTEX)));
 
     //...
 }

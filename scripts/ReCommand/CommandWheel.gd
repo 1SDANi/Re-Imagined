@@ -6,8 +6,11 @@ func _init(_user : Actor, _commands : Array[Command]) -> void:
 	_user.command_menu = commands[0]
 
 func command_close(_user : Actor) -> void:
-	index = index + 1
-	_user.set_command_menu(commands[index] as CommandMenu)
+	command_up()
+	menu_select(_user)
 
-func command_use(_user : Actor) -> void:
+func command_use(_user : Actor, _state : InputState) -> void:
 	command_close(_user)
+
+func menu_select(_user : Actor) -> void:
+	_user.set_command_menu(commands[index] as CommandMenu)

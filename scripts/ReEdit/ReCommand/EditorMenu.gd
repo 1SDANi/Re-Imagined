@@ -3,16 +3,6 @@ extends CommandMenu
 
 var controller : EditorController
 
-var mode_commands : Array[Array]
-
-var model_shape : String
-
-var model_rot : int
-
-var mode : MapHandler.MODE
-
-var palette : EditorPalette
-
 var dragging : bool
 var selection : bool
 
@@ -21,65 +11,35 @@ var clipboard : MapTile
 var start_pos : Vector3i
 var end_pos : Vector3i
 
+var tool_menu : ToolMenu
+var mode_menu : ModeMenu
+var shape_menu : ShapeMenu
+var textures_menu : TexturesMenu
+var detail_menu : DetailMenu
+
 func _init(_last : CommandMenu, _controller : EditorController) -> void:
 	controller = _controller
 
-	model_shape = _controller.initial_model
-	model_rot = _controller.initial_rot
-	mode = _controller.initial_mode
+	_controller.editor = self
+	category = "Editor"
 
-	var _palette : EditorPalette = EditorPalette.new(\
-		_controller.initial_texture_1, \
-		_controller.initial_texture_2, _controller.initial_texture_3, \
-		_controller.initial_texture_4, _controller.initial_weight_r, \
-		_controller.initial_weight_g, _controller.initial_weight_b, \
-		_controller.initial_weight_a, _controller.initial_smooth_value, \
-		_controller.initial_slope_value)
-	palette = _palette
-	game.palette = palette
+	tool_menu = ToolMenu.new(self, _controller.initial_mode)
+	mode_menu = ModeMenu.new(self, _controller.initial_mode)
+	shape_menu = ShapeMenu.new(self, _controller.initial_model)
+	textures_menu = TexturesMenu.new(self, controller.initial_texture_1, controller.initial_texture_2, controller.initial_texture_3, controller.initial_texture_4)
+	detail_menu = DetailMenu.new(self, _controller.initial_rot, controller.initial_weight_r, controller.initial_weight_g, controller.initial_weight_b, controller.initial_weight_a)
 
-	mode_commands = [[], [], []]
-
-	var smooth_commands : Array[Command] = \
+	var _commands : Array[Command] = \
 	[
-		ToolMenu.new(self),
-		ModeMenu.new(self),
-		ShapeMenu.new(self),
-		TexturesMenu.new(self, _palette),
-		WeightsMenu.new(self, _palette)
+		tool_menu,
+		mode_menu,
+		shape_menu,
+		textures_menu,
+		detail_menu
 	]
 
-	var slope_commands : Array[Command] = \
-	[
-		ToolMenu.new(self),
-		ModeMenu.new(self),
-		ShapeMenu.new(self),
-		TexturesMenu.new(self, _palette),
-		WeightsMenu.new(self, _palette)
-	]
-	var model_commands : Array[Command] = \
-	[
-		ToolMenu.new(self),
-		ModeMenu.new(self),
-		ShapeMenu.new(self),
-		TexturesMenu.new(self, _palette),
-		RotationMenu.new(self)
-	]
-
-	mode_commands[MapHandler.MODE.SMOOTH] = smooth_commands
-	mode_commands[MapHandler.MODE.SLOPE] = slope_commands
-	mode_commands[MapHandler.MODE.MODEL] = model_commands
-
-	super("Level Editor", _last, mode_commands[mode])
-
-func update_commands() -> void:
-	super()
-
-func set_mode(_mode : MapHandler.MODE) -> void:
-	mode = _mode
-	game.mode = _mode
-	commands = mode_commands[_mode]
-	update_commands()
+	super("Level Editor", _last, _commands)
+	game.command_update()
 
 func new_clipboard(_x : int, _y : int, _z : int) -> void:
 	clipboard = MapTile.new()
@@ -126,106 +86,32 @@ func new_clipboard(_x : int, _y : int, _z : int) -> void:
 				clipboard.smooth_tex.col[x].rows[y].col.append("")
 				clipboard.model_vox.layers[x].rows[y].vox.append(0)
 
-func set_rot(_rot : int) -> void:
-	model_rot = _rot
-	update_commands()
+func get_mode() -> MapHandler.MODE:
+	return mode_menu.index as MapHandler.MODE
 
-func set_model_shape(_model_shape : String) -> void:
-	model_shape = _model_shape
-	update_commands()
+func get_shape() -> float:
+	return shape_menu.main
 
-func set_slope_value(_slope_value : float) -> void:
-	palette.slope_value = _slope_value
-	update_commands()
-
-func add_slope_value(_slope_value : float) -> void:
-	set_slope_value(palette.slope_value + _slope_value)
-
-func sub_slope_value(_slope_value : float) -> void:
-	set_slope_value(palette.slope_value - _slope_value)
-
-func set_smooth_value(_smooth_value : float) -> void:
-	palette.smooth_value = _smooth_value
-	update_commands()
-
-func add_smooth_value(_smooth_value : float) -> void:
-	set_smooth_value(palette.smooth_value + _smooth_value)
-
-func sub_smooth_value(_smooth_value : float) -> void:
-	set_smooth_value(palette.smooth_value - _smooth_value)
+func get_model() -> String:
+	return shape_menu.get_model()
 
 func get_texture(channel : int) -> String:
-	match (channel):
-		0:
-			return palette.w
-		1:
-			return palette.x
-		2:
-			return palette.y
-		3:
-			return palette.z
-		_:
-			return "ERROR"
-
-func set_texture(channel : int, texture : String) -> void:
-	match (channel):
-		0:
-			palette.x = palette.w if palette.x == texture else palette.x
-			palette.y = palette.w if palette.y == texture else palette.y
-			palette.z = palette.w if palette.z == texture else palette.z
-			palette.w = texture
-		1:
-			palette.w = palette.w if palette.w == texture else palette.w
-			palette.y = palette.w if palette.y == texture else palette.y
-			palette.z = palette.w if palette.z == texture else palette.z
-			palette.x = texture
-		2:
-			palette.w = palette.w if palette.w == texture else palette.w
-			palette.x = palette.w if palette.x == texture else palette.x
-			palette.z = palette.w if palette.z == texture else palette.z
-			palette.y = texture
-		3:
-			palette.w = palette.w if palette.w == texture else palette.w
-			palette.x = palette.w if palette.x == texture else palette.x
-			palette.y = palette.w if palette.y == texture else palette.y
-			palette.z = texture
-	update_commands()
-	game.palette = palette
+	return textures_menu.get_texture(channel)
 
 func get_weight(channel : int) -> float:
-	match (channel):
-		0:
-			return palette.r
-		1:
-			return palette.g
-		2:
-			return palette.b
-		3:
-			return palette.a
-		_:
-			return NAN
+	return detail_menu.get_weight(channel)
 
-func set_weight(channel : int, weight : float) -> void:
-	match (channel):
-		0:
-			palette.r = weight
-		1:
-			palette.g = weight
-		2:
-			palette.b = weight
-		3:
-			palette.a = weight
-	update_commands()
-	game.palette = palette
+func get_rotation() -> int:
+	return detail_menu.rotation
 
-func add_weight(channel : int, change : float) -> void:
-	set_weight(channel, get_weight(channel) + change)
+func get_blend() -> Color:
+	var weight0 : float = get_weight(0)
+	var weight1 : float = get_weight(1)
+	var weight2 : float = get_weight(2)
+	var weight3 : float = get_weight(3)
+	var total : float = weight0 + weight1 + weight2 + weight3
 
-func sub_weight(channel : int, change : float) -> void:
-	set_weight(channel, get_weight(channel) - change)
-
-func get_blend() -> void:
-	return Color(get_weight(0), get_weight(1), get_weight(2), get_weight(3))
+	return Color(weight0 / total, weight1 / total, weight2 / total, weight3 / total)
 
 func select_start(targeti : Vector3i) -> void:
 	start_pos = targeti

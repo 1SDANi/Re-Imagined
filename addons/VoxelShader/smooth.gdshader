@@ -1,7 +1,7 @@
 shader_type spatial;
 
 // Textures should preferably be in a TextureArray, so looking them up is cheap
-uniform sampler2DArray Atlas : source_color;
+uniform sampler2DArray u_texture_array : source_color;
 
 // We'll need to pass data from the vertex shader to the fragment shader
 varying vec4 v_indices;
@@ -59,10 +59,10 @@ void fragment() {
     // We can re-use the same triplanar blending factors for all of them so separating that part
     // of the function improves performance a little.
     vec3 blending = get_triplanar_blend(v_normal);
-    vec3 col0 = texture_array_triplanar(Atlas, v_pos * uv_scale, blending, v_indices.x).rgb;
-    vec3 col1 = texture_array_triplanar(Atlas, v_pos * uv_scale, blending, v_indices.y).rgb;
-    vec3 col2 = texture_array_triplanar(Atlas, v_pos * uv_scale, blending, v_indices.z).rgb;
-    vec3 col3 = texture_array_triplanar(Atlas, v_pos * uv_scale, blending, v_indices.w).rgb;
+    vec3 col0 = texture_array_triplanar(u_texture_array, v_pos * uv_scale, blending, v_indices.x).rgb;
+    vec3 col1 = texture_array_triplanar(u_texture_array, v_pos * uv_scale, blending, v_indices.y).rgb;
+    vec3 col2 = texture_array_triplanar(u_texture_array, v_pos * uv_scale, blending, v_indices.z).rgb;
+    vec3 col3 = texture_array_triplanar(u_texture_array, v_pos * uv_scale, blending, v_indices.w).rgb;
 
     // Get weights and make sure they are normalized.
     // We may add a tiny safety margin so we can afford some degree of error.

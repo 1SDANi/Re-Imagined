@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://de4x4mlwsgk4e"]
+
+[ext_resource type="Script" path="res://scripts/ReInput/InputTest.gd" id="1_4kb34"]
+
+[sub_resource type="Gradient" id="Gradient_h6dih"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xkdht"]
+gradient = SubResource("Gradient_h6dih")
+
+[node name="Test" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(567, 334)
+texture = SubResource("GradientTexture2D_xkdht")
+script = ExtResource("1_4kb34")

@@ -4,8 +4,10 @@ extends ToolCommand
 func _init(_last : ToolMenu, _tool : MapHandler.TOOL) -> void:
 	super(_last, _tool)
 
-func command_use(_user : Actor) -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh()
+func command_use(_user : Actor, _state : InputState) -> void:
+	var editor : EditorMenu = last.last
+	var mode : MapHandler.MODE = editor.get_mode()
+	var mesh : VoxelMesh = game.get_mode_mesh(mode)
 	var target : Vector3 = mesh.to_local(_user.position) + Vector3.DOWN / 2
 	if target.x < 0.0: target.x -= 1.0
 	if target.y < 0.0: target.y -= 1.0
@@ -15,7 +17,9 @@ func command_use(_user : Actor) -> void:
 	(last.last as EditorMenu).select_start(targeti)
 
 func command_use_release_hold(_user : Actor) -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh()
+	var editor : EditorMenu = last.last
+	var mode : MapHandler.MODE = editor.get_mode()
+	var mesh : VoxelMesh = game.get_mode_mesh(mode)
 	var target : Vector3 = mesh.to_local(_user.position) + Vector3.DOWN / 2
 	if target.x < 0.0: target.x -= 1.0
 	if target.y < 0.0: target.y -= 1.0

@@ -189,7 +189,7 @@ func mass_reskin() -> void:
 	reload_map()
 
 func reskin_at(mode : MODE, pos : Vector3i, brush : Array[String], weights : Array[float], name : String) -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh()
+	var mesh : VoxelMesh = game.get_mode_mesh(mode)
 	var pos_x : int = floori(float(pos.x) / float(map.tile_palette.tile_size.x))
 	var pos_y : int = floori(float(pos.y) / float(map.tile_palette.tile_size.y))
 	var pos_z : int = floori(float(pos.z) / float(map.tile_palette.tile_size.z))
@@ -204,4 +204,3 @@ func reskin_at(mode : MODE, pos : Vector3i, brush : Array[String], weights : Arr
 		target = map.get_texture(vox)
 	#map.reskin(base, target, brush, weights, name)
 	reload_map()
-

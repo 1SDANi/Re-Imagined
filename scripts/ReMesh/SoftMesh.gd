@@ -1,10 +1,15 @@
-extends VoxelMesh
 class_name SoftMesh
+extends VoxelMesh
 
 func _ready() -> void:
 	super()
-	await owner.ready
-	update_shader("Atlas", game.map.get_atlas_array())
+	if not game.AtlasUpdate.connect(atlas_update) == OK:
+		pass
+
+func atlas_update() -> void:
+	var _atlas : Texture2DArray = game.map.get_atlas_array()
+	# not working for some reason
+	(material_override as ShaderMaterial).set_shader_parameter("u_texture_array", _atlas)
 
 func set_tex(pos : Vector3i, w : String, x : String, y : String, z : String) -> void:
 	tool.channel = VoxelBuffer.CHANNEL_INDICES
@@ -19,11 +24,11 @@ func get_geo(pos : Vector3i) -> float:
 	return tool.get_voxel_f(pos)
 
 func has_geo(pos : Vector3i) -> bool:
-	return is_zero_approx(get_geo(pos))
+	return not is_equal_approx(get_geo(pos), 500.0)
 
 func set_geo(pos : Vector3i, value : float) -> void:
 	tool.channel = VoxelBuffer.CHANNEL_SDF
-	tool.set_voxel_f(pos, value)
+	tool.set_voxel_f(pos, snappedf(value / 500,  0.1))
 
 func place_geo(pos : Vector3i, value : float) -> void:
 	if not has_geo(pos): set_geo(pos, value)
@@ -32,11 +37,11 @@ func max_geo(pos : Vector3i) -> void:
 	set_geo(pos, -1.0)
 
 func remove_geo(pos : Vector3i) -> void:
-	if has_geo(pos): set_geo(pos, 1.0)
+	if has_geo(pos): set_geo(pos, 500.0)
 
 func change_geo(p : Vector3i, change : float) -> void:
 	tool.channel = VoxelBuffer.CHANNEL_SDF
-	var geo : float = tool.get_voxel_f(p) / 500.0
+	var geo : float = tool.get_voxel_f(p)
 	set_geo(p, geo + change)
 
 func add_geo(p : Vector3i, change : float) -> void:
@@ -54,11 +59,3 @@ func get_indices(w : String, x : String, y : String, z : String) -> Vector4i:
 
 func get_texture(indices : Vector4i) -> String:
 	return game.map.get_texture_name(indices[0])
-
-func remove(p : Vector3i) -> void:
-	var _voxel : int = tool.get_voxel(p)
-	tool.channel = VoxelBuffer.CHANNEL_SDF
-	tool.set_voxel_f(p, 1)
-
-func update_shader(_name : String, _atlas : Texture2DArray) -> void:
-	(material_override as ShaderMaterial).set_shader_parameter(_name, _atlas)

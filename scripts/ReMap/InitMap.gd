@@ -28,3 +28,5 @@ func _ready() -> void:
 		game.map.reskin_tex = reskin_tex
 	else:
 		game.map.reskin_tex = primaries
+
+	game.atlas_update()

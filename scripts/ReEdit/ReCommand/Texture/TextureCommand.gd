@@ -1,13 +1,15 @@
 class_name TextureCommand
 extends Command
 
-var last : TextureMenu
 var texture : String
 
 func _init(_last : TextureMenu, _texture : String) -> void:
-	last = _last
 	texture = _texture
-	super(_texture)
+	category = _texture
+	super(_texture, _last)
 
-func command_use(_user : Actor) -> void:
-	last.set_texture(texture)
+func command_use(_user : Actor, _state : InputState) -> void:
+	command_select(_user, _state)
+
+func texture_menu_select(_user : Actor) -> void:
+	(last as TextureMenu).texture_menu_select(_user, texture)

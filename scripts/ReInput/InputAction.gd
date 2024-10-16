@@ -1,8 +1,8 @@
 class_name InputAction
 
-var statehistory : Array[Dictionary]
+var statehistory : Array[InputState]
 
-var value : float
+var axis : InputAxis
 
 var deadzone : float
 var tap_threshold : float
@@ -12,93 +12,94 @@ var doubletap_threshold : float
 
 var buffer_length : int
 
+var positive : bool
+
+func _init() -> void:
+	var state : InputState = InputState.new(0.0)
+	state.is_zero = true
+	statehistory.push_front(state)
+	axis = null
+
 func update(input : float, delta : float) -> void:
 	var _is_zero : bool = input < deadzone and input > -deadzone
-	var _is_high : bool = not _is_zero and \
-		(input >= high_threshold or input <= -high_threshold)
+	var _is_high : bool = not _is_zero and input >= high_threshold
+	var same_highness : bool = statehistory[0].is_high == _is_high
+	var same_nillness : bool = statehistory[0].is_zero == _is_zero
+	var value : float = 0.0
 
 	if not _is_zero:
 		value = input
 	else:
 		value = 0.0
 
-	if statehistory.size() > 0 and statehistory[0]["is_high"] == _is_high and \
-		statehistory[0]["is_zero"] == _is_zero:
-		statehistory[0]["duration"] = statehistory[0]["duration"] + delta
-		if not _is_zero and statehistory[0]["duration"] >= hold_threshold:
-			statehistory[0]["is_held"] = true
+	if statehistory.size() > 0 and same_highness and same_nillness:
+		statehistory[0].duration += delta
+		if statehistory[0].duration >= hold_threshold:
+			if _is_zero:
+				statehistory[0].is_idle = true
+			else:
+				statehistory[0].is_held = true
 	else:
 		if statehistory.size() >= buffer_length:
 			statehistory.pop_back()
-		pushstate(_is_high, _is_zero)
-		if statehistory.size() > 1 and not statehistory[1]["is_zero"] and \
-				_is_zero and statehistory[1]["duration"] < tap_threshold:
-					statehistory[0]["is_tapped"] = true
+		pushstate(value, _is_high, _is_zero, delta)
 
-		if statehistory.size() > 3 and not _is_zero and \
-			statehistory[1]["is_zero"] and not statehistory[2]["is_zero"] and \
-			statehistory[1]["duration"] < doubletap_threshold:
-				statehistory[0]["is_doubletapped"] = true
+	if is_axis(): axis.update_action(delta, positive, self)
 
-func get_value() -> float:
-	return value
+func bind_axis(_axis : InputAxis, _positive : bool) -> bool:
+	if axis != null:
+		return false
 
-func get_duration() -> float:
-	return statehistory[0]["duration"]
+	axis = _axis
+	positive = _positive
+	return true
 
-func is_zero() -> bool:
-	return statehistory[0]["is_zero"]
-
-func is_high() -> bool:
-	return statehistory[0]["is_high"]
-
-func is_held() -> bool:
-	return statehistory[0]["is_held"]
-
-func was_held() -> bool:
-	for state : Dictionary in statehistory:
-		if state["is_held"] == true:
-			return true
-
-	return false
-
-func was_tapped() -> bool:
-	for state : Dictionary in statehistory:
-		if state["is_tapped"] == true:
-			return true
-
-	return false
-
-func was_doubletapped() -> bool:
-	for state : Dictionary in statehistory:
-		if state["is_doubletapped"] == true:
-			return true
-
-	return false
-
-func was_pressed() -> bool:
-	for state : Dictionary in statehistory:
-		if not (state["is_zero"] and state["is_held"] and state["is_tapped"]):
-			return true
-
-	return false
-
-func untap() -> void:
-	statehistory[0]["is_tapped"] = false
-
-func undoubletap() -> void:
-	statehistory[0]["is_doubletapped"] = false
+func is_axis() -> bool:
+	return axis != null
 
 func clear_history() -> void:
 	if statehistory.size() > 1:
 		if statehistory.resize(1) != OK:
 			print("failed to clear history")
 
-func pushstate(_is_high : bool, _is_zero : bool) -> void:
-	statehistory.push_front({})
-	statehistory[0]["is_high"] = _is_high
-	statehistory[0]["is_zero"] = _is_zero
-	statehistory[0]["duration"] = 0.0
-	statehistory[0]["is_held"] = false
-	statehistory[0]["is_tapped"] = false
-	statehistory[0]["is_doubletapped"] = false
+func get_state() -> InputState:
+	return statehistory[0]
+
+func get_average() -> float:
+	var average : float = 0.0
+
+	for state : InputState in statehistory:
+		average += state.value
+
+	average /= statehistory.size()
+
+	return average
+
+func pushstate(value : float, high : bool, zero : bool, delta : float) -> void:
+	var last_duration : float
+
+	var was_zero : bool
+	if statehistory.size() > 0:
+		last_duration = statehistory[0].duration
+		was_zero = statehistory[0].is_zero
+
+	statehistory.push_front(InputState.new(value))
+	statehistory[0].is_high = high
+	statehistory[0].is_low = not (high or zero)
+	statehistory[0].is_zero = zero
+	if statehistory.size() > 1:
+		if not was_zero and not zero:
+			statehistory[0].duration = last_duration + delta
+
+		if not was_zero and zero and statehistory[0].is_high:
+			statehistory[0].is_dropped = true
+
+		if not was_zero and zero and last_duration >= tap_threshold:
+			statehistory[0].is_pressed = true
+
+		if not was_zero and zero and last_duration < tap_threshold:
+			if statehistory.size() > 2 and statehistory[2].is_tapped and \
+				last_duration < doubletap_threshold:
+				statehistory[0].is_doubletapped = true
+			else:
+				statehistory[0].is_tapped = true

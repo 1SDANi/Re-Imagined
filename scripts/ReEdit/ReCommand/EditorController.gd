@@ -42,107 +42,120 @@ var _command_lock : bool
 var start_pos : bool
 var end_pos : bool
 var commanding : bool
-var opening : bool
+
+var editor : EditorMenu
+
+const c : InputAxis.AxisType = InputAxis.AxisType.CANCEL
+const p : InputAxis.BiasType = InputAxis.BiasType.POS
 
 func _ready() -> void:
-	var action : InputAction
-
-	if not game.input.add_mouse_dir(InputHandler.MOUSE_DIR.UP, "Look Up"):
-		print("failed to add input")
-	if not game.input.add_input("RY+", "Look Up GMP"):
-		print("failed to add input")
-	if not game.input.add_mouse_dir(InputHandler.MOUSE_DIR.DOWN, "Look Down"):
-		print("failed to add input")
-	if not game.input.add_input("RY-", "Look Down GMP"):
-		print("failed to add input")
-	if not game.input.add_mouse_dir(InputHandler.MOUSE_DIR.LEFT, "Look Left"):
-		print("failed to add input")
-	if not game.input.add_input("RX-", "Look Left GMP"):
-		print("failed to add input")
-	if not game.input.add_mouse_dir(InputHandler.MOUSE_DIR.RIGHT, "Look Right"):
-		print("failed to add input")
-	if not game.input.add_input("RX+", "Look Right GMP"):
-		print("failed to add input")
+	game.input.set_input_mode(InputHandler.InputMode.KBM)
+	if game.input.add_mouse_dir(InputHandler.MOUSE_DIR.UP, "Look Up"):
+		pass
+	if game.input.add_mouse_dir(InputHandler.MOUSE_DIR.DOWN, "Look Down"):
+		pass
+	if not game.input.add_input("RY-", "Look Up"):
+		pass
+	if not game.input.add_input("RY+", "Look Down"):
+		pass
+	if game.input.add_axis("Look Vertical", c, p):
+		pass
+	if not game.input.set_deadzone("Look Up", 0.5):
+		pass
+	if not game.input.set_deadzone("Look Down", 0.5):
+		pass
+	if not game.input.bind_axis("Look Down", "Look Vertical", false):
+		pass
+	if not game.input.bind_axis("Look Up", "Look Vertical", true):
+		pass
+	if game.input.add_mouse_dir(InputHandler.MOUSE_DIR.LEFT, "Look Left"):
+		pass
+	if game.input.add_mouse_dir(InputHandler.MOUSE_DIR.RIGHT, "Look Right"):
+		pass
+	if not game.input.set_deadzone("Look Left", 0.5):
+		pass
+	if not game.input.set_deadzone("Look Right", 0.5):
+		pass
+	if not game.input.add_input("RX-", "Look Left"):
+		pass
+	if not game.input.add_input("RX+", "Look Right"):
+		pass
+	if game.input.add_axis("Look Horizontal", c, p):
+		pass
+	if not game.input.bind_axis("Look Left", "Look Horizontal", false):
+		pass
+	if not game.input.bind_axis("Look Right", "Look Horizontal", true):
+		pass
 	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_LEFT, "Use Command"):
-		print("failed to add input")
-	if not game.input.add_input("RR", "Use Command GMP"):
-		print("failed to add input")
-	if not game.input.add_key(Key.KEY_TAB, "Mode"):
-		print("failed to add input")
-	if not game.input.add_input("LC", "Mode GMP"):
-		print("failed to add input")
-	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_RIGHT, "Tool"):
-		print("failed to add input")
-	if not game.input.add_input("RU", "Tool GMP"):
-		print("failed to add input")
+		pass
 	if not game.input.add_key(Key.KEY_Q, "Close Menu"):
-		print("failed to add input")
+		pass
 	if not game.input.add_key(Key.KEY_E, "Open Menu"):
-		print("failed to add input")
-	if not game.input.add_input("LL", "Close Menu GMP"):
-		print("failed to add input")
-	if not game.input.add_input("LR", "Open Right GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("LL", "Close Menu"):
+		pass
+	if not game.input.add_input("LR", "Open Menu"):
+		pass
+	if not game.input.add_axis("Menu", c, p):
+		pass
+	if not game.input.bind_axis("Open Menu", "Menu", true):
+		pass
+	if not game.input.bind_axis("Close Menu", "Menu", false):
+		pass
 	if not game.input.add_key(Key.KEY_F, "Command Down"):
-		print("failed to add input")
+		pass
 	if not game.input.add_key(Key.KEY_R, "Command Up"):
-		print("failed to add input")
-	if not game.input.add_input("LD", "Command Down GMP"):
-		print("failed to add input")
-	if not game.input.add_input("LU", "Command Up GMP"):
-		print("failed to add input")
-	if not game.input.add_key(Key.KEY_C, "Copy"):
-		print("failed to add input")
-	if not game.input.add_key(Key.KEY_V, "Paste"):
-		print("failed to add input")
-	if not game.input.add_input("LZ", "Copy GMP"):
-		print("failed to add input")
-	if not game.input.add_input("RZ", "Paste GMP"):
-		print("failed to add input")
-	if not game.input.add_key(Key.KEY_CTRL, "Reskin"):
-		print("failed to add input")
-	if not game.input.add_input("RF", "Reskin GMP"):
-		print("failed to add input")
-	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_WHEEL_DOWN, "Last Texture"):
-		print("failed to add input")
-	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_WHEEL_UP, "Next Texture"):
-		print("failed to add input")
-	action = game.input.actions["Last Texture"]
-	action.update(0.0, 1.0)
-	action = game.input.actions["Next Texture"]
-	action.update(0.0, 1.0)
-	if not game.input.add_input("LB", "Last Texture GMP"):
-		print("failed to add input")
-	if not game.input.add_input("RB", "Next Texture GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("LD", "Command Down"):
+		pass
+	if not game.input.add_input("LU", "Command Up"):
+		pass
+	if not game.input.add_axis("Command", c, p):
+		pass
+	if not game.input.bind_axis("Command Down", "Command", true):
+		pass
+	if not game.input.bind_axis("Command Up", "Command", false):
+		pass
 	if not game.input.add_key(Key.KEY_W, "Move Front"):
-		print("failed to add input")
-	if not game.input.add_input("LY-", "Move Front GMP"):
-		print("failed to add input")
+		pass
 	if not game.input.add_key(Key.KEY_S, "Move Back"):
-		print("failed to add input")
-	if not game.input.add_input("LY+", "Move Back GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("LY-", "Move Front"):
+		pass
+	if not game.input.add_input("LY+", "Move Back"):
+		pass
+	if not game.input.add_axis("Move Vertical", c, p):
+		pass
+	if not game.input.bind_axis("Move Back", "Move Vertical", false):
+		pass
+	if not game.input.bind_axis("Move Front", "Move Vertical", true):
+		pass
 	if not game.input.add_key(Key.KEY_A, "Move Left"):
-		print("failed to add input")
-	if not game.input.add_input("LX-", "Move Left GMP"):
-		print("failed to add input")
+		pass
 	if not game.input.add_key(Key.KEY_D, "Move Right"):
-		print("failed to add input")
-	if not game.input.add_input("LX+", "Move Right GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("LX-", "Move Left"):
+		pass
+	if not game.input.add_input("LX+", "Move Right"):
+		pass
+	if not game.input.add_axis("Move Horizontal", c, p):
+		pass
+	if not game.input.bind_axis("Move Left", "Move Horizontal", true):
+		pass
+	if not game.input.bind_axis("Move Right", "Move Horizontal", false):
+		pass
 	if not game.input.add_key(Key.KEY_ESCAPE, "Pause"):
-		print("failed to add input")
-	if not game.input.add_input("RC", "Pause GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("RC", "Pause"):
+		pass
 	if not game.input.add_key(Key.KEY_SPACE, "Rise"):
-		print("failed to add input")
-	if not game.input.add_input("RD", "Rise GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("RD", "Rise"):
+		pass
 	if not game.input.add_key(Key.KEY_SHIFT, "Fall"):
-		print("failed to add input")
-	if not game.input.add_input("RL", "Fall GMP"):
-		print("failed to add input")
+		pass
+	if not game.input.add_input("RL", "Fall"):
+		pass
 	game.input.set_cam_speed_x(cam_speed_x)
 	game.input.set_cam_speed_y(cam_speed_y)
 	_cam = get_node(cam)
@@ -162,7 +175,10 @@ func _ready() -> void:
 
 	update_target()
 
-func _physics_process(delta : float) -> void:
+	if not game.InputsReady.connect(inputs_ready) != OK:
+		pass
+
+func inputs_ready(delta : float) -> void:
 	handle_pausing()
 
 	if game.input.is_mouse_free(): return
@@ -172,43 +188,36 @@ func _physics_process(delta : float) -> void:
 	handle_placing(delta)
 
 func handle_pausing() -> void:
-	var pause : float = game.input.get_action_value("Pause")
-	pause = max(pause, game.input.get_action_value("Pause GMP"))
+	var pause : InputState = game.input.get_state("Pause")
 
 	if _pause_lock:
-		if is_zero_approx(pause):
+		if is_zero_approx(pause.value):
 			_pause_lock = false
-	elif not is_zero_approx(pause):
+	elif not is_zero_approx(pause.value):
 		game.input.toggle_mouse_capture()
 		_pause_lock = true
 
 func handle_looking(delta : float) -> void:
-	var look_x : float = game.input.get_axis_value_total("Look Right", "Look Left", true)
-	look_x += game.input.get_axis_value_total("Look Right GMP", "Look Left GMP", true)
-	var look_y : float = game.input.get_axis_value_total("Look Up", "Look Down", true)
-	look_y += game.input.get_axis_value_total("Look Up GMP", "Look Down GMP", true)
+	var look_x : InputState = game.input.get_axis_state("Look Horizontal")
+	var look_y : InputState = game.input.get_axis_state("Look Vertical")
 
-	if not is_zero_approx(look_x):
-		_cam.orbiting.yaw += look_x * game.input.get_cam_speed_x() * delta
+	if not is_zero_approx(look_x.value):
+		_cam.orbiting.yaw += look_x.value * game.input.get_cam_speed_x() * delta
 
-	if not is_zero_approx(look_y):
-		_cam.orbiting.pitch += look_y * game.input.get_cam_speed_y() * delta
+	if not is_zero_approx(look_y.value):
+		_cam.orbiting.pitch += look_y.value * game.input.get_cam_speed_y() * delta
 		_cam.orbiting.pitch = clamp(_cam.orbiting.pitch, -TAU/64 * 3, TAU/64 * 15)
 
 func handle_movement(delta: float) -> void:
-	var move_y : float = game.input.get_axis_value_spacey("Move Front", "Move Back", true)
-	move_y += game.input.get_axis_value_spacey("Move Front GMP", "Move Back GMP", true)
-	var move_x : float = game.input.get_axis_value_spacey("Move Left", "Move Right", true)
-	move_x += game.input.get_axis_value_spacey("Move Left GMP", "Move Right GMP", true)
+	var move_y : InputState = game.input.get_axis_state("Move Vertical")
+	var move_x : InputState = game.input.get_axis_state("Move Horizontal")
 	var parent : ThirdPersonActor = get_parent()
 
-	var move : Vector3 = Vector3(move_x, 0, move_y).normalized()
+	var move : Vector3 = Vector3(move_x.value, 0, move_y.value).normalized()
 
-	var rise : float = game.input.get_action_value("Rise")
-	rise = max(rise, game.input.get_action_value("Rise GMP"))
+	var rise : InputState = game.input.get_state("Rise")
 
-	var fall : float = game.input.get_action_value("Fall")
-	fall = max(fall, game.input.get_action_value("Fall GMP"))
+	var fall : InputState = game.input.get_state("Fall")
 
 	if not move.is_zero_approx():
 		var v : Vector3 = move.rotated(Vector3.UP, -_cam.orbiting.yaw)
@@ -220,115 +229,59 @@ func handle_movement(delta: float) -> void:
 	var ymove : bool = false
 
 	if _ymove_lock:
-		if is_zero_approx(rise) and is_zero_approx(fall):
+		if is_zero_approx(rise.value) and is_zero_approx(fall.value):
 			_ymove_lock = false
-	elif not is_zero_approx(rise) or not is_zero_approx(fall):
+	elif not is_zero_approx(rise.value) or not is_zero_approx(fall.value):
 		_ymove_lock = true
 		ymove = true
 
 	if ymove:
 		var _mesh : SlopeMesh = game.get_slope_mesh()
 		var off : Vector3 = Vector3(0, 1, 0)
-		if is_zero_approx(rise) and not is_zero_approx(fall):
+		if is_zero_approx(rise.value) and not is_zero_approx(fall.value):
 			off = Vector3(0, -1, 0)
 		parent.position += off
 		parent.position.y = floor(parent.position.y)
 
-func handle_placing(delta: float) -> void:
-	var action: InputAction
-	var place : float = game.input.get_action_value("Place")
-	place = max(place, game.input.get_action_value("Place GMP"))
-	var mode_toggle : float = game.input.get_action_value("Mode")
-	mode_toggle = max(mode_toggle, game.input.get_action_value("Mode GMP"))
-	var tool_toggle : float = game.input.get_action_value("Tool")
-	tool_toggle = max(tool_toggle, game.input.get_action_value("Tool GMP"))
-	var copy : float = game.input.get_action_value("Copy")
-	copy = max(copy, game.input.get_action_value("Copy GMP"))
-	var paste : float = game.input.get_action_value("Paste")
-	paste = max(paste, game.input.get_action_value("Paste GMP"))
-	var reskin : float = game.input.get_action_value("Reskin")
-	reskin = max(reskin, game.input.get_action_value("Reskin GMP"))
-	var next : float = game.input.get_action_value("Next Texture")
-	next = max(next, game.input.get_action_value("Next Texture GMP"))
-	var last : float = game.input.get_action_value("Last Texture")
-	last = max(last, game.input.get_action_value("Last Texture GMP"))
-	action = game.input.actions["Last Texture"]
-	action.update(0.0, delta)
-	action = game.input.actions["Next Texture"]
-	action.update(0.0, delta)
+func handle_placing(_delta: float) -> void:
+	var command : InputState = game.input.get_axis_state("Command")
 
-	var command : float = 0.0
-	command += game.input.get_action_value("Command Down")
-	command -= game.input.get_action_value("Command Up")
-	command += game.input.get_action_value("Command Up GMP")
-	command -= game.input.get_action_value("Command Down GMP")
-	var menu : float = 0.0
-	menu += game.input.get_action_value("Open Menu")
-	menu -= game.input.get_action_value("Close Menu")
-	menu += game.input.get_action_value("Open Menu GMP")
-	menu -= game.input.get_action_value("Close Menu GMP")
-	var use : float = 0.0
-	menu += game.input.get_action_value("Use Command")
-	menu += game.input.get_action_value("Use Command GMP")
-	var use_held : int = 0
-	use_held += 1 if game.input.was_action_held("Use Command") else 0
-	use_held += 1 if game.input.was_action_held("Use Command GMP") else 0
-	if use_held > 0: print("opened")
+	var menu : InputState = game.input.get_axis_state("Menu")
 
-	var use_tapped : int = 0
-	use_tapped += 1 if game.input.was_action_tapped("Use Command") else 0
-	use_tapped += 1 if game.input.was_action_tapped("Use Command GMP") else 0
-
-	var open_held : int = 0
-	open_held += 1 if game.input.was_action_held("Open Menu") else 0
-	open_held += 1 if game.input.was_action_held("Open Menu GMP") else 0
-	if open_held > 0: print("opened")
-
-	var open_tapped : int = 0
-	open_tapped += 1 if game.input.was_action_tapped("Open Menu") else 0
-	open_tapped += 1 if game.input.was_action_tapped("Open Menu GMP") else 0
+	var use : InputState = game.input.get_state("Use Command")
 
 	update_target()
 
 	if commanding:
-		if use_held > 0:
-			(get_parent() as Actor).command_use_release_hold()
-		elif use_tapped > 0:
-			(get_parent() as Actor).command_use_release_tap()
+		if use.is_zero:
+			(get_parent() as Actor).command_use_release(use)
 			commanding = false
-
-	if opening:
-		if use_held > 0:
-			(get_parent() as Actor).command_open_release_hold()
-		elif use_tapped > 0:
-			(get_parent() as Actor).command_open_release_tap()
-			opening = false
+		else:
+			(get_parent() as Actor).command_use_holding(use)
 
 	if _command_lock:
-		if is_zero_approx(command) and is_zero_approx(menu):
+		if is_zero_approx(command.value) and is_zero_approx(menu.value):
 			_command_lock = false
-	elif not is_zero_approx(command) or not is_zero_approx(menu) or \
-		not is_zero_approx(use):
+	elif not is_zero_approx(command.value) or not is_zero_approx(menu.value) or \
+		not is_zero_approx(use.value):
 		_command_lock = true
-		if command > 0:
+		if command.value > 0:
 			(get_parent() as Actor).command_up()
-		elif command < 0:
+		elif command.value < 0:
 			(get_parent() as Actor).command_down()
-		if menu > 0:
+		if menu.value > 0:
 			(get_parent() as Actor).command_open()
-			opening = true
-		elif menu < 0:
+		elif menu.value < 0:
 			(get_parent() as Actor).command_close()
-		if not is_zero_approx(use):
-			(get_parent() as Actor).command_use()
+		if not is_zero_approx(use.value) and not commanding:
 			commanding = true
-
-	elif not is_zero_approx(place) or not is_zero_approx(copy) or \
-		not is_zero_approx(paste) or not is_zero_approx(reskin):
-		_place_lock = true
+			if (get_parent() as Actor).is_selecting():
+				(get_parent() as Actor).command_select(use)
+			else:
+				(get_parent() as Actor).command_use(use)
 
 func update_target() -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh()
+	var mesh : VoxelMesh = game.get_mode_mesh(editor.get_mode())
 	var parent_pos : Vector3 = (get_parent() as ThirdPersonActor).position
 	var pos : Vector3 = mesh.to_local(parent_pos) + Vector3.DOWN / 2
 	var target : Vector3 = pos

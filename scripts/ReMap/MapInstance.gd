@@ -17,6 +17,7 @@ func setup(
 		_models : Array[Mesh],
 		_model_names : Array[String]) -> void:
 	tile_palette.setup(_textures, _texture_names, _res, _models, _model_names)
+	clear_map()
 
 func new_map() -> void:
 	layers = []
