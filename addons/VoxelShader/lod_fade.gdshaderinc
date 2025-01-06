@@ -21,4 +21,3 @@ bool get_lod_fade_discard(vec2 screen_uv) {
 		return lod_fade.x > h;
 	}
 }
-

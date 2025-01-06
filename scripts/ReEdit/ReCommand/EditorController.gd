@@ -172,6 +172,9 @@ func _ready() -> void:
 	await owner.ready
 
 	var _wheel : EditorWheel = EditorWheel.new(get_parent() as Actor, self)
+	(get_parent() as Actor).set_command_menu(_wheel)
+
+	game.input.set_action_mode(InputHandler.ACTION_MODE.WORLD)
 
 	update_target()
 
@@ -182,6 +185,7 @@ func inputs_ready(delta : float) -> void:
 	handle_pausing()
 
 	if game.input.is_mouse_free(): return
+	if game.input.action_mode != InputHandler.ACTION_MODE.WORLD: return
 
 	handle_looking(delta)
 	handle_movement(delta)
@@ -296,13 +300,13 @@ func update_target() -> void:
 		_grid_highlight.position = Vector3(Vector3i(target + Vector3.DOWN / 2))
 
 func select_start(pos : Vector3i) -> void:
-		if not _start_highlight.visible: _start_highlight.visible = true
-		_start_highlight.position = Vector3(pos)
+	if not _start_highlight.visible: _start_highlight.visible = true
+	_start_highlight.position = Vector3(pos)
 
 func select_end(pos : Vector3i) -> void:
-		if not _end_highlight.visible: _end_highlight.visible = true
-		_end_highlight.position = Vector3(pos)
+	if not _end_highlight.visible: _end_highlight.visible = true
+	_end_highlight.position = Vector3(pos)
 
 func deselect() -> void:
-		_end_highlight.visible = false
-		_start_highlight.visible = false
+	_end_highlight.visible = false
+	_start_highlight.visible = false

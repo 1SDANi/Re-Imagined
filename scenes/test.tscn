@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://j28scctrhxas"]
+[gd_scene load_steps=57 format=3 uid="uid://j28scctrhxas"]
 
 [ext_resource type="Shader" path="res://addons/VoxelShader/smooth.gdshader" id="1_jrjy4"]
 [ext_resource type="Script" path="res://scripts/ReMap/InitMap.gd" id="1_ml853"]
@@ -26,9 +26,10 @@
 [ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
 [ext_resource type="ArrayMesh" uid="uid://btpyl3cwmin5f" path="res://models/sign.obj" id="14_dpks5"]
 [ext_resource type="Script" path="res://scripts/ReMesh/SmoothMesh.gd" id="15_gv8xu"]
-[ext_resource type="Texture2DArray" uid="uid://bwguf65sbb1b3" path="res://atlas_array.tres" id="16_3ss0b"]
+[ext_resource type="Texture2DArray" uid="uid://cd1vhr4yie6y5" path="res://atlas_array.tres" id="16_3ss0b"]
 [ext_resource type="Script" path="res://scripts/ReMesh/ModelMesh.gd" id="16_aoao2"]
 [ext_resource type="ArrayMesh" uid="uid://boljbhl56jg1r" path="res://models/block.obj" id="17_xxmat"]
+[ext_resource type="PackedScene" uid="uid://c26pwxglf7165" path="res://scenes/name_popup.tscn" id="28_mftsw"]
 [ext_resource type="Material" uid="uid://cuoqo0xmpnukq" path="res://shaders/water.tres" id="28_taxcv"]
 [ext_resource type="Script" path="res://addons/AutoSizer/AutoSizeRichLabel.gd" id="32_bb1ba"]
 [ext_resource type="StyleBox" uid="uid://csjamn24ylho6" path="res://themes/activecommand.tres" id="32_xhvlv"]
@@ -232,9 +233,11 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("6_k8042")
+name_popup = ExtResource("28_mftsw")
 PauseUI = NodePath("../PauseUI")
 GameUI = NodePath("../GameUI")
 CommandUI = NodePath("../Command UI")
+TemporaryUI = NodePath("../TemporaryUI")
 MenuTitle = NodePath("../Command UI/HBoxContainer/VBoxContainer/Menu Title/Container/Menu Title")
 Menu1 = NodePath("../Command UI/HBoxContainer/VBoxContainer/Command 1/Container/Menu 1")
 Menu2 = NodePath("../Command UI/HBoxContainer/VBoxContainer/Command 2/Container/Menu 2")
@@ -324,35 +327,6 @@ text = "0
 script = ExtResource("51_wnygd")
 target = "/root/game"
 getter = "get_tile_pos"
-
-[node name="TileLabelMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="TileLabel" type="Label" parent="GameUI/TileRowMargin/TileRow/TileLabelMargin"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Tile:"
-
-[node name="TileMargin" type="MarginContainer" parent="GameUI/TileRowMargin/TileRow"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="Tile" type="Label" parent="GameUI/TileRowMargin/TileRow/TileMargin"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "0
-"
-script = ExtResource("51_wnygd")
-target = "/root/game"
-subtarget = "map"
-getter = "get_tile"
 
 [node name="PauseUI" type="VBoxContainer" parent="."]
 visible = false
@@ -507,6 +481,14 @@ text = "0
 "
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TemporaryUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Command UI" type="MarginContainer" parent="."]
 anchors_preset = -1

@@ -9,7 +9,7 @@ extends Resource
 @export var models : Array[Mesh]
 @export var model_names : Array[String]
 
-@export var tiles : Dictionary
+@export var tiles : Dictionary[String,MapTile]
 @export var tile_size : Vector3i
 
 @export var meshes : Array[VoxelBlockyModelMesh]

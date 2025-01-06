@@ -15,10 +15,10 @@ func _init(_last : EditorMenu, _mode : MapHandler.MODE) -> void:
 		SubCommand.new(self, MapHandler.TOOL.SUB),
 		RecolorCommand.new(self, MapHandler.TOOL.RECOLOR),
 		SelectCommand.new(self, MapHandler.TOOL.SELECT),
-		ToolCommand.new(self, MapHandler.TOOL.COPY),
-		ToolCommand.new(self, MapHandler.TOOL.CUT),
-		ToolCommand.new(self, MapHandler.TOOL.PASTE),
-		ToolCommand.new(self, MapHandler.TOOL.CLEAR)
+		CopyCommand.new(self, MapHandler.TOOL.COPY),
+		CutCommand.new(self, MapHandler.TOOL.CUT),
+		PasteCommand.new(self, MapHandler.TOOL.PASTE),
+		ClearCommand.new(self, MapHandler.TOOL.CLEAR)
 	]
 
 	mode_commands[MapHandler.MODE.SLOPE] = slope_commands

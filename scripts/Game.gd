@@ -4,6 +4,7 @@ var slope_mesh : NodePath
 var smooth_mesh : NodePath
 var model_mesh : NodePath
 var block_mesh : NodePath
+var ui_controller : NodePath
 
 var input : InputHandler
 var map : MapHandler
@@ -109,6 +110,12 @@ func get_controller() -> Controller:
 
 func inputs_ready(delta : float) -> void:
 	InputsReady.emit(delta)
+
+func set_ui(path : NodePath) -> void:
+	ui_controller = path
+
+func get_ui() -> UIController:
+	return get_node(ui_controller)
 
 func command_update() -> void:
 	CommandUpdate.emit()

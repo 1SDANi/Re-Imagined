@@ -6,6 +6,12 @@ enum InputMode
 	GMP
 }
 
+enum ACTION_MODE
+{
+	WORLD,
+	POPUP
+}
+
 enum MOUSE_DIR
 {
 	UP,
@@ -41,8 +47,16 @@ var cam_speed_y : float
 
 var input_mode : InputMode
 
+var action_mode : ACTION_MODE
+
 func set_input_mode(mode: InputMode) -> void:
 	input_mode = mode
+
+func set_action_mode(mode: ACTION_MODE) -> void:
+	if mode == ACTION_MODE.POPUP and not is_mouse_free(): release_mouse()
+	if mode == ACTION_MODE.WORLD and is_mouse_free(): capture_mouse()
+	action_mode = mode
+	game.command_update()
 
 func set_cam_speed_x(speed : float) -> void:
 	cam_speed_x = speed

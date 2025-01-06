@@ -26,20 +26,26 @@ func new_map() -> void:
 		for y : int in range(map_size.y):
 			layers[x].rows.append(MapRow.new())
 			for z : int in range(map_size.z):
-				layers[x].rows[y].tiles.append("")
+				layers[x].rows[y].stacks.append(MapStack.new())
+				layers[x].rows[y].stacks[0].tiles.append("")
 
-func set_tile(name : String, pos : Vector3i) -> void:
+func set_tile(name : String, pos : Vector3i, priority : int) -> void:
 	if pos.x < -map_size.x or pos.x > map_size.x: return
 	if pos.y < -map_size.y or pos.y > map_size.y: return
 	if pos.z < -map_size.z or pos.z > map_size.z: return
-	layers[pos.x].rows[pos.y].tiles[pos.z] = name
+	if priority > layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size():
+		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.append(name)
+	elif priority < 0:
+		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.push_front(name)
+	else:
+		layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority] = name
 	load_tile(name, pos)
 
-func get_tile(pos : Vector3i) -> String:
+func get_tile(pos : Vector3i, priority : int) -> String:
 	if pos.x < -map_size.x or pos.x >= map_size.x: return ""
 	if pos.y < -map_size.y or pos.y >= map_size.y: return ""
 	if pos.z < -map_size.z or pos.z >= map_size.z: return ""
-	return layers[pos.x].rows[pos.y].tiles[pos.z]
+	return layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
 
 func reload_map() -> void:
 	var pos : Vector3i
@@ -48,8 +54,9 @@ func reload_map() -> void:
 		for y : int in map_size.y:
 			for z : int in map_size.z:
 				pos = Vector3i(x, y, z)
-				tile = get_tile(pos)
-				load_tile(tile, pos)
+				for i : int in range(layers[x].rows[y].stacks[z].tiles.size()):
+					tile = get_tile(pos, i)
+					load_tile(tile, pos)
 
 func get_atlas_texture() -> ImageTexture:
 	return tile_palette.get_atlas_texture()
@@ -111,7 +118,10 @@ func clear_map() -> void:
 	var model_mesh : ModelMesh = game.get_model_mesh()
 	model_mesh.generator = generator
 
-func save_tile(name : String, position : Vector3i) -> void:
+func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+	return pack(position * tile_palette.tile_size, tile_palette.tile_size, fill, fill_palette)
+
+func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
 	var slope_mesh : SlopeMesh = game.get_slope_mesh()
 	var smooth_mesh : SmoothMesh = game.get_smooth_mesh()
 	var model_mesh : ModelMesh = game.get_model_mesh()
@@ -129,9 +139,7 @@ func save_tile(name : String, position : Vector3i) -> void:
 	var index : int
 	var tex : String
 
-	var p : Vector3i = position * tile_palette.tile_size
-
-	for x : int in range(tile_palette.tile_size.x):
+	for x : int in range(size.x):
 		slope_geo.layers.append(GeoLayer.new())
 		slope_tex.w.append(TexLayer.new())
 		slope_tex.x.append(TexLayer.new())
@@ -145,7 +153,7 @@ func save_tile(name : String, position : Vector3i) -> void:
 		smooth_tex.z.append(TexLayer.new())
 		smooth_tex.col.append(ColLayer.new())
 		model_vox.layers.append(VoxLayer.new())
-		for y : int in range(tile_palette.tile_size.y):
+		for y : int in range(size.y):
 			slope_geo.layers[x].rows.append(GeoRow.new())
 			slope_tex.w[x].rows.append(TexRow.new())
 			slope_tex.x[x].rows.append(TexRow.new())
@@ -159,8 +167,8 @@ func save_tile(name : String, position : Vector3i) -> void:
 			smooth_tex.z[x].rows.append(TexRow.new())
 			smooth_tex.col[x].rows.append(ColRow.new())
 			model_vox.layers[x].rows.append(VoxRow.new())
-			for z : int in range(tile_palette.tile_size.z):
-				pos = Vector3i(x, y, z) + p
+			for z : int in range(size.z):
+				pos = Vector3i(x, y, z) + position
 
 				slope_mesh.tool.channel = VoxelBuffer.CHANNEL_SDF
 				geo = slope_mesh.tool.get_voxel_f(pos)
@@ -216,15 +224,22 @@ func save_tile(name : String, position : Vector3i) -> void:
 	tile.smooth_geo = smooth_geo
 	tile.smooth_tex = smooth_tex
 	tile.model_vox = model_vox
-	tile_palette.tiles[name] = tile
+	tile.size = size
+	tile.fill = fill
+	tile.fill_palette = fill_palette
+	return tile
 
-func load_tile(name : String, position : Vector3i) -> void:
-	if not tile_palette.tiles.has(name): return
+func save_tile(name : String, position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> void:
+	tile_palette.tiles[name] = pack_tile(position, fill, fill_palette)
+
+func unpack_tile(position : Vector3i, tile : MapTile) -> void:
+	unpack(position * tile_palette.tile_size, tile)
+
+func unpack(position : Vector3i, tile : MapTile) -> void:
 	var slope_mesh : SlopeMesh = game.get_slope_mesh()
 	var smooth_mesh : SmoothMesh = game.get_smooth_mesh()
 	var model_mesh : ModelMesh = game.get_model_mesh()
 
-	var tile : MapTile = tile_palette.tiles[name]
 	var geo : float
 	var tex_w : String
 	var tex_x : String
@@ -234,36 +249,91 @@ func load_tile(name : String, position : Vector3i) -> void:
 	var vox : int
 	var pos : Vector3i
 
-	var p : Vector3i = position * tile_palette.tile_size
-
-	for x : int in range(tile_palette.tile_size.x):
-		for y : int in range(tile_palette.tile_size.y):
-			for z : int in range(tile_palette.tile_size.z):
-				pos = p + Vector3i(x, y, z)
+	for x : int in range(tile.size.x):
+		for y : int in range(tile.size.y):
+			for z : int in range(tile.size.z):
+				pos = position + Vector3i(x, y, z)
 				geo = tile.slope_geo.layers[x].rows[y].geo[z]
-				tex_w = tile.slope_tex.w[x].rows[y].tex[z]
-				tex_x = tile.slope_tex.x[x].rows[y].tex[z]
-				tex_y = tile.slope_tex.y[x].rows[y].tex[z]
-				tex_z = tile.slope_tex.z[x].rows[y].tex[z]
-				col = tile.slope_tex.col[x].rows[y].col[z]
 
-				slope_mesh.set_blend(pos, col)
-				slope_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
-				slope_mesh.set_geo(pos, geo)
+				if not (is_equal_approx(col.r, 0.0) and \
+						is_equal_approx(col.g, 0.0) and \
+						is_equal_approx(col.b, 0.0) and \
+						is_equal_approx(col.a, 0.0)):
+					tex_w = tile.slope_tex.w[x].rows[y].tex[z]
+					tex_x = tile.slope_tex.x[x].rows[y].tex[z]
+					tex_y = tile.slope_tex.y[x].rows[y].tex[z]
+					tex_z = tile.slope_tex.z[x].rows[y].tex[z]
+					col = tile.slope_tex.col[x].rows[y].col[z]
+
+					slope_mesh.set_blend(pos, col)
+					slope_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+				elif tile.fill:
+					tex_w = tile.fill_palette.slope_w
+					tex_x = tile.fill_palette.slope_x
+					tex_y = tile.fill_palette.slope_y
+					tex_z = tile.fill_palette.slope_z
+
+					slope_mesh.set_blend(pos, tile.fill_palette.slope_col)
+					slope_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+
+				if not is_equal_approx(geo, 1.0):
+					slope_mesh.set_geo(pos, geo)
+				elif tile.fill:
+					slope_mesh.set_geo(pos, tile.fill_palette.slope_geo)
 
 				geo = tile.smooth_geo.layers[x].rows[y].geo[z]
-				tex_w = tile.smooth_tex.w[x].rows[y].tex[z]
-				tex_x = tile.smooth_tex.x[x].rows[y].tex[z]
-				tex_y = tile.smooth_tex.y[x].rows[y].tex[z]
-				tex_z = tile.smooth_tex.z[x].rows[y].tex[z]
-				col = tile.smooth_tex.col[x].rows[y].col[z]
 
-				smooth_mesh.set_blend(pos, col)
-				smooth_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
-				smooth_mesh.set_geo(pos, geo)
+				if not (is_equal_approx(col.r, 0.0) and \
+						is_equal_approx(col.g, 0.0) and \
+						is_equal_approx(col.b, 0.0) and \
+						is_equal_approx(col.a, 0.0)):
+					tex_w = tile.smooth_tex.w[x].rows[y].tex[z]
+					tex_x = tile.smooth_tex.x[x].rows[y].tex[z]
+					tex_y = tile.smooth_tex.y[x].rows[y].tex[z]
+					tex_z = tile.smooth_tex.z[x].rows[y].tex[z]
+					col = tile.smooth_tex.col[x].rows[y].col[z]
 
-				vox = tile.model_vox.layers[x].rows[y].vox[z]
-				model_mesh.set_voxel(pos, vox)
+					smooth_mesh.set_blend(pos, col)
+					smooth_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+				elif tile.fill:
+					tex_w = tile.fill_palette.smooth_w
+					tex_x = tile.fill_palette.smooth_x
+					tex_y = tile.fill_palette.smooth_y
+					tex_z = tile.fill_palette.smooth_z
+
+					smooth_mesh.set_blend(pos, tile.fill_palette.smooth_col)
+					smooth_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+
+				if not is_equal_approx(geo, 1.0):
+					smooth_mesh.set_geo(pos, geo)
+				elif tile.fill:
+					smooth_mesh.set_geo(pos, tile.fill_palette.smooth_geo)
+
+				if vox != 0:
+					vox = tile.model_vox.layers[x].rows[y].vox[z]
+					model_mesh.set_voxel(pos, vox)
+				elif tile.fill:
+					model_mesh.set_voxel(pos, tile.fill_palette.model)
+
+func clear_tile(position : Vector3i) -> void:
+	clear(position * tile_palette.tile_size, tile_palette.tile_size)
+
+func clear(position : Vector3i, size : Vector3i) -> void:
+	var slope_mesh : SlopeMesh = game.get_slope_mesh()
+	var smooth_mesh : SmoothMesh = game.get_smooth_mesh()
+	var model_mesh : ModelMesh = game.get_model_mesh()
+	var pos : Vector3i
+	for x : int in range(size.x):
+		for y : int in range(size.y):
+			for z : int in range(size.z):
+				pos = position + Vector3i(x, y, z)
+				slope_mesh.remove_geo(pos)
+				smooth_mesh.remove_geo(pos)
+				model_mesh.remove_voxel(pos)
+
+func load_tile(name : String, position : Vector3i) -> void:
+	if not tile_palette.tiles.has(name): return
+	unpack_tile(position, tile_palette.tiles[name] as MapTile)
 
 func duplicate_tile(from : String, to : String) -> void:
 	var slope_geo : TileGeo = TileGeo.new()
@@ -327,10 +397,10 @@ func duplicate_tile(from : String, to : String) -> void:
 				smooth_tex.y[x].rows[y].tex.append(tex)
 				tex = tile_palette.tiles[from].smooth_tex.z[x].rows[y].tex[z]
 				smooth_tex.z[x].rows[y].tex.append(tex)
-				col = tile_palette.tiles[from].smooth_tex.col[x].rows[y].geo[z]
+				col = tile_palette.tiles[from].smooth_tex.col[x].rows[y].col[z]
 				smooth_tex.col[x].rows[y].col.append(tex)
 
-				vox = tile_palette.tiles[from].model_vox[x][y][z]
+				vox = tile_palette.tiles[from].model_vox.layers[x].rows[y].vox[z]
 				model_vox.layers[x].rows[y].vox.append(vox)
 	var tile : MapTile = MapTile.new()
 	tile.slope_geo = slope_geo
@@ -338,40 +408,21 @@ func duplicate_tile(from : String, to : String) -> void:
 	tile.smooth_geo = smooth_geo
 	tile.smooth_tex = smooth_tex
 	tile.model_vox = model_vox
-	tile_palette.tiles[to] = tile
+	tile.model_vox = model_vox
 
-func reskin(base : String, target : Array[String], brush : Array[String], weights : Array[float], name : String) -> void:
-	duplicate_tile(base, name)
-	var vox : int
-	for x : int in range(tile_palette.tile_size.x):
-		for y : int in range(tile_palette.tile_size.y):
-			for z : int in range(tile_palette.tile_size.z):
-				if tile_palette.tiles[name].smooth_tex[x][y][z].w == target[0]:
-					tile_palette.tiles[name].smooth_tex[x][y][z].w = brush[0]
-					tile_palette.tiles[name].smooth_tex[x][y][z].col.r = weights[0]
-				if tile_palette.tiles[name].smooth_tex[x][y][z].x == target[1]:
-					tile_palette.tiles[name].smooth_tex[x][y][z].x = brush[1]
-					tile_palette.tiles[name].smooth_tex[x][y][z].col.g = weights[1]
-				if tile_palette.tiles[name].smooth_tex[x][y][z].y == target[2]:
-					tile_palette.tiles[name].smooth_tex[x][y][z].y = brush[2]
-					tile_palette.tiles[name].smooth_tex[x][y][z].col.b = weights[2]
-				if tile_palette.tiles[name].smooth_tex[x][y][z].z == target[3]:
-					tile_palette.tiles[name].smooth_tex[x][y][z].z = brush[3]
-					tile_palette.tiles[name].smooth_tex[x][y][z].col.a = weights[3]
-				if tile_palette.tiles[name].slope_tex[x][y][z].w == target[0]:
-					tile_palette.tiles[name].slope_tex[x][y][z].w = brush[0]
-					tile_palette.tiles[name].slope_tex[x][y][z].col.r = weights[0]
-				if tile_palette.tiles[name].slope_tex[x][y][z].x == target[1]:
-					tile_palette.tiles[name].slope_tex[x][y][z].x = brush[1]
-					tile_palette.tiles[name].slope_tex[x][y][z].col.g = weights[1]
-				if tile_palette.tiles[name].slope_tex[x][y][z].y == target[2]:
-					tile_palette.tiles[name].slope_tex[x][y][z].y = brush[2]
-					tile_palette.tiles[name].slope_tex[x][y][z].col.b = weights[2]
-				if tile_palette.tiles[name].slope_tex[x][y][z].z == target[3]:
-					tile_palette.tiles[name].slope_tex[x][y][z].z = brush[3]
-					tile_palette.tiles[name].slope_tex[x][y][z].col.a = weights[3]
-				vox = tile_palette.tiles[name].model_vox[x][y][z]
-				if vox <= 0: continue
-				if get_texture(vox) == target[0]:
-					vox = get_skin(vox, brush[0])
-					tile_palette.tiles[name].model_vox[x][y][z] = vox
+	tile.fill_palette = VoxelPalette.new()
+	tile.fill_palette.slope_w = tile_palette.tiles[from].fill_palette.slope_w
+	tile.fill_palette.slope_x = tile_palette.tiles[from].fill_palette.slope_x
+	tile.fill_palette.slope_y = tile_palette.tiles[from].fill_palette.slope_y
+	tile.fill_palette.slope_z = tile_palette.tiles[from].fill_palette.slope_z
+	tile.fill_palette.slope_col= tile_palette.tiles[from].fill_palette.slope_col
+	tile.fill_palette.slope_geo= tile_palette.tiles[from].fill_palette.slope_geo
+	tile.fill_palette.smooth_w = tile_palette.tiles[from].fill_palette.smooth_w
+	tile.fill_palette.smooth_x = tile_palette.tiles[from].fill_palette.smooth_x
+	tile.fill_palette.smooth_y = tile_palette.tiles[from].fill_palette.smooth_y
+	tile.fill_palette.smooth_z = tile_palette.tiles[from].fill_palette.smooth_z
+	tile.fill_palette.smooth_col= tile_palette.tiles[from].fill_palette.smooth_col
+	tile.fill_palette.smooth_geo= tile_palette.tiles[from].fill_palette.smooth_geo
+	tile.fill_palette.model = tile_palette.tiles[from].fill_palette.model
+
+	tile_palette.tiles[to] = tile

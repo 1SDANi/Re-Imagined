@@ -10,6 +10,7 @@ var clipboard : MapTile
 
 var start_pos : Vector3i
 var end_pos : Vector3i
+var selection_size : Vector3i
 
 var tool_menu : ToolMenu
 var mode_menu : ModeMenu
@@ -21,7 +22,11 @@ func _init(_last : CommandMenu, _controller : EditorController) -> void:
 	controller = _controller
 
 	_controller.editor = self
-	category = "Editor"
+	category = "Edit"
+
+	start_pos = Vector3i.ZERO
+	end_pos = Vector3i.ZERO
+	selection_size = Vector3.ZERO
 
 	tool_menu = ToolMenu.new(self, _controller.initial_mode)
 	mode_menu = ModeMenu.new(self, _controller.initial_mode)
@@ -38,7 +43,7 @@ func _init(_last : CommandMenu, _controller : EditorController) -> void:
 		detail_menu
 	]
 
-	super("Level Editor", _last, _commands)
+	super("Edit", _last, _commands)
 	game.command_update()
 
 func new_clipboard(_x : int, _y : int, _z : int) -> void:
@@ -122,11 +127,40 @@ func select_end(targeti : Vector3i) -> void:
 	end_pos = targeti
 	selection = true
 	dragging = false
+	adjust_clipboard()
 	controller.select_end(targeti)
-	print("select end")
 
 func deselect() -> void:
 	selection = false
 	dragging = false
 	controller.deselect()
-	print("deselect")
+	selection_size = Vector3.ZERO
+
+func adjust_clipboard() -> void:
+	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
+	var temp : int
+	if start_pos.x > end_pos.x:
+		temp = start_pos.x
+		start_pos.x = end_pos.x
+		end_pos.x = temp
+	if start_pos.y > end_pos.y:
+		temp = start_pos.y
+		start_pos.y = end_pos.y
+		end_pos.y = temp
+	if start_pos.z > end_pos.z:
+		temp = start_pos.z
+		start_pos.z = end_pos.z
+		end_pos.z = temp
+	selection_size = end_pos - start_pos + Vector3i(1,1,1)
+
+func clear() -> void:
+	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
+	game.map.clear(start_pos, selection_size)
+
+func copy() -> void:
+	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
+	clipboard = game.map.pack(start_pos, selection_size, false, VoxelPalette.new())
+
+func paste(targeti : Vector3i) -> void:
+	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
+	game.map.unpack(targeti, clipboard)

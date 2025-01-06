@@ -1,8 +1,10 @@
+class_name UIController
 extends Node
 
 var _pause_ui : Control
 var _game_ui : Control
 var _command_ui : Control
+var _temporary_ui : Control
 var _menu_title : RichTextLabel
 var _menu_1 : RichTextLabel
 var _menu_2 : RichTextLabel
@@ -19,9 +21,12 @@ var _command_5 : RichTextLabel
 var hide : Array[NodePath]
 var show : Array[NodePath]
 
+@export var name_popup : PackedScene
+
 @export var PauseUI : NodePath
 @export var GameUI : NodePath
 @export var CommandUI : NodePath
+@export var TemporaryUI : NodePath
 @export var MenuTitle : NodePath
 @export var Menu1 : NodePath
 @export var Menu2 : NodePath
@@ -38,10 +43,12 @@ var show : Array[NodePath]
 @export var passive: StyleBoxFlat
 
 func _ready() -> void:
+	game.set_ui(get_path())
 	_pause_ui = get_node(PauseUI)
 	_game_ui = get_node(GameUI)
 	_command_ui = get_node(CommandUI)
 	_menu_title = get_node(MenuTitle)
+	_temporary_ui = get_node(TemporaryUI)
 	_menu_1 = get_node(Menu1)
 	_menu_2 = get_node(Menu2)
 	_menu_3 = get_node(Menu3)
@@ -53,11 +60,27 @@ func _ready() -> void:
 	_command_3 = get_node(Command3)
 	_command_4 = get_node(Command4)
 	_command_5 = get_node(Command5)
-	if not game.CommandUpdate.connect(command_update) != OK:
-		pass
+	if game.CommandUpdate.connect(command_update) != OK:
+		print("failed to connect ui controller to command updates")
+
+func add_temporary(temporary : PackedScene) -> Node:
+	var _temporary : Node = temporary.instantiate()
+	_temporary_ui.add_child(_temporary)
+	return _temporary
+
+func clear_temporary() -> void:
+	for temporary : Node in _temporary_ui.get_children():
+		temporary.free()
 
 func command_update() -> void:
-	if game.input.is_mouse_free():
+	if game.input.action_mode != InputHandler.ACTION_MODE.WORLD:
+		_pause_ui.set_process_mode(PROCESS_MODE_DISABLED)
+		_pause_ui.set_visible(false)
+		_game_ui.set_process_mode(PROCESS_MODE_DISABLED)
+		_game_ui.set_visible(false)
+		_command_ui.set_process_mode(PROCESS_MODE_DISABLED)
+		_command_ui.set_visible(false)
+	elif game.input.is_mouse_free():
 		_pause_ui.set_process_mode(PROCESS_MODE_INHERIT)
 		_pause_ui.set_visible(true)
 		_game_ui.set_process_mode(PROCESS_MODE_DISABLED)
@@ -77,7 +100,6 @@ func command_update() -> void:
 		var command : String
 		var menu_panel : PanelContainer
 		var command_panel : PanelContainer
-		var pos : Vector2
 		_menu_title.text = "[center][b]" + menu.category + "[b][center]"
 
 		if menu.commands.size() > 0:
@@ -178,7 +200,6 @@ func command_update() -> void:
 			else:
 				menu_panel.add_theme_stylebox_override("panel", passive)
 				command_panel.add_theme_stylebox_override("panel", passive)
-				pos = Vector2(_command_4.global_position.x, _menu_title.global_position.y)
 				command_panel.set_visible(false)
 		else:
 			_menu_4.text = ""

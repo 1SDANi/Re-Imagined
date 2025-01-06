@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://c26pwxglf7165"]
+
+[ext_resource type="Script" path="res://scripts/NamePopup.gd" id="1_ai81k"]
+
+[node name="Control" type="HBoxContainer" node_paths=PackedStringArray("Cancel", "Name", "Confirm")]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -96.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_ai81k")
+Cancel = NodePath("Cancel")
+Name = NodePath("Name")
+Confirm = NodePath("Confirm")
+
+[node name="Cancel" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Name" type="LineEdit" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 8.0
+alignment = 1
+
+[node name="Confirm" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Confirm"

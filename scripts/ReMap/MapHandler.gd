@@ -123,31 +123,42 @@ func get_skin(vox : int, texture : String) -> int:
 func get_model(model : String, rot : int, terrain : String) -> int:
 	return map.get_model(model, rot, terrain)
 
-func reset_tile() -> void:
-	var x : int = floori(float(game.targeti.x) / float(map.tile_palette.tile_size.x))
-	var y : int = floori(float(game.targeti.y) / float(map.tile_palette.tile_size.y))
-	var z : int = floori(float(game.targeti.z) / float(map.tile_palette.tile_size.z))
-	map.load_tile(get_tile(), Vector3i(x, y, z))
+func reset_tile(position : Vector3i, priority : int) -> void:
+	map.load_tile(get_tile(position, priority), position)
 
-func save_tile() -> void:
-	var x : int = floori(float(game.targeti.x) / float(map.tile_palette.tile_size.x))
-	var y : int = floori(float(game.targeti.y) / float(map.tile_palette.tile_size.y))
-	var z : int = floori(float(game.targeti.z) / float(map.tile_palette.tile_size.z))
-	var pos : Vector3i = Vector3i(x,y,z)
-	map.save_tile(primary + secondary, pos)
+func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+	return map.pack_tile(position, fill, fill_palette)
 
-func set_tile() -> void:
-	var x : int = floori(float(game.targeti.x) / float(map.tile_palette.tile_size.x))
-	var y : int = floori(float(game.targeti.y) / float(map.tile_palette.tile_size.y))
-	var z : int = floori(float(game.targeti.z) / float(map.tile_palette.tile_size.z))
-	map.set_tile(primary + secondary, Vector3i(x, y, z))
+func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+	return map.pack(position, size, fill, fill_palette)
+
+func unpack_tile(position : Vector3i, tile : MapTile) -> void:
+	map.unpack_tile(position, tile)
+
+func unpack(position : Vector3i, tile : MapTile) -> void:
+	map.unpack(position, tile)
+
+func clear_tile(position : Vector3i) -> void:
+	map.clear_tile(position)
+
+func clear(position : Vector3i, size : Vector3i) -> void:
+	map.clear(position, size)
+
+func save_tile(name : String, position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> void:
+	map.save_tile(name, position, fill, fill_palette)
+
+func set_tile(name : String, position : Vector3i, priority : int) -> void:
+	map.set_tile(name, position, priority)
 	save_map()
 
-func get_tile() -> String:
-	var x : int = floori(float(game.targeti.x) / float(map.tile_palette.tile_size.x))
-	var y : int = floori(float(game.targeti.y) / float(map.tile_palette.tile_size.y))
-	var z : int = floori(float(game.targeti.z) / float(map.tile_palette.tile_size.z))
-	return map.get_tile(Vector3i(x, y, z))
+func get_tile(position : Vector3i, priority : int) -> String:
+	return map.get_tile(position, priority)
+
+func get_pos(position : Vector3i) -> Vector3i:
+	var x : int = floori(float(position.x) / float(map.tile_palette.tile_size.x))
+	var y : int = floori(float(position.y) / float(map.tile_palette.tile_size.y))
+	var z : int = floori(float(position.z) / float(map.tile_palette.tile_size.z))
+	return Vector3i(x, y, z)
 
 func set_primary(name : String) -> void:
 	primary = name
@@ -179,28 +190,3 @@ func load_map() -> void:
 		print("failed to load from " + save_location + ".res")
 	else:
 		print("loaded from " + save_location + ".res")
-
-func mass_reskin() -> void:
-	for i : int in range(primaries.size() - 1):
-		for j : int in range(secondaries.size()):
-			var base_name : String = primaries[0] + secondaries[j]
-			var new_name : String = primaries[i + 1] + secondaries[j]
-			#map.reskin(base_name, primaries[0], reskin_tex[i + 1], new_name)
-	reload_map()
-
-func reskin_at(mode : MODE, pos : Vector3i, brush : Array[String], weights : Array[float], name : String) -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh(mode)
-	var pos_x : int = floori(float(pos.x) / float(map.tile_palette.tile_size.x))
-	var pos_y : int = floori(float(pos.y) / float(map.tile_palette.tile_size.y))
-	var pos_z : int = floori(float(pos.z) / float(map.tile_palette.tile_size.z))
-	var vox : int = mesh.tool.get_voxel(pos)
-	var base : String = map.get_tile(Vector3i(pos_x, pos_y, pos_z))
-	var target : String = ""
-	if mode in MapHandler.SOFT_MODES:
-		mesh.tool.channel = VoxelBuffer.CHANNEL_SDF
-		var indices : Vector4i = VoxelTool.u16_indices_to_vec4i(vox)
-		target = map.get_texture(indices.x)
-	elif mode == MapHandler.MODE.MODEL:
-		target = map.get_texture(vox)
-	#map.reskin(base, target, brush, weights, name)
-	reload_map()
