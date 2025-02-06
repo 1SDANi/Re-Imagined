@@ -11,6 +11,8 @@ var map : MapHandler
 var targeti : Vector3i
 var actor : Actor
 var controller : Controller
+var save_dialog : FileDialog
+var load_dialog : FileDialog
 
 signal InputsReady(delta : float)
 signal CommandUpdate
@@ -107,6 +109,18 @@ func set_controller(_controller : Controller) -> void:
 
 func get_controller() -> Controller:
 	return controller
+
+func set_save_dialog(_save_dialog : FileDialog) -> void:
+	save_dialog = _save_dialog
+
+func get_save_dialog() -> FileDialog:
+	return save_dialog
+
+func set_load_dialog(_load_dialog : FileDialog) -> void:
+	load_dialog = _load_dialog
+
+func get_load_dialog() -> FileDialog:
+	return load_dialog
 
 func inputs_ready(delta : float) -> void:
 	InputsReady.emit(delta)

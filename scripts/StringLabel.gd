@@ -7,10 +7,14 @@ extends Label
 var _get : Callable
 
 func _ready() -> void:
+	var mainget : Object = get_node(target)
+	var subget : Object = mainget.get(subtarget)
+
 	if subtarget:
-		_get = Callable(get_node(target).get(subtarget) as Object, getter)
+		_get = Callable(subget, getter)
 	else:
-		_get = Callable(get_node(target) as Object, getter)
+		_get = Callable(mainget, getter)
 
 func _process(_delta : float) -> void:
-	set_text(_get.call() as String)
+	var val : String = _get.call()
+	set_text(val)

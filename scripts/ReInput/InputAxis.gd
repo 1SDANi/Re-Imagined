@@ -36,10 +36,6 @@ func _init(axis: AxisType, bias: BiasType) -> void:
 	state.is_zero = true
 	statehistory.push_front(state)
 
-func update_axis(_delta : float) -> void:
-	positive = null
-	negative = null
-
 func update_action(delta : float, _positive : bool, action : InputAction) -> void:
 	if _positive:
 		positive = action
@@ -64,6 +60,7 @@ func update_spacey(pos : InputState, neg : InputState, delta : float) -> void:
 
 	if is_equal_approx(pos.duration, neg.duration) and not both_zero:
 		statehistory[0].duration += delta
+		update_state(pos.value if statehistory[0].value > 0 else -neg.value)
 	elif not pos.is_zero and (pos_younger or neg.is_zero):
 		push_state(pos, delta, false, "positive is older")
 	elif not neg.is_zero and (neg_younger or pos.is_zero):
@@ -102,7 +99,9 @@ func get_average() -> float:
 
 func push_nil(delta : float, r : String) -> void:
 	var last_duration : float = statehistory[0].duration
-	if statehistory[0].is_zero: last_duration += delta
+	if statehistory[0].is_zero:
+		last_duration += delta
+		update_state(0.0)
 
 	if statehistory.size() >= buffer_length:
 		statehistory.pop_back()
@@ -120,8 +119,6 @@ func push_nil(delta : float, r : String) -> void:
 
 		if not statehistory[0].is_zero and last_duration < tap_threshold:
 			state.is_tapped = true
-			print(last_duration)
-			print(tap_threshold)
 
 		if statehistory.size() > 2:
 			if statehistory[0].is_tapped and statehistory[2].is_tapped:
@@ -132,6 +129,9 @@ func push_nil(delta : float, r : String) -> void:
 	if nil_print_switch:
 		print("stopping  because " + r)
 
+func update_state(value : float) -> void:
+	statehistory[0].value = value
+
 func push_state(state : InputState, del : float, n : bool, r : String) -> void:
 	var same_direction : bool = statehistory[0].value < 0 == n
 	var same_highness : bool = statehistory[0].is_high == state.is_high
@@ -139,6 +139,7 @@ func push_state(state : InputState, del : float, n : bool, r : String) -> void:
 
 	if same_highness and same_nillness and same_direction:
 		statehistory[0].duration += del
+		update_state(state.value * (-1.0 if n else 1.0))
 	else:
 		if statehistory.size() >= buffer_length:
 			statehistory.pop_back()

@@ -34,6 +34,7 @@ func update(input : float, delta : float) -> void:
 
 	if statehistory.size() > 0 and same_highness and same_nillness:
 		statehistory[0].duration += delta
+		updatestate(value)
 		if statehistory[0].duration >= hold_threshold:
 			if _is_zero:
 				statehistory[0].is_idle = true
@@ -74,6 +75,9 @@ func get_average() -> float:
 	average /= statehistory.size()
 
 	return average
+
+func updatestate(value : float) -> void:
+	statehistory[0].value = value
 
 func pushstate(value : float, high : bool, zero : bool, delta : float) -> void:
 	var last_duration : float

@@ -43,7 +43,7 @@ var start_pos : bool
 var end_pos : bool
 var commanding : bool
 
-var editor : EditorMenu
+var editor : EditorWheel
 
 const c : InputAxis.AxisType = InputAxis.AxisType.CANCEL
 const p : InputAxis.BiasType = InputAxis.BiasType.POS
@@ -102,9 +102,9 @@ func _ready() -> void:
 		pass
 	if not game.input.bind_axis("Close Menu", "Menu", false):
 		pass
-	if not game.input.add_key(Key.KEY_F, "Command Down"):
+	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_WHEEL_DOWN, "Command Down"):
 		pass
-	if not game.input.add_key(Key.KEY_R, "Command Up"):
+	if not game.input.add_mouse_button(MouseButton.MOUSE_BUTTON_WHEEL_UP, "Command Up"):
 		pass
 	if not game.input.add_input("LD", "Command Down"):
 		pass
@@ -171,10 +171,12 @@ func _ready() -> void:
 
 	await owner.ready
 
-	var _wheel : EditorWheel = EditorWheel.new(get_parent() as Actor, self)
-	(get_parent() as Actor).set_command_menu(_wheel)
+	editor = EditorWheel.new(get_parent() as Actor, self)
+	var menu : CommandMenu = editor.editor
+	(get_parent() as Actor).set_command_menu(menu)
 
 	game.input.set_action_mode(InputHandler.ACTION_MODE.WORLD)
+	game.input.release_mouse()
 
 	update_target()
 
@@ -247,6 +249,8 @@ func handle_movement(delta: float) -> void:
 		parent.position += off
 		parent.position.y = floor(parent.position.y)
 
+	editor.map.tile_menu.update_tiles(get_parent() as Actor)
+
 func handle_placing(_delta: float) -> void:
 	var command : InputState = game.input.get_axis_state("Command")
 
@@ -285,7 +289,7 @@ func handle_placing(_delta: float) -> void:
 				(get_parent() as Actor).command_use(use)
 
 func update_target() -> void:
-	var mesh : VoxelMesh = game.get_mode_mesh(editor.get_mode())
+	var mesh : VoxelMesh = game.get_mode_mesh(editor.editor.get_mode())
 	var parent_pos : Vector3 = (get_parent() as ThirdPersonActor).position
 	var pos : Vector3 = mesh.to_local(parent_pos) + Vector3.DOWN / 2
 	var target : Vector3 = pos

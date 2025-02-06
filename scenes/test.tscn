@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://j28scctrhxas"]
+[gd_scene load_steps=58 format=3 uid="uid://j28scctrhxas"]
 
 [ext_resource type="Shader" path="res://addons/VoxelShader/smooth.gdshader" id="1_jrjy4"]
 [ext_resource type="Script" path="res://scripts/ReMap/InitMap.gd" id="1_ml853"]
@@ -26,11 +26,12 @@
 [ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
 [ext_resource type="ArrayMesh" uid="uid://btpyl3cwmin5f" path="res://models/sign.obj" id="14_dpks5"]
 [ext_resource type="Script" path="res://scripts/ReMesh/SmoothMesh.gd" id="15_gv8xu"]
-[ext_resource type="Texture2DArray" uid="uid://cd1vhr4yie6y5" path="res://atlas_array.tres" id="16_3ss0b"]
+[ext_resource type="Texture2DArray" path="res://atlas_array.tres" id="16_3ss0b"]
 [ext_resource type="Script" path="res://scripts/ReMesh/ModelMesh.gd" id="16_aoao2"]
 [ext_resource type="ArrayMesh" uid="uid://boljbhl56jg1r" path="res://models/block.obj" id="17_xxmat"]
 [ext_resource type="PackedScene" uid="uid://c26pwxglf7165" path="res://scenes/name_popup.tscn" id="28_mftsw"]
 [ext_resource type="Material" uid="uid://cuoqo0xmpnukq" path="res://shaders/water.tres" id="28_taxcv"]
+[ext_resource type="PackedScene" uid="uid://cuaamst05kj3e" path="res://scenes/notification_popup.tscn" id="29_q6ayx"]
 [ext_resource type="Script" path="res://addons/AutoSizer/AutoSizeRichLabel.gd" id="32_bb1ba"]
 [ext_resource type="StyleBox" uid="uid://csjamn24ylho6" path="res://themes/activecommand.tres" id="32_xhvlv"]
 [ext_resource type="StyleBox" uid="uid://ce85l88e3nv8n" path="res://themes/passivecommand.tres" id="33_xne3l"]
@@ -121,17 +122,15 @@ r = 0.0
 [sub_resource type="QuadMesh" id="QuadMesh_cd132"]
 size = Vector2(100, 100)
 
-[node name="World3D" type="Node3D"]
+[node name="World3D" type="Node3D" node_paths=PackedStringArray("save_dialog", "load_dialog")]
 script = ExtResource("1_ml853")
 textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_xn442"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("10_sq67x"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5"), ExtResource("12_fa3ir")])
 texture_names = Array[String](["Snow", "Permafrost", "Dirt", "Leaves", "Straw", "WetGrass", "DryGrass", "RockyGrass", "Sand", "Stone", "Water"])
 resolution = 32
 models = Array[Mesh]([ExtResource("17_xxmat"), ExtResource("14_dpks5")])
 model_names = Array[String](["Block", "Sign"])
-primaries = Array[String](["Arctic", "Tundra", "Steppe", "Heath", "Prarie", "Grassland", "Savanna", "Semidesert", "Desert", "Badland"])
-secondaries = Array[String](["Mountain", "Plateau", "Hills", "Plains", "Lagoon", "Archipelago", "Cape", "Coast", "Ocean"])
-initial_primary = "Arctic"
-initial_secondary = "Ocean"
+save_dialog = NodePath("SaveDialog")
+load_dialog = NodePath("LoadDialog")
 
 [node name="SlopeMesh" type="VoxelTerrain" parent="."]
 mesher = SubResource("VoxelMesherTransvoxel_lldlo")
@@ -234,6 +233,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("6_k8042")
 name_popup = ExtResource("28_mftsw")
+notification_popup = ExtResource("29_q6ayx")
 PauseUI = NodePath("../PauseUI")
 GameUI = NodePath("../GameUI")
 CommandUI = NodePath("../Command UI")
@@ -840,3 +840,19 @@ visible = false
 material_override = ExtResource("28_taxcv")
 transparency = 0.75
 mesh = SubResource("QuadMesh_cd132")
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+title = "Save As"
+ok_button_text = "Save"
+access = 2
+filters = PackedStringArray("*.res")
+use_native_dialog = true
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.res")
+use_native_dialog = true

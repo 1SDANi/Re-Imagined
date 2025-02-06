@@ -11,17 +11,24 @@ var _set : Callable
 var _get : Callable
 
 func _ready() -> void:
+	var mainset : Object = get_node(target)
+	var mainget : Object = get_node(target)
+	var subset : Object = mainset.get(subtarget)
+	var subget : Object = mainget.get(subtarget)
+
 	_label = get_node(Value)
 
 	if subtarget:
-		_set = Callable(get_node(target).get(subtarget) as Object, setter)
-		_get = Callable(get_node(target).get(subtarget) as Object, getter)
+		_set = Callable(subset, setter)
+		_get = Callable(subget, getter)
 	else:
-		_set = Callable(get_node(target) as Object, setter)
-		_get = Callable(get_node(target) as Object, getter)
+		_set = Callable(mainset, setter)
+		_get = Callable(mainget, getter)
 
-	set_value(_get.call() as float)
+	var val : float = _get.call()
 
-func _value_changed(_value : float) -> void:
-	_label.set_text(str(_value))
-	_set.call(_value)
+	set_value(val)
+
+func _value_changed(_val : float) -> void:
+	_label.set_text(str(_val))
+	_set.call(_val)

@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://cuaamst05kj3e"]
+
+[ext_resource type="Script" path="res://scripts/NotificationPopup.gd" id="1_os8hv"]
+[ext_resource type="StyleBox" uid="uid://ce85l88e3nv8n" path="res://themes/passivecommand.tres" id="2_os8hv"]
+[ext_resource type="StyleBox" uid="uid://csjamn24ylho6" path="res://themes/activecommand.tres" id="4_4rfki"]
+[ext_resource type="StyleBox" uid="uid://cp6xir3h4ypbh" path="res://themes/titlecommand.tres" id="5_qlsx4"]
+
+[node name="Popup" type="VBoxContainer" node_paths=PackedStringArray("Notification", "Dismiss")]
+anchors_preset = -1
+anchor_top = 0.75
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_os8hv")
+Notification = NodePath("Notification")
+Dismiss = NodePath("Dismiss")
+
+[node name="Notification" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/normal = ExtResource("2_os8hv")
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="Dismiss" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/focus = ExtResource("4_4rfki")
+theme_override_styles/hover_pressed_mirrored = ExtResource("5_qlsx4")
+theme_override_styles/hover_pressed = ExtResource("5_qlsx4")
+theme_override_styles/hover = ExtResource("4_4rfki")
+theme_override_styles/pressed = ExtResource("5_qlsx4")
+theme_override_styles/normal = ExtResource("2_os8hv")
+text = "Confirm"

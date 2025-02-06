@@ -1,7 +1,7 @@
-class_name TilesetSetCommand
+class_name LayersSetCommand
 extends Command
 
-func _init(_name : String, _last : TilesMenu) -> void:
+func _init(_name : String, _last : LayersMenu) -> void:
 	category = _name
 	super(_name, _last)
 

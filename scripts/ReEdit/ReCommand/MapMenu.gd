@@ -5,7 +5,7 @@ var tileset_menu : TilesetMenu
 var tile_menu : TileMenu
 var manager_menu : MapManagerMenu
 
-func _init(_last : CommandMenu) -> void:
+func _init(_last : EditorWheel) -> void:
 	category = "Map"
 
 	tileset_menu = TilesetMenu.new(self)
@@ -20,18 +20,3 @@ func _init(_last : CommandMenu) -> void:
 	]
 
 	super("Map", _last, _commands)
-
-func get_tile_name() -> String:
-	return tileset_menu.get_tile_name()
-
-func add_tile(above : bool) -> void:
-	return tileset_menu.add_tile(above)
-
-func remove_tile(_user : Actor) -> void:
-	return tileset_menu.remove_tile(_user)
-
-func rename_tile() -> void:
-	return tileset_menu.rename_tile()
-
-func move_tile(amount : int) -> void:
-	return tileset_menu.move_tile(amount)

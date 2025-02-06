@@ -20,6 +20,12 @@ enum MOUSE_DIR
 	RIGHT
 }
 
+const WHEEL_DIR : Array[int] = \
+[
+	MouseButton.MOUSE_BUTTON_WHEEL_UP,
+	MouseButton.MOUSE_BUTTON_WHEEL_DOWN
+]
+
 const MOUSE_DIR_NAMES : Array[String] = [ "Up", "Down", "Left", "Right" ]
 
 var gmp : Dictionary
@@ -38,6 +44,7 @@ var default_doubletap_threshold : float
 var default_axis_doubletap_threshold : float
 
 var mouse_motion : Vector2
+var wheel_motion : float
 
 var default_buffer_length : int
 var default_axis_buffer_length : int
@@ -111,10 +118,20 @@ func update_keys(delta : float) -> void:
 func update_mouse_buttons(delta : float) -> void:
 	if input_mode != InputMode.KBM: return
 	for action : MouseButton in mob:
-		if action == MouseButton.MOUSE_BUTTON_WHEEL_UP: continue
-		if action == MouseButton.MOUSE_BUTTON_WHEEL_DOWN: continue
+		if action in WHEEL_DIR: continue
 		var a : InputAction = actions[mob[action]]
 		a.update(Input.is_mouse_button_pressed(action), delta)
+
+	var up : float = wheel_motion if wheel_motion > 0.0 else 0.0
+	var down : float = -wheel_motion if wheel_motion < 0.0 else 0.0
+
+	var up_a : InputAction = actions[mob[MouseButton.MOUSE_BUTTON_WHEEL_UP]]
+	var down_a : InputAction = actions[mob[MouseButton.MOUSE_BUTTON_WHEEL_DOWN]]
+
+	up_a.update(up, delta)
+	down_a.update(down, delta)
+
+	wheel_motion = 0.0
 
 func update_mouse_dir(delta : float) -> void:
 	if input_mode != InputMode.KBM: return
@@ -138,11 +155,10 @@ func mouse_wheel_event(event : InputEvent) -> void:
 	if input_mode != InputMode.KBM: return
 	if event is InputEventMouseButton:
 		var e : InputEventMouseButton = event
-		var action : InputAction = actions[mob[e.button_index]]
 		if e.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
-			action.update(1.0, 1.0)
+			wheel_motion = 1.0
 		elif e.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
-			action.update(1.0, 1.0)
+			wheel_motion = -1.0
 
 func mouse_motion_event(event : InputEvent) -> void:
 	if input_mode != InputMode.KBM: return

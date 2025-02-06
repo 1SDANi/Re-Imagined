@@ -18,10 +18,9 @@ var shape_menu : ShapeMenu
 var textures_menu : TexturesMenu
 var detail_menu : DetailMenu
 
-func _init(_last : CommandMenu, _controller : EditorController) -> void:
+func _init(_last : EditorWheel, _controller : EditorController) -> void:
 	controller = _controller
 
-	_controller.editor = self
 	category = "Edit"
 
 	start_pos = Vector3i.ZERO
@@ -162,5 +161,6 @@ func copy() -> void:
 	clipboard = game.map.pack(start_pos, selection_size, false, VoxelPalette.new())
 
 func paste(targeti : Vector3i) -> void:
+	if clipboard == null: return
 	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
 	game.map.unpack(targeti, clipboard)

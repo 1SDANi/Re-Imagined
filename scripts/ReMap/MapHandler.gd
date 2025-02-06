@@ -2,15 +2,8 @@ class_name MapHandler
 
 var map : MapInstance
 
-var primaries : Array[String]
-var secondaries : Array[String]
-
-var primary : String
-var secondary : String
-
-var reskin_tex : Array[String]
-
 var save_location : String
+var save_name : String
 
 enum MODE
 {
@@ -149,28 +142,27 @@ func save_tile(name : String, position : Vector3i, fill : bool, fill_palette : V
 
 func set_tile(name : String, position : Vector3i, priority : int) -> void:
 	map.set_tile(name, position, priority)
-	save_map()
+
+func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
+	map.move_tile(pos, priority, amount)
+
+func reload_at(position : Vector3i) -> void:
+	map.reload_at(position)
+
+func remove_tile(position : Vector3i, priority : int) -> void:
+	map.remove_tile(position, priority)
 
 func get_tile(position : Vector3i, priority : int) -> String:
 	return map.get_tile(position, priority)
+
+func get_tile_stack(position : Vector3i) -> MapStack:
+	return map.get_tile_stack(position)
 
 func get_pos(position : Vector3i) -> Vector3i:
 	var x : int = floori(float(position.x) / float(map.tile_palette.tile_size.x))
 	var y : int = floori(float(position.y) / float(map.tile_palette.tile_size.y))
 	var z : int = floori(float(position.z) / float(map.tile_palette.tile_size.z))
 	return Vector3i(x, y, z)
-
-func set_primary(name : String) -> void:
-	primary = name
-
-func get_primary() -> String:
-	return primary
-
-func set_secondary(name : String) -> void:
-	secondary = name
-
-func get_secondary() -> String:
-	return secondary
 
 func set_save_location(location : String) -> void:
 	save_location = location
@@ -179,14 +171,15 @@ func get_save_location() -> String:
 	return save_location
 
 func save_map() -> void:
-	if not ResourceSaver.save(map, "res://" + save_location + ".res") == OK:
-		print("failed to save to " + save_location + ".res")
+	if not ResourceSaver.save(map, save_location) == OK:
+		print("failed to save to " + save_location)
 	else:
-		print("saved to " + save_location + ".res")
+		print("saved to " + save_location)
 
 func load_map() -> void:
-	map = (ResourceLoader.load("res://" + save_location + ".res") as MapInstance)
+	map = (ResourceLoader.load(save_location) as MapInstance)
 	if not map:
-		print("failed to load from " + save_location + ".res")
+		print("failed to load from " + save_location)
 	else:
-		print("loaded from " + save_location + ".res")
+		print("loaded from " + save_location)
+		reload_map()

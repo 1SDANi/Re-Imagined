@@ -22,14 +22,19 @@ func _process(delta : float) -> void:
 	command_menu.tick_commands(delta)
 
 func is_selecting() -> bool:
-	return not command_menu.last is CommandWheel
+	var menu : bool = command_menu.commands[command_menu.index] is CommandMenu
+	return menu and not command_menu.last is CommandWheel
 
 func command_update() -> void:
 	if command_menu != null:
 		command_menu.update_commands()
 
 func set_command_menu(c : CommandMenu) -> void:
-	command_menu = c
+	if c is CommandWheel:
+		c.command_up()
+		command_menu = c.commands[c.index]
+	else:
+		command_menu = c
 	game.command_update()
 
 func command_use(_state : InputState) -> void:

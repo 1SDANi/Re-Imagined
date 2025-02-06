@@ -33,13 +33,37 @@ func set_tile(name : String, pos : Vector3i, priority : int) -> void:
 	if pos.x < -map_size.x or pos.x > map_size.x: return
 	if pos.y < -map_size.y or pos.y > map_size.y: return
 	if pos.z < -map_size.z or pos.z > map_size.z: return
+	var e : int = OK
 	if priority > layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size():
 		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.append(name)
 	elif priority < 0:
 		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.push_front(name)
 	else:
-		layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority] = name
-	load_tile(name, pos)
+		e = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.insert(priority, name)
+
+	if e == OK:
+		reload_at(pos)
+
+func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
+	var target : int = priority + amount
+	var size : int = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size()
+	if target < 0:
+		target = size
+	elif target >= size:
+		target = 0
+	var temp1 : String = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
+	var temp2 : String = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target]
+	layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority] = temp2
+	layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target] = temp1
+	game.command_update()
+	reload_at(pos)
+
+func remove_tile(pos : Vector3i, priority : int) -> void:
+	if pos.x < -map_size.x or pos.x > map_size.x: return
+	if pos.y < -map_size.y or pos.y > map_size.y: return
+	if pos.z < -map_size.z or pos.z > map_size.z: return
+	layers[pos.x].rows[pos.y].stacks[pos.z].tiles.remove_at(priority)
+	reload_at(pos)
 
 func get_tile(pos : Vector3i, priority : int) -> String:
 	if pos.x < -map_size.x or pos.x >= map_size.x: return ""
@@ -47,16 +71,23 @@ func get_tile(pos : Vector3i, priority : int) -> String:
 	if pos.z < -map_size.z or pos.z >= map_size.z: return ""
 	return layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
 
+func get_tile_stack(pos : Vector3i) -> MapStack:
+	if pos.x < -map_size.x or pos.x >= map_size.x: return MapStack.new()
+	if pos.y < -map_size.y or pos.y >= map_size.y: return MapStack.new()
+	if pos.z < -map_size.z or pos.z >= map_size.z: return MapStack.new()
+	return layers[pos.x].rows[pos.y].stacks[pos.z]
+
 func reload_map() -> void:
-	var pos : Vector3i
-	var tile : String
 	for x : int in map_size.x:
 		for y : int in map_size.y:
 			for z : int in map_size.z:
-				pos = Vector3i(x, y, z)
-				for i : int in range(layers[x].rows[y].stacks[z].tiles.size()):
-					tile = get_tile(pos, i)
-					load_tile(tile, pos)
+				reload_at(Vector3i(x, y, z))
+
+func reload_at(pos : Vector3i) -> void:
+	var tile : String
+	for i : int in range(layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size()):
+		tile = get_tile(pos, i)
+		load_tile(tile, pos)
 
 func get_atlas_texture() -> ImageTexture:
 	return tile_palette.get_atlas_texture()

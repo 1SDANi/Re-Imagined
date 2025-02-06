@@ -1,9 +1,9 @@
-class_name TileRenameCommand
+class_name TileReloadCommand
 extends Command
 
 func _init(_last : TileMenu) -> void:
-	category = "Rename Tile"
+	category = "Reload Tile"
 	super(category, _last)
 
 func command_use(_user : Actor, _state : InputState) -> void:
-	(last.last as MapMenu).rename_tile()
+	(last as TileMenu).reload_tile(_user)

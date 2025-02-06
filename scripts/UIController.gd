@@ -22,6 +22,7 @@ var hide : Array[NodePath]
 var show : Array[NodePath]
 
 @export var name_popup : PackedScene
+@export var notification_popup : PackedScene
 
 @export var PauseUI : NodePath
 @export var GameUI : NodePath

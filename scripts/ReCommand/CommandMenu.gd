@@ -14,25 +14,31 @@ func _init(_name : String, _last : CommandMenu, _com : Array[Command]) -> void:
 	is_selecting = false
 
 func command_open(_user : Actor) -> void:
+	if commands.size() == 0: return
 	if commands[index] is CommandMenu:
 		_user.set_command_menu(commands[index] as CommandMenu)
 	else:
-		menu_select(_user)
+		command_close(_user)
 
 func command_close(_user : Actor) -> void:
 	_user.set_command_menu(last)
 
 func command_use(_user : Actor, _state : InputState) -> void:
-	commands[index].command_use(_user, _state)
+	if commands[index] is CommandMenu:
+		_user.set_command_menu(commands[index] as CommandMenu)
+	else:
+		commands[index].command_use(_user, _state)
 
 func menu_select(_user : Actor) -> void:
 	last.menu_select(_user)
 
 func command_use_release(_user : Actor, _state : InputState) -> void:
-	commands[index].command_use_release(_user, _state)
+	if not commands[index] is CommandMenu:
+		commands[index].command_use_release(_user, _state)
 
 func command_use_holding(_user : Actor, _state : InputState) -> void:
-	commands[index].command_use_holding(_user, _state)
+	if not commands[index] is CommandMenu:
+		commands[index].command_use_holding(_user, _state)
 
 func command_up() -> void:
 	if index >= commands.size() - 1:
