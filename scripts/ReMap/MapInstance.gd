@@ -27,22 +27,29 @@ func new_map() -> void:
 			layers[x].rows.append(MapRow.new())
 			for z : int in range(map_size.z):
 				layers[x].rows[y].stacks.append(MapStack.new())
-				layers[x].rows[y].stacks[0].tiles.append("")
+				layers[x].rows[y].stacks[0].tiles.append(MapTile.new())
 
-func set_tile(name : String, pos : Vector3i, priority : int) -> void:
+func set_tile(name : String, pos : Vector3i, priority : int, rot : int) -> void:
 	if pos.x < -map_size.x or pos.x > map_size.x: return
 	if pos.y < -map_size.y or pos.y > map_size.y: return
 	if pos.z < -map_size.z or pos.z > map_size.z: return
 	var e : int = OK
+	var tile : MapTile = MapTile.new()
+	tile.palette_tile = name
+	tile.rotation = rot
 	if priority > layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size():
-		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.append(name)
+		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.append(tile)
 	elif priority < 0:
-		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.push_front(name)
+		layers[pos.x].rows[pos.y].stacks[pos.z].tiles.push_front(tile)
 	else:
-		e = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.insert(priority, name)
+		e = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.insert(priority, tile)
 
 	if e == OK:
 		reload_at(pos)
+
+func set_tile_rotation(pos : Vector3i, priority : int, rot : int) -> void:
+	layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority].rotation = rot
+	reload_at(pos)
 
 func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
 	var target : int = priority + amount
@@ -51,12 +58,12 @@ func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
 		target = size
 	elif target >= size:
 		target = 0
-	var temp1 : String = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
-	var temp2 : String = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target]
+	var temp1 : MapTile = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
+	var temp2 : MapTile = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target]
 	layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority] = temp2
 	layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target] = temp1
-	game.command_update()
 	reload_at(pos)
+	game.command_update()
 
 func remove_tile(pos : Vector3i, priority : int) -> void:
 	if pos.x < -map_size.x or pos.x > map_size.x: return
@@ -64,12 +71,22 @@ func remove_tile(pos : Vector3i, priority : int) -> void:
 	if pos.z < -map_size.z or pos.z > map_size.z: return
 	layers[pos.x].rows[pos.y].stacks[pos.z].tiles.remove_at(priority)
 	reload_at(pos)
+	game.command_update()
+
+func remove_tile_from_tileset(name : String) -> bool:
+	return tile_palette.tiles.erase(name)
 
 func get_tile(pos : Vector3i, priority : int) -> String:
 	if pos.x < -map_size.x or pos.x >= map_size.x: return ""
 	if pos.y < -map_size.y or pos.y >= map_size.y: return ""
 	if pos.z < -map_size.z or pos.z >= map_size.z: return ""
-	return layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
+	return layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority].palette_tile
+
+func get_tile_rotation(pos : Vector3i, priority : int) -> int:
+	if pos.x < -map_size.x or pos.x >= map_size.x: return -1
+	if pos.y < -map_size.y or pos.y >= map_size.y: return -1
+	if pos.z < -map_size.z or pos.z >= map_size.z: return -1
+	return layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority].rotation
 
 func get_tile_stack(pos : Vector3i) -> MapStack:
 	if pos.x < -map_size.x or pos.x >= map_size.x: return MapStack.new()
@@ -84,10 +101,8 @@ func reload_map() -> void:
 				reload_at(Vector3i(x, y, z))
 
 func reload_at(pos : Vector3i) -> void:
-	var tile : String
 	for i : int in range(layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size()):
-		tile = get_tile(pos, i)
-		load_tile(tile, pos)
+		load_tile(get_tile(pos, i), pos, get_tile_rotation(pos, i))
 
 func get_atlas_texture() -> ImageTexture:
 	return tile_palette.get_atlas_texture()
@@ -149,10 +164,10 @@ func clear_map() -> void:
 	var model_mesh : ModelMesh = game.get_model_mesh()
 	model_mesh.generator = generator
 
-func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> PaletteTile:
 	return pack(position * tile_palette.tile_size, tile_palette.tile_size, fill, fill_palette)
 
-func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> PaletteTile:
 	var slope_mesh : SlopeMesh = game.get_slope_mesh()
 	var smooth_mesh : SmoothMesh = game.get_smooth_mesh()
 	var model_mesh : ModelMesh = game.get_model_mesh()
@@ -249,7 +264,7 @@ func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : Voxe
 				vox = model_mesh.tool.get_voxel(pos)
 				model_vox.layers[x].rows[y].vox.append(vox)
 
-	var tile : MapTile = MapTile.new()
+	var tile : PaletteTile = PaletteTile.new()
 	tile.slope_geo = slope_geo
 	tile.slope_tex = slope_tex
 	tile.smooth_geo = smooth_geo
@@ -263,10 +278,10 @@ func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : Voxe
 func save_tile(name : String, position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> void:
 	tile_palette.tiles[name] = pack_tile(position, fill, fill_palette)
 
-func unpack_tile(position : Vector3i, tile : MapTile) -> void:
-	unpack(position * tile_palette.tile_size, tile)
+func unpack_tile(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
+	unpack(position * tile_palette.tile_size, tile, rotation)
 
-func unpack(position : Vector3i, tile : MapTile) -> void:
+func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 	var slope_mesh : SlopeMesh = game.get_slope_mesh()
 	var smooth_mesh : SmoothMesh = game.get_smooth_mesh()
 	var model_mesh : ModelMesh = game.get_model_mesh()
@@ -280,10 +295,32 @@ func unpack(position : Vector3i, tile : MapTile) -> void:
 	var vox : int
 	var pos : Vector3i
 
+	var _x : int
+	var _y : int
+	var _z : int
+
 	for x : int in range(tile.size.x):
 		for y : int in range(tile.size.y):
 			for z : int in range(tile.size.z):
-				pos = position + Vector3i(x, y, z)
+				match rotation:
+					0:
+						_x = x
+						_y = y
+						_z = z
+					1:
+						_x = tile.size.x-1-x
+						_y = y
+						_z = tile.size.z-1-z
+					2:
+						_x = tile.size.x-1-x
+						_y = y
+						_z = z
+					3:
+						_x = x
+						_y = y
+						_z = tile.size.z-1-z
+
+				pos = position + Vector3i(_x, _y, _z)
 				geo = tile.slope_geo.layers[x].rows[y].geo[z]
 
 				if not (is_equal_approx(col.r, 0.0) and \
@@ -362,9 +399,9 @@ func clear(position : Vector3i, size : Vector3i) -> void:
 				smooth_mesh.remove_geo(pos)
 				model_mesh.remove_voxel(pos)
 
-func load_tile(name : String, position : Vector3i) -> void:
+func load_tile(name : String, position : Vector3i, rotation : int) -> void:
 	if not tile_palette.tiles.has(name): return
-	unpack_tile(position, tile_palette.tiles[name] as MapTile)
+	unpack_tile(position, tile_palette.tiles[name] as PaletteTile, rotation)
 
 func duplicate_tile(from : String, to : String) -> void:
 	var slope_geo : TileGeo = TileGeo.new()
@@ -433,7 +470,7 @@ func duplicate_tile(from : String, to : String) -> void:
 
 				vox = tile_palette.tiles[from].model_vox.layers[x].rows[y].vox[z]
 				model_vox.layers[x].rows[y].vox.append(vox)
-	var tile : MapTile = MapTile.new()
+	var tile : PaletteTile = PaletteTile.new()
 	tile.slope_geo = slope_geo
 	tile.slope_tex = slope_tex
 	tile.smooth_geo = smooth_geo

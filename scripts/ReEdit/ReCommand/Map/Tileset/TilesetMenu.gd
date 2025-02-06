@@ -40,7 +40,8 @@ func add_tile(above : bool) -> void:
 	tiles.add_tile(above)
 
 func remove_tile(_user : Actor) -> void:
-	tiles.remove_tile(_user)
+	if game.map.remove_tile_from_tileset(tiles.commands[tiles.index].name):
+		tiles.remove_tile(_user)
 
 func rename_tile() -> void:
 	tiles.rename_tile()

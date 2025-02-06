@@ -6,7 +6,7 @@ var controller : EditorController
 var dragging : bool
 var selection : bool
 
-var clipboard : MapTile
+var clipboard : PaletteTile
 
 var start_pos : Vector3i
 var end_pos : Vector3i
@@ -46,7 +46,7 @@ func _init(_last : EditorWheel, _controller : EditorController) -> void:
 	game.command_update()
 
 func new_clipboard(_x : int, _y : int, _z : int) -> void:
-	clipboard = MapTile.new()
+	clipboard = PaletteTile.new()
 	for x : int in range(_x + 1):
 		clipboard.slope_geo.layers.append([])
 		clipboard.slope_tex.w.append([])
@@ -163,4 +163,4 @@ func copy() -> void:
 func paste(targeti : Vector3i) -> void:
 	if clipboard == null: return
 	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
-	game.map.unpack(targeti, clipboard)
+	game.map.unpack(targeti, clipboard, 0)

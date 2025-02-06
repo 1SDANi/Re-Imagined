@@ -1,4 +1,4 @@
-class_name MapTile
+class_name PaletteTile
 extends Resource
 
 @export var tile_tex_names : Array[String]

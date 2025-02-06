@@ -117,19 +117,19 @@ func get_model(model : String, rot : int, terrain : String) -> int:
 	return map.get_model(model, rot, terrain)
 
 func reset_tile(position : Vector3i, priority : int) -> void:
-	map.load_tile(get_tile(position, priority), position)
+	map.load_tile(get_tile(position, priority), position, get_tile_rotation(position, priority))
 
-func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+func pack_tile(position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> PaletteTile:
 	return map.pack_tile(position, fill, fill_palette)
 
-func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> MapTile:
+func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : VoxelPalette) -> PaletteTile:
 	return map.pack(position, size, fill, fill_palette)
 
-func unpack_tile(position : Vector3i, tile : MapTile) -> void:
-	map.unpack_tile(position, tile)
+func unpack_tile(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
+	map.unpack_tile(position, tile, rotation)
 
-func unpack(position : Vector3i, tile : MapTile) -> void:
-	map.unpack(position, tile)
+func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
+	map.unpack(position, tile, rotation)
 
 func clear_tile(position : Vector3i) -> void:
 	map.clear_tile(position)
@@ -140,8 +140,14 @@ func clear(position : Vector3i, size : Vector3i) -> void:
 func save_tile(name : String, position : Vector3i, fill : bool, fill_palette : VoxelPalette) -> void:
 	map.save_tile(name, position, fill, fill_palette)
 
-func set_tile(name : String, position : Vector3i, priority : int) -> void:
-	map.set_tile(name, position, priority)
+func remove_tile_from_tileset(name : String) -> bool:
+	return map.remove_tile_from_tileset(name)
+
+func set_tile(name : String, position : Vector3i, priority : int, rotation : int) -> void:
+	map.set_tile(name, position, priority, rotation)
+
+func set_tile_rotation(position : Vector3i, priority : int, rotation : int) -> void:
+	map.set_tile_rotation(position, priority, rotation)
 
 func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
 	map.move_tile(pos, priority, amount)
@@ -154,6 +160,9 @@ func remove_tile(position : Vector3i, priority : int) -> void:
 
 func get_tile(position : Vector3i, priority : int) -> String:
 	return map.get_tile(position, priority)
+
+func get_tile_rotation(position : Vector3i, priority : int) -> int:
+	return map.get_tile_rotation(position, priority)
 
 func get_tile_stack(position : Vector3i) -> MapStack:
 	return map.get_tile_stack(position)
