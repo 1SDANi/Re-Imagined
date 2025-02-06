@@ -100,6 +100,18 @@ func reload_tile(_user : Actor) -> void:
 	game.command_update()
 
 func remove_tile(_user : Actor) -> void:
+	var editor : EditorMenu = (last.last as EditorWheel).editor
+	var mode : MapHandler.MODE = editor.get_mode()
+	var mesh : VoxelMesh = game.get_mode_mesh(mode)
+	var target : Vector3 = mesh.to_local(_user.position) + Vector3.DOWN / 2
+	if target.x < 0.0: target.x -= 1.0
+	if target.y < 0.0: target.y -= 1.0
+	if target.z < 0.0: target.z -= 1.0
+	var targeti : Vector3i = target + Vector3.DOWN / 2
+	var pos : Vector3i = game.map.get_pos(targeti)
+
+	game.map.remove_tile(pos, layers.index)
+
 	if layers.remove_tile(_user):
 		game.command_update()
 

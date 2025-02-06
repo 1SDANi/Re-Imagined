@@ -53,10 +53,10 @@ func set_tile_rotation(pos : Vector3i, priority : int, rot : int) -> void:
 
 func move_tile(pos : Vector3i, priority : int, amount : int) -> void:
 	var target : int = priority + amount
-	var size : int = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size()
+	var size : int = layers[pos.x].rows[pos.y].stacks[pos.z].tiles.size() - 1
 	if target < 0:
 		target = size
-	elif target >= size:
+	elif target > size:
 		target = 0
 	var temp1 : MapTile = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[priority]
 	var temp2 : MapTile = layers[pos.x].rows[pos.y].stacks[pos.z].tiles[target]
@@ -218,7 +218,7 @@ func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : Voxe
 
 				slope_mesh.tool.channel = VoxelBuffer.CHANNEL_SDF
 				geo = slope_mesh.tool.get_voxel_f(pos)
-				slope_geo.layers[x].rows[y].geo.append(geo / 500.0)
+				slope_geo.layers[x].rows[y].geo.append(geo)
 
 				slope_mesh.tool.channel = VoxelBuffer.CHANNEL_INDICES
 				index = slope_mesh.tool.get_voxel(pos)
@@ -240,7 +240,7 @@ func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : Voxe
 
 				smooth_mesh.tool.channel = VoxelBuffer.CHANNEL_SDF
 				geo = smooth_mesh.tool.get_voxel_f(pos)
-				smooth_geo.layers[x].rows[y].geo.append(geo / 500.0)
+				smooth_geo.layers[x].rows[y].geo.append(geo)
 
 				smooth_mesh.tool.channel = VoxelBuffer.CHANNEL_INDICES
 				index = smooth_mesh.tool.get_voxel(pos)
@@ -255,7 +255,7 @@ func pack(position : Vector3i, size : Vector3i, fill : bool, fill_palette : Voxe
 				tex = game.map.get_texture_name(indices.z)
 				smooth_tex.z[x].rows[y].tex.append(tex)
 
-				smooth_mesh.tool.channel = VoxelBuffer.CHANNEL_COLOR
+				smooth_mesh.tool.channel = VoxelBuffer.CHANNEL_WEIGHTS
 				index = smooth_mesh.tool.get_voxel(pos)
 				col = VoxelTool.u16_weights_to_color(index)
 				smooth_tex.col[x].rows[y].col.append(col)
@@ -323,6 +323,7 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 				pos = position + Vector3i(_x, _y, _z)
 				geo = tile.slope_geo.layers[x].rows[y].geo[z]
 
+				col = tile.slope_tex.col[x].rows[y].col[z]
 				if not (is_equal_approx(col.r, 0.0) and \
 						is_equal_approx(col.g, 0.0) and \
 						is_equal_approx(col.b, 0.0) and \
@@ -331,7 +332,6 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 					tex_x = tile.slope_tex.x[x].rows[y].tex[z]
 					tex_y = tile.slope_tex.y[x].rows[y].tex[z]
 					tex_z = tile.slope_tex.z[x].rows[y].tex[z]
-					col = tile.slope_tex.col[x].rows[y].col[z]
 
 					slope_mesh.set_blend(pos, col)
 					slope_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
@@ -342,15 +342,16 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 					tex_z = tile.fill_palette.slope_z
 
 					slope_mesh.set_blend(pos, tile.fill_palette.slope_col)
-					slope_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+					slope_mesh.set_tex(pos, tex_x, tex_y, tex_z, tex_w)
 
-				if not is_equal_approx(geo, 1.0):
+				if not is_equal_approx(geo, 500.0):
 					slope_mesh.set_geo(pos, geo)
 				elif tile.fill:
 					slope_mesh.set_geo(pos, tile.fill_palette.slope_geo)
 
 				geo = tile.smooth_geo.layers[x].rows[y].geo[z]
 
+				col = tile.smooth_tex.col[x].rows[y].col[z]
 				if not (is_equal_approx(col.r, 0.0) and \
 						is_equal_approx(col.g, 0.0) and \
 						is_equal_approx(col.b, 0.0) and \
@@ -359,10 +360,9 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 					tex_x = tile.smooth_tex.x[x].rows[y].tex[z]
 					tex_y = tile.smooth_tex.y[x].rows[y].tex[z]
 					tex_z = tile.smooth_tex.z[x].rows[y].tex[z]
-					col = tile.smooth_tex.col[x].rows[y].col[z]
 
 					smooth_mesh.set_blend(pos, col)
-					smooth_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
+					smooth_mesh.set_tex(pos, tex_x, tex_y, tex_z, tex_w)
 				elif tile.fill:
 					tex_w = tile.fill_palette.smooth_w
 					tex_x = tile.fill_palette.smooth_x
@@ -372,13 +372,13 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 					smooth_mesh.set_blend(pos, tile.fill_palette.smooth_col)
 					smooth_mesh.set_tex(pos, tex_w, tex_x, tex_y, tex_z)
 
-				if not is_equal_approx(geo, 1.0):
+				if not is_equal_approx(geo, 500.0):
 					smooth_mesh.set_geo(pos, geo)
 				elif tile.fill:
 					smooth_mesh.set_geo(pos, tile.fill_palette.smooth_geo)
 
+				vox = tile.model_vox.layers[x].rows[y].vox[z]
 				if vox != 0:
-					vox = tile.model_vox.layers[x].rows[y].vox[z]
 					model_mesh.set_voxel(pos, vox)
 				elif tile.fill:
 					model_mesh.set_voxel(pos, tile.fill_palette.model)
