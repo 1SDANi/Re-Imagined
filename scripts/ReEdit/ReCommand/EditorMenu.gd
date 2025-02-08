@@ -154,7 +154,10 @@ func adjust_clipboard() -> void:
 
 func clear() -> void:
 	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return
+	game.move_edit_viewer(start_pos as Vector3)
 	game.map.clear(start_pos, selection_size)
+	game.changes_complete()
+	game.command_update()
 
 func copy() -> void:
 	if end_pos == Vector3i.MAX or start_pos == Vector3i.MIN: return

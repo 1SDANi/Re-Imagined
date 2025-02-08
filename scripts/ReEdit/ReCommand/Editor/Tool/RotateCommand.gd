@@ -19,8 +19,13 @@ func command_use(_user : Actor, _state : InputState) -> void:
 	var rot : int = editor.get_rotation()
 
 	if mode == MapHandler.MODE.MODEL:
+		game.move_edit_viewer(targeti as Vector3)
+
 		var voxel : int = (mesh as ModelMesh).get_voxel(targeti)
 		var primary : String =  game.map.get_texture(voxel)
 		var shape : String = game.map.get_shape(voxel)
 		voxel = game.map.get_model(shape, rot, primary)
 		(mesh as ModelMesh).set_voxel(targeti, voxel)
+
+		game.changes_complete()
+		game.command_update()

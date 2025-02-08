@@ -29,6 +29,8 @@ func add(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 	var rot : int = editor.get_rotation()
 	var primary : String = editor.get_texture(0)
 
+	game.move_edit_viewer(targeti as Vector3)
+
 	match(mode):
 		MapHandler.MODE.MODEL:
 			var voxel : int = game.map.get_model(model, rot, primary)
@@ -37,3 +39,6 @@ func add(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 			(mesh as SoftMesh).add_geo(targeti, editor.get_shape() * -500)
 		MapHandler.MODE.SLOPE:
 			(mesh as SoftMesh).add_geo(targeti, editor.get_shape() * -500)
+
+	game.changes_complete()
+	game.command_update()

@@ -48,7 +48,7 @@ const TOOL_NAMES : Array[String] = \
 func _init() -> void:
 	map = MapInstance.new()
 	map.map_size = Vector3i(150, 1, 150)
-	map.tile_palette.tile_size = Vector3i(10, 20, 10)
+	map.tile_palette.tile_size = Vector3i(10, 10, 10)
 	map.new_map()
 
 func setup(

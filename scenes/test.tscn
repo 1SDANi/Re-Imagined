@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://j28scctrhxas"]
+[gd_scene load_steps=61 format=3 uid="uid://j28scctrhxas"]
 
 [ext_resource type="Shader" path="res://addons/VoxelShader/smooth.gdshader" id="1_jrjy4"]
 [ext_resource type="Script" path="res://scripts/ReMap/InitMap.gd" id="1_ml853"]
@@ -26,7 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://c3hck30uiqudy" path="res://Highlight.tscn" id="14_00k5w"]
 [ext_resource type="ArrayMesh" uid="uid://btpyl3cwmin5f" path="res://models/sign.obj" id="14_dpks5"]
 [ext_resource type="Script" path="res://scripts/ReMesh/SmoothMesh.gd" id="15_gv8xu"]
-[ext_resource type="Texture2DArray" path="res://atlas_array.tres" id="16_3ss0b"]
+[ext_resource type="Texture2DArray" uid="uid://bmmpsesbay6i5" path="res://atlas_array.tres" id="16_3ss0b"]
 [ext_resource type="Script" path="res://scripts/ReMesh/ModelMesh.gd" id="16_aoao2"]
 [ext_resource type="ArrayMesh" uid="uid://boljbhl56jg1r" path="res://models/block.obj" id="17_xxmat"]
 [ext_resource type="PackedScene" uid="uid://c26pwxglf7165" path="res://scenes/name_popup.tscn" id="28_mftsw"]
@@ -43,6 +43,8 @@
 [ext_resource type="Script" path="res://scripts/ReEdit/ReCommand/EditorController.gd" id="42_8tggf"]
 [ext_resource type="Script" path="res://scripts/StringLabel.gd" id="51_wnygd"]
 
+[sub_resource type="VoxelStreamMemory" id="VoxelStreamMemory_q6ayx"]
+
 [sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_lldlo"]
 texturing_mode = 1
 
@@ -51,6 +53,8 @@ render_priority = 0
 shader = ExtResource("2_uc5lo")
 shader_parameter/u_texture_array = ExtResource("16_3ss0b")
 
+[sub_resource type="VoxelStreamMemory" id="VoxelStreamMemory_iq7xp"]
+
 [sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_3630w"]
 texturing_mode = 1
 
@@ -58,6 +62,8 @@ texturing_mode = 1
 render_priority = 0
 shader = ExtResource("1_jrjy4")
 shader_parameter/u_texture_array = ExtResource("16_3ss0b")
+
+[sub_resource type="VoxelStreamMemory" id="VoxelStreamMemory_s6cx0"]
 
 [sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_vu751"]
 
@@ -122,7 +128,7 @@ r = 0.0
 [sub_resource type="QuadMesh" id="QuadMesh_cd132"]
 size = Vector2(100, 100)
 
-[node name="World3D" type="Node3D" node_paths=PackedStringArray("save_dialog", "load_dialog")]
+[node name="World3D" type="Node3D" node_paths=PackedStringArray("save_dialog", "load_dialog", "edit_viewer")]
 script = ExtResource("1_ml853")
 textures = Array[Image]([ExtResource("4_psxsc"), ExtResource("5_o2rqs"), ExtResource("6_7jjgn"), ExtResource("7_xn442"), ExtResource("7_3eagx"), ExtResource("8_ai7ek"), ExtResource("10_sq67x"), ExtResource("9_p3i2e"), ExtResource("10_b8t4p"), ExtResource("11_co6d5"), ExtResource("12_fa3ir")])
 texture_names = Array[String](["Snow", "Permafrost", "Dirt", "Leaves", "Straw", "WetGrass", "DryGrass", "RockyGrass", "Sand", "Stone", "Water"])
@@ -131,8 +137,10 @@ models = Array[Mesh]([ExtResource("17_xxmat"), ExtResource("14_dpks5")])
 model_names = Array[String](["Block", "Sign"])
 save_dialog = NodePath("SaveDialog")
 load_dialog = NodePath("LoadDialog")
+edit_viewer = NodePath("EditViewer")
 
 [node name="SlopeMesh" type="VoxelTerrain" parent="."]
+stream = SubResource("VoxelStreamMemory_q6ayx")
 mesher = SubResource("VoxelMesherTransvoxel_lldlo")
 gi_mode = 1
 collision_layer = 3
@@ -141,6 +149,7 @@ mesh_block_size = 32
 script = ExtResource("4_epbx7")
 
 [node name="SmoothMesh" type="VoxelTerrain" parent="."]
+stream = SubResource("VoxelStreamMemory_iq7xp")
 mesher = SubResource("VoxelMesherTransvoxel_3630w")
 gi_mode = 1
 collision_layer = 3
@@ -149,6 +158,7 @@ mesh_block_size = 32
 script = ExtResource("15_gv8xu")
 
 [node name="ModelMesh" type="VoxelTerrain" parent="."]
+stream = SubResource("VoxelStreamMemory_s6cx0")
 mesher = SubResource("VoxelMesherTransvoxel_vu751")
 gi_mode = 1
 collision_layer = 3
@@ -202,12 +212,14 @@ initial_weight_r = 1.0
 initial_mode = 1
 
 [node name="VoxelViewer" type="VoxelViewer" parent="ThirdPersonActor"]
+view_distance = 99999999
 enabled_in_editor = true
 
 [node name="CameraBrain" type="Camera3D" parent="."]
 process_priority = 999
 transform = Transform3D(0.999999, -5.16699e-08, 1.67034e-07, 0, 0.955328, 0.295516, -1.74845e-07, -0.295518, 0.955323, 5.01109e-07, 4.88656, 2.86601)
 environment = SubResource("Environment_no8sf")
+far = 10000.0
 script = ExtResource("7_yeacn")
 
 [node name="VirtualCamera" type="Node3D" parent="CameraBrain" node_paths=PackedStringArray("follow_node")]
@@ -856,3 +868,6 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.res")
 use_native_dialog = true
+
+[node name="EditViewer" type="VoxelViewer" parent="."]
+view_distance = 1024

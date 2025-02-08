@@ -13,6 +13,7 @@ var actor : Actor
 var controller : Controller
 var save_dialog : FileDialog
 var load_dialog : FileDialog
+var edit_viewer : VoxelViewer
 
 signal InputsReady(delta : float)
 signal CommandUpdate
@@ -38,6 +39,11 @@ func _ready() -> void:
 	input.set_default_hold_threshold(1.5)
 	input.set_default_buffer_length(5)
 	input.set_default_axis_buffer_length(5)
+
+func changes_complete() -> void:
+	var _slope : VoxelSaveCompletionTracker = game.get_slope_mesh().save_modified_blocks()
+	var _smooth : VoxelSaveCompletionTracker = game.get_smooth_mesh().save_modified_blocks()
+	var _voxel : VoxelSaveCompletionTracker = game.get_model_mesh().save_modified_blocks()
 
 func get_target_pos() -> String:
 	return get_target_x() +"X, " +get_target_y() +"Y, " +get_target_z() +"Z"
@@ -73,6 +79,12 @@ func get_mode_mesh(m : MapHandler.MODE) -> VoxelMesh:
 			return get_model_mesh()
 		_:
 			return get_block_mesh()
+
+func set_edit_viewer(viewer : VoxelViewer) -> void:
+	edit_viewer = viewer
+
+func move_edit_viewer(position : Vector3) -> void:
+	edit_viewer.position = position
 
 func set_slope_mesh(path : NodePath) -> void:
 	slope_mesh = path

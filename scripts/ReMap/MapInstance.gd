@@ -299,6 +299,25 @@ func unpack(position : Vector3i, tile : PaletteTile, rotation : int) -> void:
 	var _y : int
 	var _z : int
 
+	var aabb : AABB = AABB(position, tile.size)
+
+	game.move_edit_viewer(position as Vector3)
+
+	while not slope_mesh.tool.is_area_editable(aabb):
+		await game.get_tree().process_frame
+
+	print("slope editable")
+
+	while not smooth_mesh.tool.is_area_editable(aabb):
+		await game.get_tree().process_frame
+
+	print("smooth editable")
+
+	while not model_mesh.tool.is_area_editable(aabb):
+		await game.get_tree().process_frame
+
+	print("model editable")
+
 	for x : int in range(tile.size.x):
 		for y : int in range(tile.size.y):
 			for z : int in range(tile.size.z):

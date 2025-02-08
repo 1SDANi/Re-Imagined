@@ -17,6 +17,8 @@ func set_save_location(location : String) -> void:
 	game.map.load_map()
 	var tiles : TilePalette = game.map.map.tile_palette
 	((last as MapManagerMenu).last as MapMenu).tileset_menu.load_tileset(tiles)
+	game.changes_complete()
+	game.command_update()
 	end()
 
 func end() -> void:

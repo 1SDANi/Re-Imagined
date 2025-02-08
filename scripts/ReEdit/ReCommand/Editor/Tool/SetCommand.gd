@@ -32,6 +32,8 @@ func local_set(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 	var rot : int = editor.get_rotation()
 	var primary : String = editor.get_texture(0)
 
+	game.move_edit_viewer(targeti as Vector3)
+
 	match(mode):
 		MapHandler.MODE.MODEL:
 			var voxel : int = game.map.get_model(model, rot, primary)
@@ -46,3 +48,6 @@ func local_set(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 			(mesh as SoftMesh).set_blend(targeti, editor.get_blend())
 			(mesh as SoftMesh).set_tex(targeti, editor.get_texture(0), \
 				editor.get_texture(1), editor.get_texture(2), editor.get_texture(3))
+
+	game.changes_complete()
+	game.command_update()

@@ -16,8 +16,6 @@ func _init(_last : MapMenu) -> void:
 		rots,
 		TileAddAboveCommand.new(self),
 		TileAddBelowCommand.new(self),
-		TileMoveUpCommand.new(self),
-		TileMoveDownCommand.new(self),
 		TileClearCommand.new(self),
 		TileReloadCommand.new(self),
 		TileRemoveCommand.new(self)
@@ -97,6 +95,7 @@ func reload_tile(_user : Actor) -> void:
 
 	game.map.reload_at(pos)
 
+	game.changes_complete()
 	game.command_update()
 
 func remove_tile(_user : Actor) -> void:
@@ -126,7 +125,10 @@ func clear_tile(_user : Actor) -> void:
 	var targeti : Vector3i = target + Vector3.DOWN / 2
 	var pos : Vector3i = game.map.get_pos(targeti)
 
+	game.move_edit_viewer(pos as Vector3)
 	game.map.clear_tile(pos)
+	game.changes_complete()
+	game.command_update()
 
 func set_tile_rotation(_user : Actor, rotation : int) -> void:
 	var editor : EditorMenu = (last.last as EditorWheel).editor
@@ -140,3 +142,5 @@ func set_tile_rotation(_user : Actor, rotation : int) -> void:
 	var pos : Vector3i = game.map.get_pos(targeti)
 
 	game.map.set_tile_rotation(pos, layers.index, rotation)
+	game.changes_complete()
+	game.command_update()

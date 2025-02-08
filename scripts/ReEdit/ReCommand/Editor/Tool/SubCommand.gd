@@ -26,6 +26,8 @@ func sub(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 	var mode : MapHandler.MODE = editor.get_mode()
 	var mesh : VoxelMesh = game.get_mode_mesh(mode)
 
+	game.move_edit_viewer(targeti as Vector3)
+
 	match(mode):
 		MapHandler.MODE.MODEL:
 			(mesh as ModelMesh).remove_voxel(targeti)
@@ -33,3 +35,6 @@ func sub(_user : Actor, _state : InputState, targeti : Vector3i) -> void:
 			(mesh as SoftMesh).sub_geo(targeti, editor.get_shape() * -500)
 		MapHandler.MODE.SLOPE:
 			(mesh as SoftMesh).sub_geo(targeti, editor.get_shape() * -500)
+
+	game.changes_complete()
+	game.command_update()

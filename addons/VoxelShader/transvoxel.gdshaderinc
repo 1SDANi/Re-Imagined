@@ -48,4 +48,3 @@ vec3 get_transvoxel_position(vec3 vertex_pos, vec4 fdata) {
 
 	return pos;
 }
-
